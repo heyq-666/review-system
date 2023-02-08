@@ -57,7 +57,7 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
    private IReviewQuestionService reviewQuestionService;
 
 
-   /*---------------------------------主表处理-begin-------------------------------------*/
+   /*---------------------------------主表处理-begin1-------------------------------------*/
 
    /**
     * 分页列表查询
