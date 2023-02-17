@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.review.manage.reviewClass.mapper.ReviewClassMapper">
+    <update id="reviewStopById" parameterType="String">
+        UPDATE review_class SET `status` = 0 WHERE id = #{id}
+    </update>
+
+    <update id="reviewPublishById" parameterType="String">
+        UPDATE review_class SET `status` = 1 WHERE id = #{id}
+    </update>
+
+</mapper>
