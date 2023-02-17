@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author javabage
+ * @author javabage1
  * @date 2023/2/16
  */
 @Api(tags="公告管理")
