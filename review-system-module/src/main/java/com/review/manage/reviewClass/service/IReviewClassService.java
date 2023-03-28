@@ -5,6 +5,7 @@ import com.review.manage.reviewClass.entity.ReviewClass;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @Description: 测评量表
@@ -17,9 +18,9 @@ public interface IReviewClassService extends IService<ReviewClass> {
 	/**
 	 * 删除一对多
 	 *
-	 * @param id
+	 * @param classId
 	 */
-	public void delMain (String id);
+	public void delMain (String classId);
 	
 	/**
 	 * 批量删除一对多
@@ -28,8 +29,5 @@ public interface IReviewClassService extends IService<ReviewClass> {
 	 */
 	public void delBatchMain (Collection<? extends Serializable> idList);
 
-
-	void reviewStop(String id);
-
-	void reviewPublish(String id);
+    void updateByClassId(ReviewClass reviewClass);
 }

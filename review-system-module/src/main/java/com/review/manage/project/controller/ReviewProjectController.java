@@ -3,6 +3,7 @@ package com.review.manage.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.review.common.WxAppletsUtils;
 import com.review.manage.project.entity.ReviewProjectEntity;
 import com.review.manage.project.service.IReviewProjectService;
 import io.swagger.annotations.Api;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 
 /**
@@ -96,6 +98,39 @@ public class ReviewProjectController extends JeecgController<ReviewProjectEntity
         //更新项目关联的测评量表信息
         reviewProjectService.insert(reviewProject);
         return Result.OK("编辑成功!");
+    }
+
+    /**
+     * 项目管理-生成二维码
+     * @param reviewProject
+     * @param req
+     */
+    @ApiOperation(value="项目管理-生成二维码", notes="项目管理-生成二维码")
+    @GetMapping(value = "/generateAppletsQrCode")
+    public Result<?> generateAppletsQrCode(ReviewProjectEntity reviewProject, HttpServletRequest req) {
+        Result result = new Result();
+        if (reviewProject.getId() == null){
+            result.setSuccess(false);
+            result.setCode(300);
+            result.setMessage("测评项目ID为空，无法生成二维码");
+            return result;
+        }
+        ReviewProjectEntity reviewProjectEntity = reviewProjectService.getById(reviewProject.getId());
+        if (reviewProjectEntity == null) {
+            result.setSuccess(false);
+            result.setCode(301);
+            result.setMessage("测评项目不存在，无法生成二维码");
+            return result;
+        }
+        //生成二维码
+        String qrCodePath = WxAppletsUtils.geneAppletsQrCode("pages/index/index", "projectId=" + reviewProject.getId());
+        reviewProject.setAppletsQrCodeLink(qrCodePath);
+        reviewProject.setUpdateTime(new Date());
+        reviewProjectService.saveOrUpdate(reviewProject);
+        result.setCode(200);
+        result.setMessage("生成成功");
+        result.setResult(qrCodePath);
+        return result;
     }
 
 }

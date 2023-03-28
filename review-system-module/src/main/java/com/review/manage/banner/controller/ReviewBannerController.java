@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.review.manage.banner.entity.ReviewBannerEntity;
 import com.review.manage.banner.service.IReviewBannerService;
-import com.review.manage.notice.entity.ReviewNoticeEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

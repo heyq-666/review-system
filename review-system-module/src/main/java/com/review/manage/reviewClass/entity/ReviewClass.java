@@ -29,9 +29,9 @@ public class ReviewClass implements Serializable {
     private static final long serialVersionUID = 1L;
 
 	/**主键*/
-	@TableId(type = IdType.ASSIGN_ID)
+	@TableId(type = IdType.ASSIGN_UUID)
     @ApiModelProperty(value = "主键")
-    private String id;
+    private String classId;
 	/**排序ID*/
     @Excel(name = "排序ID", width = 15)
     @ApiModelProperty(value = "排序ID")

@@ -2,6 +2,9 @@ package com.review.manage.reviewClass.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.review.manage.reviewClass.entity.ReviewClass;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @Description: 测评量表
@@ -11,7 +14,9 @@ import com.review.manage.reviewClass.entity.ReviewClass;
  */
 public interface ReviewClassMapper extends BaseMapper<ReviewClass> {
 
-    void reviewStopById(String id);
+    void updateByClassId(ReviewClass reviewClass);
 
-    void reviewPublishById(String id);
+    void deleteClassByClassId(String classId);
+
+    public boolean deleteByMainId(@Param("classId") String classId);
 }

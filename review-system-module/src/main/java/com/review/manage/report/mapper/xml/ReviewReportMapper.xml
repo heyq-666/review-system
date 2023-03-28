@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.review.manage.report.mapper.ReviewReportMapper">
+    <select id="getClassNameByClassId" parameterType="String" resultType="String">
+        SELECT
+            title AS className
+        FROM
+            review_class
+        WHERE
+            class_id = #{classId}
+    </select>
+    <delete id="delReviewReportVariate" parameterType="String">
+        DELETE FROM review_report_variate WHERE report_id = #{reportId}
+    </delete>
+</mapper>

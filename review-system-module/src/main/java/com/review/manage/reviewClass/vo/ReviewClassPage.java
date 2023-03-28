@@ -1,17 +1,13 @@
 package com.review.manage.reviewClass.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.review.manage.reviewClass.entity.ReviewQuestion;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.jeecg.common.aspect.annotation.Dict;
 import org.jeecgframework.poi.excel.annotation.Excel;
-import org.jeecgframework.poi.excel.annotation.ExcelCollection;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.util.Date;
-import java.util.List;
 
 /**
  * @Description: 测评量表
@@ -25,7 +21,7 @@ public class ReviewClassPage {
 
 	/**主键*/
 	@ApiModelProperty(value = "主键")
-    private String id;
+    private String class_id;
 	/**排序ID*/
 	@Excel(name = "排序ID", width = 15)
 	@ApiModelProperty(value = "排序ID")
@@ -85,9 +81,5 @@ public class ReviewClassPage {
 	@Excel(name = "报告提示语", width = 15)
 	@ApiModelProperty(value = "报告提示语")
     private String reportTips;
-
-	@ExcelCollection(name="问题列表")
-	@ApiModelProperty(value = "问题列表")
-	private List<ReviewQuestion> reviewQuestionList;
 
 }

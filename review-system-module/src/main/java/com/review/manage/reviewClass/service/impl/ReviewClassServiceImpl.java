@@ -3,7 +3,6 @@ package com.review.manage.reviewClass.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewClass.mapper.ReviewClassMapper;
-import com.review.manage.reviewClass.mapper.ReviewQuestionMapper;
 import com.review.manage.reviewClass.service.IReviewClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,33 +21,28 @@ public class ReviewClassServiceImpl extends ServiceImpl<ReviewClassMapper, Revie
 
 	@Autowired
 	private ReviewClassMapper reviewClassMapper;
-	@Autowired
-	private ReviewQuestionMapper reviewQuestionMapper;
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public void delMain(String id) {
-		reviewQuestionMapper.deleteByMainId(id);
-		reviewClassMapper.deleteById(id);
+	public void delMain(String classId) {
+		//删除量表下的题目
+		reviewClassMapper.deleteByMainId(classId);
+		//删除量表
+		reviewClassMapper.deleteClassByClassId(classId);
 	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void delBatchMain(Collection<? extends Serializable> idList) {
 		for(Serializable id:idList) {
-			reviewQuestionMapper.deleteByMainId(id.toString());
+			reviewClassMapper.deleteByMainId(id.toString());
 			reviewClassMapper.deleteById(id);
 		}
 	}
 
 	@Override
-	public void reviewStop(String id) {
-		reviewClassMapper.reviewStopById(id);
-	}
-
-	@Override
-	public void reviewPublish(String id) {
-		reviewClassMapper.reviewPublishById(id);
+	public void updateByClassId(ReviewClass reviewClass) {
+		reviewClassMapper.updateByClassId(reviewClass);
 	}
 
 }
