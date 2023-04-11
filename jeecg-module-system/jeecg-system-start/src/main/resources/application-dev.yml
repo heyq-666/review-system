@@ -7,7 +7,7 @@ server:
     include-stacktrace: ALWAYS
     include-message: ALWAYS
   servlet:
-    context-path: /jeecg-boot
+    context-path: /review
   compression:
     enabled: true
     min-response-size: 1024
@@ -187,8 +187,8 @@ jeecg:
     excludeUrls: /test/jeecgDemo/demo3,/test/jeecgDemo/redisDemo/**,/category/**,/visual/**,/map/**,/jmreport/bigscreen2/**
   #阿里云oss存储和大鱼短信秘钥配置
   oss:
-    accessKey: ??
-    secretKey: ??
+    accessKey: LTAI5tD2NpYHjyifEH3AeJYf
+    secretKey: cXyibhYW9hjTv4M2dBvUNg48wHbyJ6
     endpoint: oss-cn-beijing.aliyuncs.com
     bucketName: jeecgdev
   # ElasticSearch 6设置

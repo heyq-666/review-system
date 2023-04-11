@@ -12,6 +12,8 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Description: 测评用户
@@ -92,4 +94,10 @@ public class ReviewUser implements Serializable {
     /**部门名称*/
     @Excel(name = "用户组", width = 15)
     private transient String departName;
+
+    private transient String msgCode;
+
+    private transient Map<String, Object> extraObj = new HashMap<>();
+
+    private transient Long projectId;
 }

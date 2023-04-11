@@ -684,4 +684,26 @@ public class DateUtils extends PropertyEditorSupport {
         return null;
     }
 
+    /**
+     * 增加或减少毫秒数
+     * @param date
+     * @param num
+     * @return
+     */
+    public static Date addMillSecond(Date date, int num) {
+        Calendar startDT = Calendar.getInstance();
+        startDT.setTime(date);
+        startDT.add(Calendar.MILLISECOND, num);
+        return startDT.getTime();
+    }
+
+    //时间转换为时间戳
+    public static String dateToStamp(String s) throws ParseException{
+        String res;
+        SimpleDateFormat SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = SimpleDateFormat.parse(s);
+        long ts = date.getTime();
+        res = String.valueOf(ts);
+        return res;
+    }
 }

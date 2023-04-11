@@ -30,10 +30,10 @@ public class ReviewReportGradeEntity implements Serializable{
 	private String reportId;
 
 	@ApiModelProperty(value = "最小分值")
-    private String gradeSmall;
+    private Double gradeSmall;
 
 	@ApiModelProperty(value = "最大分值")
-	private String gradeBig;
+	private Double gradeBig;
 
 	@ApiModelProperty(value = "描述")
     private String resultExplain;

@@ -5,6 +5,7 @@ import com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSour
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.constant.DataBaseConstant;
 import org.jeecg.common.constant.ServiceNameConstants;
@@ -350,5 +351,22 @@ public class CommonUtils {
         }
         log.debug("-----Common getBaseUrl----- : " + baseDomainPath);
         return baseDomainPath;
+    }
+
+    public static String getSign(String input, String sk) {
+        return DigestUtils.md5Hex(input + sk);
+    }
+
+    public static String getSignContent(Map<String, String> params) {
+        StringBuilder str = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            str.append((first ? "" : "&"))
+                    .append(entry.getKey())
+                    .append("=")
+                    .append(entry.getValue());
+            first = false;
+        }
+        return str.toString();
     }
 }

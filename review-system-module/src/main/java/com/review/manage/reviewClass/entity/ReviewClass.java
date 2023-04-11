@@ -13,6 +13,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -92,4 +93,6 @@ public class ReviewClass implements Serializable {
     @Excel(name = "报告提示语", width = 15)
     @ApiModelProperty(value = "报告提示语")
     private String reportTips;
+
+    private transient BigDecimal realPrice;
 }

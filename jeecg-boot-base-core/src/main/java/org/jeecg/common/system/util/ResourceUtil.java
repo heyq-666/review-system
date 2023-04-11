@@ -12,10 +12,7 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 资源加载工具类
@@ -51,6 +48,8 @@ public class ResourceUtil {
      * 枚举类中获取字典数据的方法名
      */
     private final static String METHOD_NAME = "getDictList";
+
+    private static final ResourceBundle bundle = java.util.ResourceBundle.getBundle("sysConfig");
 
     /**
      * 获取枚举类对应的字典数据 SysDictServiceImpl#queryAllDictItems()
@@ -114,4 +113,13 @@ public class ResourceUtil {
         return map;
     }
 
+    /**
+     * 获取配置文件参数
+     *
+     * @param name
+     * @return
+     */
+    public static final String getConfigByName(String name) {
+        return bundle.getString(name);
+    }
 }

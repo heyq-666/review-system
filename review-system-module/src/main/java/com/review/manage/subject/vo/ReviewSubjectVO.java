@@ -1,8 +1,12 @@
 package com.review.manage.subject.vo;
 
+import com.review.manage.reviewClass.vo.ReviewClassPage;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author javabage
@@ -31,4 +35,6 @@ public class ReviewSubjectVO {
 
     @ApiModelProperty(value = "创建人")
     private String operator;
+
+    private List<ReviewClassPage> classList = new ArrayList<>();
 }

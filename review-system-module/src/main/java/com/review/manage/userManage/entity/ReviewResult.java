@@ -57,7 +57,7 @@ public class ReviewResult implements Serializable {
 	/**projectId*/
 	//@Excel(name = "password", width = 15)
     @ApiModelProperty(value = "projectId")
-    private long projectId;
+    private Long projectId;
 	/**levelGrade*/
 	//@Excel(name = "userType", width = 15)
     @ApiModelProperty(value = "levelGrade")

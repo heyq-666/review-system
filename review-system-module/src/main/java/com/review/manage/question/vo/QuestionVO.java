@@ -1,5 +1,6 @@
 package com.review.manage.question.vo;
 
+import com.review.front.frontReviewClass.vo.SelectVO;
 import com.review.manage.question.entity.ReviewAnswerEntity;
 import lombok.Data;
 
@@ -56,6 +57,8 @@ public class QuestionVO {
     private String isLastQuestion;
 
     private String multiple;     //可多选
+
+    private List<SelectVO> selectList = new ArrayList<SelectVO>();
 
     private List<ReviewAnswerEntity> answerList = new ArrayList<ReviewAnswerEntity>();
 }
