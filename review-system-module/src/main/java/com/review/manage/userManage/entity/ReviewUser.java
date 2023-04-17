@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @Data
 @TableName("review_user")
-@Accessors(chain = true)
+//@Accessors(chain = true)
 @ApiModel(value="review_user对象", description="测评用户")
 public class ReviewUser implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -97,7 +97,7 @@ public class ReviewUser implements Serializable {
 
     private transient String msgCode;
 
-    private transient Map<String, Object> extraObj = new HashMap<>();
+    private transient Map<String, Object> extraObj;
 
     private transient Long projectId;
 }
