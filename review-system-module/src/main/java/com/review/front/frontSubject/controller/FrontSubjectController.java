@@ -28,9 +28,9 @@ public class FrontSubjectController extends JeecgController<ReviewSubjectEntity,
 
     @AutoLog(value = "小程序-获取测评专题分类")
     @PostMapping(value = "getReviewSubjectClass")
-    public Result<?> getReviewSubjectClass(@RequestBody ReviewSubjectVO reviewSubject,
-                                           @RequestParam(name = "page") Integer page,
-                                           @RequestParam(name = "rows") Integer rows) {
+    public Result<List<ReviewSubjectVO>> getReviewSubjectClass(@RequestBody ReviewSubjectVO reviewSubject,
+                                           @RequestParam(name = "page", defaultValue="1") Integer page,
+                                           @RequestParam(name = "rows", defaultValue="4") Integer rows) {
         List<ReviewSubjectVO> reviewSubjectList = frontSubjectService.getReviewSubjectClass(reviewSubject,page,rows);
         return Result.OK("查询成功",reviewSubjectList);
     }

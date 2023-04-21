@@ -93,11 +93,11 @@ public class FrontReportController extends JeecgController<ReviewResult, IFrontR
     @AutoLog(value = "小程序-查询量表对应的报告模板")
     @PostMapping(value = "getReportTemplate")
     public Result<ReviewClassPage> getReportTemplate(@RequestBody ReviewClassPage reviewClass) {
-        if (StrUtil.isBlank(reviewClass.getClass_id())) {
+        if (StrUtil.isBlank(reviewClass.getClassId())) {
             return Result.error(300,"量表ID不能为空");
         } else {
-            ReviewClassPage reviewClassVO = reviewReportTemplateService.getByClassId(reviewClass.getClass_id());
-            reviewClassVO.setReportTips(reviewClassService.getById(reviewClass.getClass_id()).getReportTips());
+            ReviewClassPage reviewClassVO = reviewReportTemplateService.getByClassId(reviewClass.getClassId());
+            reviewClassVO.setReportTips(reviewClassService.getById(reviewClass.getClassId()).getReportTips());
             return Result.OK("查询成功",reviewClassVO);
         }
     }

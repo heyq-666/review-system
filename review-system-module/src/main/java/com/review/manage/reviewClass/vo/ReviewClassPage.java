@@ -23,7 +23,7 @@ public class ReviewClassPage {
 
 	/**主键*/
 	@ApiModelProperty(value = "主键")
-	private String class_id;
+	private String classId;
 	/**排序ID*/
 	@Excel(name = "排序ID", width = 15)
 	@ApiModelProperty(value = "排序ID")

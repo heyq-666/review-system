@@ -35,7 +35,7 @@ public class FrontBannerController extends JeecgController<ReviewBannerEntity, I
 
     @AutoLog(value = "小程序-banner列表查询")
     @PostMapping(value = "list")
-    public Result<?> list(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+    public Result<IPage<ReviewBannerEntity>> list(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                           HttpServletRequest req){
         ReviewBannerEntity reviewBanner = new ReviewBannerEntity().setStatus(Constants.StatusPublish);

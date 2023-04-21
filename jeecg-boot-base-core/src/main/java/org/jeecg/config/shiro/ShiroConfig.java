@@ -158,7 +158,14 @@ public class ShiroConfig {
         filterMap.put("jwt", new JwtFilter(cloudServer==null));
         shiroFilterFactoryBean.setFilters(filterMap);
         // <!-- 过滤链定义，从上向下顺序执行，一般将/**放在最为下边
-        filterChainDefinitionMap.put("/**", "jwt");
+        filterChainDefinitionMap.put("/review/reviewFront/notice/list", "jwt");
+        filterChainDefinitionMap.put("/review/reviewFront/banner/list", "jwt");
+        filterChainDefinitionMap.put("/review/reviewFront/reviewClass/getReviewClass", "jwt");
+        filterChainDefinitionMap.put("/review/reviewFront/subject/getReviewSubjectClass", "jwt");
+        filterChainDefinitionMap.put("/review/reviewFront/project/getReviewProjectDetail","jwt");
+        filterChainDefinitionMap.put("/review/reviewFront/user/getOpenid","jwt");
+
+        //filterChainDefinitionMap.put("/**", "jwt");
 
         // 未授权界面返回JSON
         shiroFilterFactoryBean.setUnauthorizedUrl("/sys/common/403");

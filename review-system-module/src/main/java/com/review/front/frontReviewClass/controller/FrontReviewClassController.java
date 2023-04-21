@@ -89,7 +89,7 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
      */
     @AutoLog(value = "小程序-获取测评分类")
     @PostMapping(value = "/getReviewClass")
-    public Result<?> getReviewClassByProjectId(@RequestBody ReviewClassPage reviewClass) {
+    public Result<List<ReviewClassPage>> getReviewClassByProjectId(@RequestBody ReviewClassPage reviewClass) {
         List<ReviewClassPage> reviewClassList = frontReviewClassService.getReviewClassByProjectId(reviewClass.getProjectId());
         return Result.OK("查询成功",reviewClassList);
     }
@@ -103,10 +103,10 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     @PostMapping(value = "/getReviewClassDetail")
     public Result<?> getReviewClassDetail(@RequestBody ReviewClassPage reviewClass) {
 
-        if (reviewClass == null || StringUtils.isBlank(reviewClass.getClass_id())) {
+        if (reviewClass == null || StringUtils.isBlank(reviewClass.getClassId())) {
             return Result.error(300,"分类ID为空");
         }
-        ReviewClass reviewClassInfo = frontReviewClassService.getById(reviewClass.getClass_id());
+        ReviewClass reviewClassInfo = frontReviewClassService.getById(reviewClass.getClassId());
         if (reviewClassInfo == null) {
             return Result.error(404,"量表不存在");
         }
@@ -121,8 +121,8 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
         //session获取userId
         LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
         if (StrUtil.isNotBlank(user.getId()) && reviewClassInfo.getCharge() == Constants.ClassCharge) {
-            //判断用户是都已经购买了课程
-            reviewClassVO.setBuy(frontReviewClassService.userBuy(reviewClass.getClass_id(), user.getId()));
+            //判断用户是否已经购买了课程
+            reviewClassVO.setBuy(frontReviewClassService.userBuy(reviewClass.getClassId(), user.getId()));
         }
         return Result.OK(reviewClassVO);
     }

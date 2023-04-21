@@ -39,7 +39,7 @@ public class FrontNoticeController extends JeecgController<ReviewNoticeEntity, I
      */
     @AutoLog(value = "小程序-公告列表查询")
     @PostMapping(value = "list")
-    public Result<?> list(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+    public Result<IPage<ReviewNoticeEntity>> list(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                HttpServletRequest req){
         ReviewNoticeEntity reviewNotice = new ReviewNoticeEntity().setStatus(Constants.StatusPublish);
@@ -56,7 +56,7 @@ public class FrontNoticeController extends JeecgController<ReviewNoticeEntity, I
      */
     @AutoLog(value = "小程序-公告详情")
     @PostMapping(value = "detail")
-    public Result<?> detail(@RequestBody ReviewNoticeEntity reviewNotice){
+    public Result<ReviewNoticeEntity> detail(@RequestBody ReviewNoticeEntity reviewNotice){
         if (reviewNotice.getId() != null && reviewNotice.getId() > 0) {
             ReviewNoticeEntity reviewNotice1 = frontNoticeService.getById(reviewNotice.getId());
             return Result.OK("查询成功",reviewNotice1);

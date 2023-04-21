@@ -28,7 +28,7 @@ public class ReviewReportTemplateServiceImpl extends ServiceImpl<ReviewReportTem
                     ReviewReportTemplateEntity :: getOrderNum)).collect(Collectors.toList());
         ReviewClassPage reviewClassPage = new ReviewClassPage();
         reviewClassPage.setReportTemplateList(byOrderNumSortList);
-        reviewClassPage.setClass_id(classId);
+        reviewClassPage.setClassId(classId);
         return reviewClassPage;
     }
 }
