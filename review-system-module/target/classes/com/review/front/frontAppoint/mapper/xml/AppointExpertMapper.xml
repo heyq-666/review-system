@@ -31,9 +31,9 @@
         FROM
             review_expert_calendar c
         WHERE
-            c.expert_id = 19
+            c.expert_id = #{expertId}
           AND c.STATUS = 1
-          AND c.visit_date >= DATE_FORMAT( now( ), '%Y-%m-%e' )
+          AND c.visit_date >= DATE_FORMAT( now(), '%Y-%m-%e' )
         ORDER BY
             c.visit_date,
             c.begin_time ASC

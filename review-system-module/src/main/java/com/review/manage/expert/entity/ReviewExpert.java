@@ -110,4 +110,28 @@ public class ReviewExpert implements Serializable {
 	@Excel(name = "优惠价格", width = 15)
     @ApiModelProperty(value = "优惠价格")
     private BigDecimal dicountPrice;
+    /**擅长领域-群体*/
+    @Excel(name = "擅长领域-群体", width = 15)
+    @ApiModelProperty(value = "擅长领域-群体")
+    private String expertFieldGroup;
+
+    @Excel(name = "擅长方向-情绪压力", width = 15)
+    @ApiModelProperty(value = "擅长方向-情绪压力")
+    private String beGoodAtEmotion;
+
+    @Excel(name = "擅长方向-人际关系", width = 15)
+    @ApiModelProperty(value = "擅长方向-人际关系")
+    private String beGoodAtRelation;
+
+    @Excel(name = "擅长方向-家庭困扰", width = 15)
+    @ApiModelProperty(value = "擅长方向-家庭困扰")
+    private String beGoodAtFamilyTrouble;
+
+    @Excel(name = "擅长方向-婚姻恋爱", width = 15)
+    @ApiModelProperty(value = "擅长方向-婚姻恋爱")
+    private String beGoodAtMarriage;
+
+    @Excel(name = "咨询师线下预约地址", width = 15)
+    @ApiModelProperty(value = "咨询师线下预约地址")
+    private String offlineReservationAddress;
 }

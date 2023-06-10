@@ -4,8 +4,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.review.front.frontReport.entity.ReviewReportTemplateEntity;
+import com.review.front.frontReport.service.IReviewReportTemplateService;
+import com.review.manage.project.entity.ReviewProjectEntity;
+import com.review.manage.project.service.IReviewProjectService;
 import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewClass.service.IReviewClassService;
 import io.swagger.annotations.Api;
@@ -42,6 +47,10 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
 
    @Autowired
    private IReviewClassService reviewClassService;
+   @Autowired
+   private IReviewReportTemplateService reportTemplateService;
+   @Autowired
+   private IReviewProjectService reviewProjectService;
 
    /**
     * 分页列表查询
@@ -205,5 +214,73 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
             array.add(option);
         }
         return Result.ok(array);
+    }
+
+    /**
+     * 添加报告设置
+     * @param reviewClass
+     * @return
+     */
+    @AutoLog(value = "测评量表-添加报告提示")
+    @ApiOperation(value="测评量表-添加报告提示", notes="测评量表-添加报告提示")
+    //@RequiresPermissions("reviewClass:review_class:add")
+    @PostMapping(value = "/saveReportConf")
+    public Result<String> saveReportConf(@RequestBody ReviewClass reviewClass) {
+        reviewClassService.updateById(reviewClass);
+        ReviewReportTemplateEntity reviewReportTemplateEntity = new ReviewReportTemplateEntity();
+        reviewReportTemplateEntity.setClassId(reviewClass.getClassId());
+        QueryWrapper<ReviewReportTemplateEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("class_id",reviewClass.getClassId());
+        Integer count = reportTemplateService.list(queryWrapper).size();
+        reviewReportTemplateEntity.setOrderNum(count + 1);
+        reviewReportTemplateEntity.setTitle(reviewClass.getReportTitle());
+        reviewReportTemplateEntity.setExplanation(reviewClass.getExplanation());
+        reportTemplateService.save(reviewReportTemplateEntity);
+        return Result.OK("添加成功！");
+    }
+
+    @AutoLog(value = "测评量表-报告提示列表")
+    @ApiOperation(value="测评量表-报告提示列表", notes="测评量表-报告提示列表")
+    @GetMapping(value = "/reviewReportList")
+    public Result<?> reviewReportList(ReviewReportTemplateEntity reviewReportTemplate) {
+        QueryWrapper<ReviewReportTemplateEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("class_id",reviewReportTemplate.getClassId());
+        List<ReviewReportTemplateEntity> list = reportTemplateService.list(queryWrapper);
+        QueryWrapper<ReviewClass> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("class_id",reviewReportTemplate.getClassId());
+        List<ReviewClass> list1 = reviewClassService.list(queryWrapper1);
+        if (list1 != null && list1.size() > 0) {
+            list.forEach(temp -> temp.setReportTips(list1.get(0).getReportTips()));
+        }
+        return Result.OK(list);
+    }
+    @AutoLog(value = "测评量表-通过id删除报告提示")
+    @ApiOperation(value="测评量表-通过id删除报告提示", notes="测评量表-通过id删除报告提示")
+    @DeleteMapping(value = "/deleteReportConf")
+    public Result<String> deleteReportConf(@RequestParam(name="id",required=true) String id) {
+        reportTemplateService.removeById(id);
+        return Result.OK("删除成功!");
+    }
+
+    /**
+     *
+     * @param reviewProject
+     * @param req
+     * @return
+     */
+    @ApiOperation(value="测评项目下拉框数据源", notes="测评项目下拉框数据源")
+    @GetMapping(value = "/projectOptions")
+    public Result<JSONArray> projectOptions(ReviewProjectEntity reviewProject,HttpServletRequest req) {
+        QueryWrapper<ReviewProjectEntity> queryWrapper = QueryGenerator.initQueryWrapper(reviewProject, req.getParameterMap());
+        List<ReviewProjectEntity> pageList = reviewProjectService.list(queryWrapper);
+        JSONArray array = new JSONArray(pageList.size());
+        for (ReviewProjectEntity item : pageList) {
+            JSONObject option = new JSONObject(3);
+            option.put("value", item.getId());
+            option.put("label", item.getProjectName());
+            option.put("text", item.getProjectName());
+            array.add(option);
+        }
+        return Result.OK(array);
     }
 }

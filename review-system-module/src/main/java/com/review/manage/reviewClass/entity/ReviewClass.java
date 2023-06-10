@@ -95,4 +95,8 @@ public class ReviewClass implements Serializable {
     private String reportTips;
 
     private transient BigDecimal realPrice;
+
+    private transient String reportTitle;
+
+    private transient String explanation;
 }

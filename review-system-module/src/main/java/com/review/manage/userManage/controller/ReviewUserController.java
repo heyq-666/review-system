@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.review.manage.userManage.entity.ReviewResult;
 import com.review.manage.userManage.entity.ReviewUser;
 import com.review.manage.userManage.service.IReviewUserService;
+import com.review.manage.userManage.vo.QuestionAnswerVo;
 import com.review.manage.userManage.vo.ReviewResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -125,15 +126,15 @@ public class ReviewUserController extends JeecgController<ReviewUser, IReviewUse
 	/**
 	 *   通过id删除
 	 *
-	 * @param id
+	 * @param userId
 	 * @return
 	 */
 	@AutoLog(value = "测评用户-通过id删除")
 	@ApiOperation(value="测评用户-通过id删除", notes="测评用户-通过id删除")
 	//@RequiresPermissions("reviewUser:review_user:delete")
 	@DeleteMapping(value = "/delete")
-	public Result<String> delete(@RequestParam(name="id",required=true) String id) {
-		reviewUserService.removeById(id);
+	public Result<String> delete(@RequestParam(name="userId",required=true) String userId) {
+		reviewUserService.removeById(userId);
 		return Result.OK("删除成功!");
 	}
 	
@@ -213,5 +214,13 @@ public class ReviewUserController extends JeecgController<ReviewUser, IReviewUse
 	public Result<String> deleteRecord(@RequestParam(name="resultId",required=true) String resultId) {
 		reviewUserService.removeRecord(resultId);
 		return Result.OK("删除成功!");
+	}
+
+	@AutoLog(value = "导出答题记录")
+	@ApiOperation(value="导出答题记录", notes="导出答题记录")
+	@PostMapping(value = "/exportQuestionAnswerByGroup")
+	public Result<?> exportQuestionAnswerByGroup(@RequestBody QuestionAnswerVo questionAnswerVo) {
+		System.out.println(questionAnswerVo.getEndTime());
+		return null;
 	}
 }

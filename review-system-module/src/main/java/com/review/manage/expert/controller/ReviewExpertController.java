@@ -3,8 +3,12 @@ package com.review.manage.expert.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.review.manage.expert.entity.ExpertLongDistanceTrain;
 import com.review.manage.expert.entity.ReviewExpert;
 import com.review.manage.expert.entity.ReviewExpertCalendarEntity;
+import com.review.manage.expert.model.ExpertBeGoodAtTreeModel;
+import com.review.manage.expert.service.IExpertBeGoodAtService;
+import com.review.manage.expert.service.IExpertLongDistanceTrainService;
 import com.review.manage.expert.service.IReviewExpertCalendarService;
 import com.review.manage.expert.service.IReviewExpertService;
 import com.review.manage.expert.vo.ReviewExpertCalendarVo;
@@ -42,6 +46,12 @@ public class ReviewExpertController extends JeecgController<ReviewExpert, IRevie
 
 	@Autowired
 	private IReviewExpertCalendarService reviewExpertCalendarService;
+
+	@Autowired
+	private IExpertLongDistanceTrainService iExpertLongDistanceTrainService;
+
+	@Autowired
+	private IExpertBeGoodAtService iExpertBeGoodAtService;
 	
 	/**
 	 * 分页列表查询
@@ -177,13 +187,6 @@ public class ReviewExpertController extends JeecgController<ReviewExpert, IRevie
 		 result.setCode(200);
 		 result.setResult(list);
 		 return result;
-		 /*Result<IPage<ReviewExpertCalendarEntity>> result = new Result<>();
-		 QueryWrapper<ReviewExpertCalendarEntity> queryWrapper = QueryGenerator.initQueryWrapper(expertCalendarEntity, req.getParameterMap());
-		 Page<ReviewExpertCalendarEntity> page = new Page<ReviewExpertCalendarEntity>(pageNo, pageSize);
-		 IPage<ReviewExpertCalendarEntity> pageList = reviewExpertCalendarService.page(page, queryWrapper);
-		 result.setSuccess(true);
-		 result.setResult(pageList);
-		 return result;*/
 	 }
 	/**
 	 * 通过id删除
@@ -211,4 +214,66 @@ public class ReviewExpertController extends JeecgController<ReviewExpert, IRevie
 		reviewExpertCalendarService.handleCalendarData(reviewExpertCalendarVo);
 		return Result.OK("添加成功！");
 	}
+	@ApiOperation(value="expertLongDistanceTrainList-分页列表查询", notes="expertLongDistanceTrainList-分页列表查询")
+	@GetMapping(value = "/expertLongDistanceTrainList")
+	public Result<IPage<ExpertLongDistanceTrain>> queryPageList(ExpertLongDistanceTrain expertLongDistanceTrain,
+													 @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+													 @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+													 HttpServletRequest req) {
+		QueryWrapper<ExpertLongDistanceTrain> queryWrapper = QueryGenerator.initQueryWrapper(expertLongDistanceTrain, req.getParameterMap());
+		queryWrapper.eq("expert_id",expertLongDistanceTrain.getExpertId());
+		Page<ExpertLongDistanceTrain> page = new Page<ExpertLongDistanceTrain>(pageNo, pageSize);
+		IPage<ExpertLongDistanceTrain> pageList = iExpertLongDistanceTrainService.page(page, queryWrapper);
+		return Result.OK(pageList);
+	}
+	@AutoLog(value = "expert_long_distance_train-通过id删除")
+	@ApiOperation(value="expert_long_distance_train-通过id删除", notes="expert_long_distance_train-通过id删除")
+	@DeleteMapping(value = "/deleteOneLongDistanceTrain")
+	public Result<String> deleteOneLongDistanceTrain(@RequestParam(name="id",required=true) String id) {
+		iExpertLongDistanceTrainService.removeById(id);
+		return Result.OK("删除成功!");
+	}
+
+	/**
+	 * 添加
+	 *
+	 * @param longDistanceTrain
+	 * @return
+	 */
+	@AutoLog(value = "expert_long_distance_train-添加")
+	@ApiOperation(value="expert_long_distance_train-添加", notes="expert_long_distance_train-添加")
+	//@RequiresPermissions("longDistanceTrain:expert_long_distance_train:add")
+	@PostMapping(value = "/addLongDistanceTrain")
+	public Result<String> addLongDistanceTrain(@RequestBody ExpertLongDistanceTrain longDistanceTrain) {
+		iExpertLongDistanceTrainService.save(longDistanceTrain);
+		return Result.OK("添加成功！");
+	}
+
+	/**
+	 *  编辑
+	 *
+	 * @param longDistanceTrain
+	 * @return
+	 */
+	@AutoLog(value = "expert_long_distance_train-编辑")
+	@ApiOperation(value="expert_long_distance_train-编辑", notes="expert_long_distance_train-编辑")
+	//@RequiresPermissions("longDistanceTrain:expert_long_distance_train:edit")
+	@RequestMapping(value = "/editLongDistanceTrain", method = {RequestMethod.PUT,RequestMethod.POST})
+	public Result<String> editLongDistanceTrain(@RequestBody ExpertLongDistanceTrain longDistanceTrain) {
+		iExpertLongDistanceTrainService.updateById(longDistanceTrain);
+		return Result.OK("编辑成功!");
+	}
+
+	/*@RequestMapping(value = "/queryBeGoodAtTreeSync", method = RequestMethod.GET)
+	public Result<List<ExpertBeGoodAtTreeModel>> queryBeGoodAtTreeSync(@RequestParam(name = "pid", required = false) String parentId, @RequestParam(name = "ids", required = false) String ids, @RequestParam(name = "primaryKey", required = false) String primaryKey) {
+		Result<List<ExpertBeGoodAtTreeModel>> result = new Result<>();
+		try {
+			List<ExpertBeGoodAtTreeModel> list = iExpertBeGoodAtService.queryTreeListByPid(parentId,ids, primaryKey);
+			result.setResult(list);
+			result.setSuccess(true);
+		} catch (Exception e) {
+			log.error(e.getMessage(),e);
+		}
+		return result;
+	}*/
 }

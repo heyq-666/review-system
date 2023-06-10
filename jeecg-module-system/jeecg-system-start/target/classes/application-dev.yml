@@ -173,7 +173,7 @@ jeecg:
   # 签名拦截接口
   signUrls: /sys/dict/getDictItems/*,/sys/dict/loadDict/*,/sys/dict/loadDictOrderByValue/*,/sys/dict/loadDictItem/*,/sys/dict/loadTreeData,/sys/api/queryTableDictItemsByCode,/sys/api/queryFilterTableDictInfo,/sys/api/queryTableDictByKeys,/sys/api/translateDictFromTable,/sys/api/translateDictFromTableByKeys
   #local、minio、alioss
-  uploadType: local
+  uploadType: alioss
   # 前端访问地址
   domainUrl:
     pc: http://localhost:3100
@@ -190,7 +190,7 @@ jeecg:
     accessKey: LTAI5tD2NpYHjyifEH3AeJYf
     secretKey: cXyibhYW9hjTv4M2dBvUNg48wHbyJ6
     endpoint: oss-cn-beijing.aliyuncs.com
-    bucketName: jeecgdev
+    bucketName: xztx-review-img
   # ElasticSearch 6设置
   elasticsearch:
     cluster-name: jeecg-ES

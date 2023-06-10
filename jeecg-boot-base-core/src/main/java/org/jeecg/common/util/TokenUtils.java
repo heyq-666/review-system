@@ -75,7 +75,7 @@ public class TokenUtils {
     }
 
     /**
-     * 刷新token（保证用户在线操作不掉线）
+     * （保证用户在线操作不掉线）
      * @param token
      * @param userName
      * @param passWord

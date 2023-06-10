@@ -3,6 +3,7 @@ package com.review.front.msgManage.controller;
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.exceptions.ClientException;
+import com.review.common.Constants;
 import com.review.common.WxAppletsUtils;
 import com.review.common.httpclient.HttpClientUtils;
 import com.review.front.frontAppoint.entity.ReviewExpertReserveEntity;
@@ -13,10 +14,12 @@ import com.review.front.msgManage.entity.WxTemplateValue;
 import com.review.front.msgManage.service.ISendMsgService;
 import com.review.manage.userManage.entity.ReviewUser;
 import io.swagger.annotations.Api;
+import jdk.nashorn.internal.runtime.regexp.joni.ast.StringNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.util.DySmsEnum;
 import org.jeecg.common.util.DySmsHelper;
@@ -26,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,15 +59,25 @@ public class SendMsgController extends JeecgController<ReviewUser, ISendMsgServi
      */
     @AutoLog(value = "发送短信验证码")
     @PostMapping(value = "SendMsgCode")
-    public Result<String> SendMsgCode(@RequestBody ReviewUser reviewUser) {
+    public Result<String> SendMsgCode(HttpServletRequest request,@RequestBody ReviewUser reviewUser) {
+
+        HttpSession sessoin = request.getSession();
         if (StringUtils.isEmpty(reviewUser.getMobilePhone())) {
             return Result.error(300,"手机号不能为空");
         }else {
             JSONObject obj = new JSONObject();
-            obj.put("code",RandomUtil.randomNumbers(4));
+            String code = RandomUtil.randomNumbers(4);
+            obj.put("code",code);
             try {
                 boolean isSuccess = DySmsHelper.sendSms(reviewUser.getMobilePhone(),obj, DySmsEnum.SMS_VERIFICATION_CODE);
-                return isSuccess ? Result.OK("验证码发送成功") : Result.error(400,"验证码发送失败");
+                //return isSuccess ? Result.OK("验证码发送成功") : Result.error(400,"验证码发送失败");
+                if (isSuccess) {
+                    //存验证码
+                    sessoin.setAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY,code);
+                    return Result.OK("验证码发送成功");
+                }else {
+                    return Result.error(400,"验证码发送失败");
+                }
             } catch (ClientException e) {
                 e.printStackTrace();
                 return Result.error(500,"验证码发送异常，请联系管理员");

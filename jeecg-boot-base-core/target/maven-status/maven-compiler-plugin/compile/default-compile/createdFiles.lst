@@ -103,6 +103,7 @@ org\jeecg\common\system\query\QueryGenerator$1.class
 org\jeecg\common\system\query\QueryGenerator.class
 org\jeecg\common\system\query\QueryRuleEnum.class
 org\jeecg\common\constant\WebsocketConst.class
+org\jeecg\common\util\Arith.class
 org\jeecg\common\system\util\JwtUtil.class
 org\jeecg\common\system\vo\DictModel.class
 org\jeecg\common\util\security\SecurityTools.class

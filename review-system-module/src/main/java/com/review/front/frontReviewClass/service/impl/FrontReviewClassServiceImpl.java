@@ -1,7 +1,9 @@
 package com.review.front.frontReviewClass.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.review.common.Constants;
+import com.review.common.MyBeanUtils;
 import com.review.front.frontProject.service.IFrontProjectService;
 import com.review.front.frontReport.entity.ReviewReportResultEntity;
 import com.review.front.frontReport.service.IFrontReviewResultService;
@@ -123,7 +125,7 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
             question = resultList.get(i);
             ReviewQuestionAnswerEntity reviewQuestionAnswer = new ReviewQuestionAnswerEntity();
             try {
-                BeanUtils.copyProperties(reviewQuestionAnswer,question);
+                MyBeanUtils.copyBean2Bean(reviewQuestionAnswer,question);
                 reviewQuestionAnswer.setGroupId(groupId);
                 reviewQuestionAnswer.setUserId(reviewUser.getUserId());
                 reviewQuestionAnswer.setUserName(reviewUser.getUserName());
@@ -159,9 +161,12 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
             reviewQuestionAnswerList.clear();
         }
         //查询某分类下的报告
-        Map param = new HashMap();
+        /*Map param = new HashMap();
         param.put("classId",classId);
-        List<ReviewReportEntity> reportList = reportService.listByMap(param);
+        List<ReviewReportEntity> reportList = reportService.listByMap(param);*/
+        QueryWrapper<ReviewReportEntity> queryWrapper = new QueryWrapper<ReviewReportEntity>();
+        queryWrapper.eq("class_id",classId);
+        List<ReviewReportEntity> reportList = reportService.list(queryWrapper);
 
         //报告因子
         List<ReviewReportVariateEntity> reportVariateList = null;
@@ -190,7 +195,10 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         for(Map.Entry<String, Double> entry : map.entrySet()) {
             variateEntity = variateService.getById(entry.getKey());
             reportResult = new ReviewReportResultEntity();
-            variateGradeList = variateGradeService.listByMap((Map<String, Object>) new HashMap<>().put("variateId",entry.getKey()));
+            //variateGradeList = variateGradeService.listByMap((Map<String, Object>) new HashMap<>().put("variate_id",entry.getKey()));
+            QueryWrapper<ReviewVariateGradeEntity> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("variate_id",entry.getKey());
+            variateGradeList = variateGradeService.list(queryWrapper1);
             //计算因子最后得分
             variateTotalGrade = calVariateGrade(variateEntity.getCalSymbol1(), entry.getValue(), variateEntity.getCalTotal1());
 
@@ -202,7 +210,7 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
 
             for(int i=0; i< variateGradeList.size();i++) {
                 variateGrade = variateGradeList.get(i);
-                if(variateGrade.getGradeSmall() <= variateTotalGrade && variateTotalGrade <= variateGrade.getGradeBig()) {
+                if(variateGrade.getGradeSamll() <= variateTotalGrade && variateTotalGrade <= variateGrade.getGradeBig()) {
                     variateResultExplain = variateGrade.getResultExplain();
                     resultCombine.add(variateResultExplain);
                     if (variateGrade.getLevelGrade() != null) {

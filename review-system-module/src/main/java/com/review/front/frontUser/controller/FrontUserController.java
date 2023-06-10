@@ -2,6 +2,9 @@ package com.review.front.frontUser.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.review.common.Constants;
 import com.review.common.WxAppletsUtils;
 import com.review.front.frontProject.service.IFrontProjectService;
 import com.review.front.frontUser.service.IFrontUserService;
@@ -16,6 +19,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.RedisUtil;
 import org.springframework.beans.BeanUtils;
@@ -24,7 +28,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +63,7 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
      */
     @AutoLog(value = "小程序-获取openid")
     @PostMapping(value = "getOpenid")
-    public Result<?> getOpenid(@RequestBody JSONObject paramJson){
+    public Result<?> getOpenid(@RequestBody JSONObject paramJson) throws JsonProcessingException {
         if (paramJson == null || paramJson.isEmpty() || !paramJson.containsKey("code")) {
             return Result.error(300,"code为空");
         }
@@ -68,7 +75,6 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
             return Result.OK("openid获取成功",openid);
         }
     }
-
     /**
      * 小程序-提交用户注册信息
      * @param reviewUser
@@ -108,23 +114,26 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
         if (reviewUser == null || StrUtil.isBlank(reviewUser.getUserId())) {
             return Result.error(300,"用户信息为空");
         }
-        LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        if (!reviewUser.getUserId().equals(user.getId())) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest();
+        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        if (!reviewUser.getUserId().equals(reviewUserEntity.getUserId())) {
             return Result.error(400,"非本人登陆，不允许修改");
         }
         ReviewUser reviewUserOld = frontUserService.getById(reviewUser.getUserId());
         if (reviewUserOld == null) {
             return Result.error(404,"用户不存在");
         }
-        if (!reviewUserOld.getOpenid().equals(reviewUser.getOpenid())) {
+        /*if (!reviewUserOld.getOpenid().equals(reviewUser.getOpenid())) {
             return Result.error(400,"用户openid不可修改");
-        }
+        }*/
         //需要修改手机号
         if(!reviewUserOld.getMobilePhone().equals(reviewUser.getMobilePhone())) {
             //check 验证码
-            String redisKey = CommonConstant.PHONE_REDIS_KEY_PRE + reviewUser.getMobilePhone();
-            Object object= redisUtil.get(redisKey);
-            if (StringUtils.isBlank(object.toString()) || !object.toString().equals(reviewUser.getMsgCode())) {
+            /*String redisKey1 = CommonConstant.PHONE_REDIS_KEY_PRE + reviewUser.getMobilePhone();
+            Object object1= redisUtil.get(redisKey1);*/
+            String msgCode = (String)request.getSession().getAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);
+            if (StringUtils.isBlank(msgCode) || !msgCode.equals(reviewUser.getMsgCode())) {
                 return Result.error(301,"短信验证码不正确或已过期");
             }
         }
@@ -142,8 +151,11 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
     @AutoLog(value = "小程序-用户是否注册")
     @PostMapping(value = "getUserInfoByOpenid")
     public Result<?> getUserInfoByOpenid(@RequestBody ReviewUser reviewUser) {
-        List<ReviewUser> reviewUserList = frontUserService.listByMap((Map<String, Object>) new HashMap<>().put("openid",reviewUser.getOpenid()));
-        return Result.OK(CollectionUtils.isNotEmpty(reviewUserList) ? reviewUserList.get(0) : null);
+        //List<ReviewUser> reviewUserList = frontUserService.listByMap((Map<String, Object>) new HashMap<>().put("openid",reviewUser.getOpenid()));
+        QueryWrapper<ReviewUser> queryWrapper = new QueryWrapper<ReviewUser>();
+        queryWrapper.eq("openid",reviewUser.getOpenid());
+        ReviewUser reviewUser1 = frontUserService.getOne(queryWrapper);
+        return reviewUser1 != null ? Result.OK(reviewUser1) : Result.error("用户未注册");
     }
 
     /**

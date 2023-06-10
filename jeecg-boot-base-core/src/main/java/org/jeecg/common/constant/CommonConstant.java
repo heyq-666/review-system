@@ -425,4 +425,6 @@ public interface CommonConstant {
      */
     String PHONE_REDIS_KEY_PRE = "phone_msg";
 
+    String REVIEW_LOGIN_USER = "reviewUser";
+
 }

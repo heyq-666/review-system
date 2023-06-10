@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.review.front.frontReviewClass.mapper.FrontReviewClassMapper">
+    <select id="getQuestionVOList" parameterType="String" resultType="com.review.manage.question.vo.QuestionVO">
+        SELECT
+            q.content content,
+            q.question_id questionId,
+            q.question_num questionNum,
+            q.question_type questionType,
+            q.picture_attach pictureAttach,
+            qc.class_id classId,
+            ( SELECT GROUP_CONCAT( r.variate_id ) FROM review_grade_rule r WHERE r.question_id = q.question_id ) variateId,
+            (
+                SELECT
+                    GROUP_CONCAT( v.variate_name )
+                FROM
+                    review_grade_rule r,
+                    review_variate v
+                WHERE
+                    r.variate_id = v.variate_id
+                  AND r.question_id = q.question_id
+            ) variateName
+        FROM
+            review_question q
+                INNER JOIN review_question_class qc ON q.question_id = qc.question_id
+        WHERE
+            qc.class_id = #{classId}
+        GROUP BY
+            q.question_id
+        ORDER BY
+            q.question_num ASC
+    </select>
+
+    <select id="getSelectVOList" parameterType="Integer" resultType="com.review.front.frontReviewClass.vo.SelectVO">
+        SELECT
+            a.answer_code selCode,
+            a.answer_content selectContent,
+            a.answer_id selectId,
+            a.grade selectGrade,
+            ( CASE ISNULL( a.picture_attach ) WHEN 1 THEN 'N' ELSE 'Y' END ) AS isAttach
+        FROM
+            review_answer a
+        WHERE
+            a.question_id = #{questionId}
+        ORDER BY
+            a.answer_code ASC
+    </select>
+
+    <select id="getReviewClassByProjectId" parameterType="Long" resultType="com.review.manage.reviewClass.vo.ReviewClassPage">
+        SELECT
+        c.class_id class_id,
+        c.sort_id sortId,
+        c.banner_img bannerImg,
+        c.STATUS,
+        c.type,
+        c.title,
+        c.charge,
+        c.org_price orgPrice,
+        c.dicount_price dicountPrice,
+        ( c.org_price - c.dicount_price ) AS realPrice,
+        c.class_desc classDesc,
+        c.guide
+        <choose>
+            <when test="projectId == null or projectId == 0">
+                ,(select count(o.id) from review_order o where o.class_id=c.class_id and status in(2,3)) buyCount,
+                '1' showClass
+            </when>
+            <otherwise>
+                ,rp.project_desc projectDesc
+                ,rp.show_class showClass
+                ,rp.project_name projectName
+            </otherwise>
+        </choose>
+        FROM
+        <choose>
+            <when test="projectId == null or projectId == 0">
+                review_class c
+                WHERE c.status=1
+            </when>
+            <otherwise>
+                review_class c,review_project_class pc,review_project rp
+                WHERE c.status=1 and c.class_id=pc.class_id and pc.project_id = #{projectId} and pc.project_id = rp.id
+            </otherwise>
+        </choose>
+        ORDER BY c.sort_id ASC, c.create_time desc
+    </select>
+
+    <select id="findOneOrder" parameterType="map" resultType="com.review.manage.reviewOrder.vo.ReviewOrderVO">
+        SELECT
+            id,
+            pay_id payId,
+            STATUS,
+            DATE_FORMAT( create_time, '%Y-%m-%e %H:%i:%S' ) AS createTime
+        FROM
+            review_order
+        WHERE
+            class_id = #{classId}
+          AND user_id = #{userId}
+          AND STATUS IN (#{create},#{prePay},#{preSuccess},#{success},#{payFail})
+    </select>
+
+    <select id="getReportResults" parameterType="map" resultType="com.review.front.frontReviewClass.vo.ReviewResultVO">
+        SELECT
+        r.result_id resultId,
+        r.class_id classId,
+        DATE_FORMAT(r.create_time,'%Y-%m-%e %H:%i:%S') createTime,
+        r.grade_total reportGrade,
+        c.banner_img classCover,
+        c.title classTitle
+        FROM
+        review_result r inner join review_class c on r.class_id = c.class_id
+        WHERE r.user_id = #{userId}
+        <if test="projectId != null and projectId > 0">
+            and r.project_id = #{projectId}
+        </if>
+        ORDER BY r.create_time desc
+    </select>
+</mapper>

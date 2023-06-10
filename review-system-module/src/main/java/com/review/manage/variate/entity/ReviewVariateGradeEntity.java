@@ -30,7 +30,7 @@ public class ReviewVariateGradeEntity implements Serializable{
  	private String variateId;
 
 	@ApiModelProperty(value = "最小分值")
-    private Double gradeSmall;
+    private Double gradeSamll;
 
 	@ApiModelProperty(value = "最大分值")
 	private Double gradeBig;

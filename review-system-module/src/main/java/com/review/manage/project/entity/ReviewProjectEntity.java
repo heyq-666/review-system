@@ -57,6 +57,9 @@ public class ReviewProjectEntity implements Serializable {
     @ApiModelProperty(value = "创建人")
     private String creator;
 
+    @ApiModelProperty(value = "首页是否显示咨询师列表")
+    private Integer showExpert;
+
     /*private transient List<String> classIds;*/
 
     private transient String classIds;

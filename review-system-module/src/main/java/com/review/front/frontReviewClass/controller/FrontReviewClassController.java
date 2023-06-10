@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.vo.LoginUser;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -49,7 +52,7 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     @AutoLog(value = "小程序-根据分类ID查询分类下的问题及选项")
     @PostMapping(value = "/getQuestionsByClassID")
     public Result<?> getQuestionsByClassID(@RequestBody QuestionVO questionVO) {
-        if (StringUtils.isNotBlank(questionVO.getClassId())) {
+        if (StringUtils.isBlank(questionVO.getClassId())) {
             return Result.error(300,"classID不能为空");
         }
         List<QuestionVO> questionVOList = frontReviewClassService.getQuestionVOList(questionVO.getClassId());
@@ -101,8 +104,7 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
      */
     @AutoLog(value = "小程序-查询测评分类详情")
     @PostMapping(value = "/getReviewClassDetail")
-    public Result<?> getReviewClassDetail(@RequestBody ReviewClassPage reviewClass) {
-
+    public Result<ReviewClassPage> getReviewClassDetail(HttpServletRequest request,@RequestBody ReviewClassPage reviewClass) {
         if (reviewClass == null || StringUtils.isBlank(reviewClass.getClassId())) {
             return Result.error(300,"分类ID为空");
         }
@@ -119,10 +121,11 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
         ReviewClassPage reviewClassVO = new ReviewClassPage();
         BeanUtils.copyProperties(reviewClassInfo, reviewClassVO);
         //session获取userId
-        LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        if (StrUtil.isNotBlank(user.getId()) && reviewClassInfo.getCharge() == Constants.ClassCharge) {
+        //LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        ReviewUser reviewUser = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        if (reviewUser != null && StrUtil.isNotBlank(reviewUser.getUserId()) && reviewClassInfo.getCharge() == Constants.ClassCharge) {
             //判断用户是否已经购买了课程
-            reviewClassVO.setBuy(frontReviewClassService.userBuy(reviewClass.getClassId(), user.getId()));
+            reviewClassVO.setBuy(frontReviewClassService.userBuy(reviewClass.getClassId(), reviewUser.getUserId()));
         }
         return Result.OK(reviewClassVO);
     }
@@ -134,7 +137,7 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
      */
     @AutoLog(value = "小程序-获取我的测评记录/测评报告")
     @PostMapping(value = "/getReviewRecords")
-    public Result<?> getReviewRecords(@RequestBody ReviewUser reviewUser) {
+    public Result<List<ReviewResultVO>> getReviewRecords(@RequestBody ReviewUser reviewUser) {
         if (reviewUser == null || StringUtils.isBlank(reviewUser.getUserId())) {
             return Result.error(300,"用户信息为空");
         }

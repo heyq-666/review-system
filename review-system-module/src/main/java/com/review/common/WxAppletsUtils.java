@@ -1,8 +1,16 @@
 package com.review.common;
 
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.oss.common.utils.HttpUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.review.common.httpclient.HttpClientUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.system.util.ResourceUtil;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * 微信小程序工具类
@@ -70,7 +78,7 @@ public class WxAppletsUtils {
      * @param code
      * @return
      */
-    public static String getOpenid(String code) {
+    /*public static String getOpenid(String code) {
         String responseStr = HttpUtils.postString(String.format(openidUrl, appId, appSecret, code), "");
         if (StringUtils.isNotBlank(responseStr)) {
             JSONObject resJson = JSONObject.parseObject(responseStr);
@@ -79,6 +87,19 @@ public class WxAppletsUtils {
             }
         }
         return null;
+    }*/
+
+    public static String getOpenid(String code) throws JsonProcessingException {
+        String result = "";
+        Map<String,String> map = new HashMap();
+        map.put("appid",appId);
+        map.put("secret",appSecret);
+        map.put("js_code",code);
+        map.put("grant_type","authorization_code");
+        result = HttpClientUtils.doGet("https://api.weixin.qq.com/sns/jscode2session",map,null);
+        ObjectMapper mapper = new ObjectMapper();
+        OpenIdJson openIdJson = mapper.readValue(result,OpenIdJson.class);
+        return openIdJson.getOpenid();
     }
 
     /**

@@ -13,8 +13,10 @@ import com.review.front.frontAppoint.service.IFrontReviewExpertCalendarService;
 import com.review.front.frontAppoint.service.IReviewExpertReserveService;
 import com.review.front.frontAppoint.vo.ConsultationVO;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
+import com.review.manage.expert.entity.ExpertLongDistanceTrain;
 import com.review.manage.expert.entity.ReviewExpert;
 import com.review.manage.expert.entity.ReviewExpertCalendarEntity;
+import com.review.manage.expert.service.IExpertLongDistanceTrainService;
 import com.review.manage.expert.vo.ReviewExpertCalendarVo;
 import com.review.manage.userManage.entity.ReviewUser;
 import io.swagger.annotations.Api;
@@ -22,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
@@ -29,6 +32,8 @@ import org.jeecg.common.util.DySmsEnum;
 import org.jeecg.common.util.DySmsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -57,6 +62,9 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
     @Autowired
     private IFrontReviewClassService reviewClassService;
 
+    @Autowired
+    private IExpertLongDistanceTrainService distanceTrainService;
+
     /**
      * 小程序-专家列表查询
      * @param reviewExpert
@@ -66,7 +74,7 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
      * @return
      */
     @AutoLog(value = "小程序-专家列表查询")
-    @GetMapping(value = "list")
+    @PostMapping(value = "list")
     public Result<IPage<ReviewExpert>> list(ReviewExpert reviewExpert,
                                                      @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                      @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
@@ -83,8 +91,8 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
      * @return
      */
     @AutoLog(value = "小程序-专家详情查询")
-    @GetMapping(value = "detail")
-    public Result<ReviewExpert> detail(ReviewExpert reviewExpert) {
+    @PostMapping(value = "detail")
+    public Result<ReviewExpert> detail(@RequestBody ReviewExpert reviewExpert) {
         ReviewExpert reviewExpert1 = appointExpertService.getById(reviewExpert.getId());
         return Result.OK("查询成功",reviewExpert1);
     }
@@ -95,7 +103,7 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
      * @return
      */
     @AutoLog(value = "小程序-专家日历查询")
-    @GetMapping(value = "listCalendar")
+    @PostMapping(value = "listCalendar")
     public Result<List<ReviewExpertCalendarVo>> listCalendar(@RequestBody ReviewExpertCalendarVo reviewExpertCalendar) {
         List<ReviewExpertCalendarVo> reviewExpertCalendarList =
                 appointExpertService.getReviewExpertCalendars(reviewExpertCalendar);
@@ -136,7 +144,7 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
      * @return
      */
     @AutoLog(value = "小程序-我的预约列表")
-    @GetMapping(value = "queryMyConsultation")
+    @PostMapping(value = "queryMyConsultation")
     public Result<List<ConsultationVO>> queryMyConsultation(@RequestBody ConsultationVO consultationVO) {
         List<ConsultationVO> reviewExpertReserveList = reviewExpertReserveService.getMyConsultation(consultationVO.getUserId());
         return Result.OK("查询成功",reviewExpertReserveList);
@@ -148,11 +156,15 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
      * @return
      */
     @AutoLog(value = "小程序-我的预约详情")
-    @GetMapping(value = "queryMyConsultationDetail")
+    @PostMapping(value = "queryMyConsultationDetail")
     public Result<List<ConsultationVO>> queryMyConsultationDetail(@RequestBody ConsultationVO consultationVO) {
         List<ConsultationVO> reviewExpertReserveList = reviewExpertReserveService.getMyConsultationDetail(consultationVO.getId());
-        LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        String userId = user.getId();
+        /*LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        String userId = user.getId();*/
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest();
+        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        String userId = reviewUserEntity.getUserId();
         if (StrUtil.isNotBlank(reviewExpertReserveList.get(0).getUserId()) && reviewExpertReserveList.get(0).getCharge() == Constants.ClassCharge) {
             //判断用户是否支付了问诊费用
             reviewExpertReserveList.get(0).setBuy(reviewClassService.userBuy(reviewExpertReserveList.get(0).getId().toString(), userId));
@@ -237,5 +249,13 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         obj.put("name",consultationVO.getPatientName());
         DySmsHelper.sendSms(consultationVO.getUserPhone(),obj, DySmsEnum.SMS_REMINDER_PAY_CODE);
         return Result.OK("已确认",consultationVO.getId());
+    }
+    @AutoLog(value = "小程序-专家长程培训经历列表查询")
+    @PostMapping(value = "postLongDistanceTrainList")
+    public Result<List<ExpertLongDistanceTrain>> postLongDistanceTrainList(@RequestBody ExpertLongDistanceTrain expertLongDistanceTrain, HttpServletRequest req) {
+        QueryWrapper<ExpertLongDistanceTrain> queryWrapper = new QueryWrapper<ExpertLongDistanceTrain>();
+        queryWrapper.eq("expert_id",expertLongDistanceTrain.getExpertId());
+        List<ExpertLongDistanceTrain> list = distanceTrainService.list(queryWrapper);
+        return Result.OK(list);
     }
 }

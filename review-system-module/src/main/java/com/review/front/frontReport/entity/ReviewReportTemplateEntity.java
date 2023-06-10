@@ -50,4 +50,6 @@ public class ReviewReportTemplateEntity implements Serializable {
 	/**操作人*/
 	@ApiModelProperty(value = "操作人")
 	private String operator;
+
+	private transient String reportTips;
 }
