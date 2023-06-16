@@ -51,4 +51,6 @@ public interface FrontReviewClassMapper extends BaseMapper<ReviewClass> {
      * @return
      */
     List<ReviewResultVO> getReportResults(Map param);
+
+    List<ReviewClass> getPsychoMetrics();
 }

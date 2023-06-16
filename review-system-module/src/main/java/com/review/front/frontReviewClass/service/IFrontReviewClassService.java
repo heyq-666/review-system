@@ -65,4 +65,10 @@ public interface IFrontReviewClassService extends IService<ReviewClass> {
      * @return
      */
     List<ReviewResultVO> getReportResults(String userId, Long projectId);
+
+    /**
+     * 获取推荐量表（limit 2）
+     * @return
+     */
+    List<ReviewClass> getPsychoMetrics();
 }

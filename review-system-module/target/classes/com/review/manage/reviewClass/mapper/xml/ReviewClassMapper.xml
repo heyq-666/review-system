@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.review.manage.reviewClass.mapper.ReviewClassMapper">
-    <update id="updateByClassId" parameterType="com.review.manage.reviewClass.entity.ReviewClass">
+    <!--<update id="updateByClassId" parameterType="com.review.manage.reviewClass.entity.ReviewClass">
         UPDATE review_class
         SET sort_id = #{sortId},
             title = #{title},
@@ -14,7 +14,7 @@
             video_analysis = #{videoAnalysis}
         WHERE
             class_id = #{classId}
-    </update>
+    </update>-->
     <delete id="deleteClassByClassId" parameterType="java.lang.String">
         DELETE
         FROM

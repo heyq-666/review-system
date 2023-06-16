@@ -118,7 +118,8 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
    @ApiOperation(value="测评量表-编辑", notes="测评量表-编辑")
    @RequestMapping(value = "/edit", method = {RequestMethod.PUT,RequestMethod.POST})
    public Result<String> edit(@RequestBody ReviewClass reviewClass) {
-       reviewClassService.updateByClassId(reviewClass);
+       //reviewClassService.updateByClassId(reviewClass);
+       reviewClassService.updateById(reviewClass);
        return Result.OK("编辑成功!");
    }
 

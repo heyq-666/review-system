@@ -40,9 +40,9 @@ public class ReviewClassServiceImpl extends ServiceImpl<ReviewClassMapper, Revie
 		}
 	}
 
-	@Override
+	/*@Override
 	public void updateByClassId(ReviewClass reviewClass) {
 		reviewClassMapper.updateByClassId(reviewClass);
-	}
+	}*/
 
 }

@@ -29,5 +29,5 @@ public interface IReviewClassService extends IService<ReviewClass> {
 	 */
 	public void delBatchMain (Collection<? extends Serializable> idList);
 
-    void updateByClassId(ReviewClass reviewClass);
+    //void updateByClassId(ReviewClass reviewClass);
 }

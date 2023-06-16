@@ -115,4 +115,7 @@
         </if>
         ORDER BY r.create_time desc
     </select>
+    <select id="getPsychoMetrics" resultType="com.review.manage.reviewClass.entity.ReviewClass">
+        select * from review_class where recommend_type = 1 LIMIT 2
+    </select>
 </mapper>

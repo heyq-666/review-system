@@ -328,6 +328,11 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         return frontReviewClassMapper.getReportResults(param);
     }
 
+    @Override
+    public List<ReviewClass> getPsychoMetrics() {
+        return frontReviewClassMapper.getPsychoMetrics();
+    }
+
     /**
      * 按照因子排序
      * @param resultList

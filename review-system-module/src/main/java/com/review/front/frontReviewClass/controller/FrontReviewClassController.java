@@ -1,6 +1,7 @@
 package com.review.front.frontReviewClass.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.review.common.Constants;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
 import com.review.front.frontReviewClass.vo.ReviewResultVO;
@@ -143,5 +144,25 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
         }
         List<ReviewResultVO> reviewResultList = frontReviewClassService.getReportResults(reviewUser.getUserId(), reviewUser.getProjectId());
         return Result.OK(reviewResultList);
+    }
+
+    /**
+     * 获取推荐量表（limit 2）
+     * @return
+     */
+    @AutoLog(value = "小程序-获取推荐量表")
+    @PostMapping(value = "/getPsychoMetrics")
+    public Result<List<ReviewClass>> getPsychoMetrics() {
+        List<ReviewClass> reviewClassList = frontReviewClassService.getPsychoMetrics();
+        return Result.OK(reviewClassList);
+    }
+    @AutoLog(value = "小程序-模糊查询量表")
+    @PostMapping(value = "/getReviewClassByLike")
+    public Result<List<ReviewClass>> getReviewClassByLike(@RequestBody ReviewClass reviewClass) {
+        QueryWrapper<ReviewClass> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("title",reviewClass.getTitle());
+        List<ReviewClass> classList = frontReviewClassService.list(queryWrapper);
+        classList.removeIf(reviewClass1 -> reviewClass1.getStatus() == 0);
+        return Result.OK(classList);
     }
 }
