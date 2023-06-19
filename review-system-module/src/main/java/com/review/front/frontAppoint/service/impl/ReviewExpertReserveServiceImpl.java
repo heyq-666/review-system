@@ -96,7 +96,7 @@ public class ReviewExpertReserveServiceImpl extends ServiceImpl<ReviewExpertRese
     }
 
     @Override
-    public String getExpertFieldGroup(String expertId) {
+    public String getExpertFieldGroup(Integer expertId) {
         return reviewExpertReserveMapper.getExpertFieldGroup(expertId);
     }
 
@@ -106,7 +106,7 @@ public class ReviewExpertReserveServiceImpl extends ServiceImpl<ReviewExpertRese
     }
 
     @Override
-    public List<String> getDictText(String dictId,List<Integer> dictIdList) {
+    public List<BeGoodAt> getDictText(String dictId,List<Integer> dictIdList) {
         return reviewExpertReserveMapper.getDictText(dictId,dictIdList);
     }
 

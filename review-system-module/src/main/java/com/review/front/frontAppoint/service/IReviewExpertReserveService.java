@@ -51,11 +51,11 @@ public interface IReviewExpertReserveService extends IService<ReviewExpertReserv
      * 获取咨询师擅长领域id
      * @return
      */
-    String getExpertFieldGroup(String expertId);
+    String getExpertFieldGroup(Integer expertId);
 
     String getDictId(String expertFieldGroup);
 
-    List<String> getDictText(String dictId,List<Integer> dictIdList);
+    List<BeGoodAt> getDictText(String dictId,List<Integer> dictIdList);
 
     /**
      * 获取咨询师擅长方向标签

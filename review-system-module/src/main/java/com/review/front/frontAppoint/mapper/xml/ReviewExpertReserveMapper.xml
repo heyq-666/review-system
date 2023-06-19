@@ -135,14 +135,14 @@
         ORDER BY
             rer.create_time DESC
     </select>
-    <select id="getExpertFieldGroup" parameterType="String" resultType="String">
+    <select id="getExpertFieldGroup" parameterType="Integer" resultType="String">
         select expert_field_group from review_expert where id = #{expertId}
     </select>
     <select id="getDictId" parameterType="String" resultType="String">
         select id from sys_dict where dict_code = #{expertFieldGroup}
     </select>
-    <select id="getDictText" parameterType="map" resultType="map">
-        select item_text from sys_dict_item where dict_id = #{dictId} and item_value in
+    <select id="getDictText" parameterType="map" resultType="com.review.front.frontAppoint.vo.BeGoodAt">
+        select item_text as dictName from sys_dict_item where dict_id = #{dictId} and item_value in
         <foreach collection="dictIdList" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>

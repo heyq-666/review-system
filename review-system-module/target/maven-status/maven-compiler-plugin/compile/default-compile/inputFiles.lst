@@ -110,6 +110,7 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\mana
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\dongliangReview\entity\EvalCodeEntity.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\userManage\mapper\ReviewUserMapper.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\report\mapper\ReviewReportMapper.java
+D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontAppoint\vo\VisitDate.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\expert\service\impl\ReviewExpertCalendarImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontAppoint\service\impl\ReviewExpertReserveServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\reviewClass\service\impl\ReviewClassServiceImpl.java
@@ -172,6 +173,7 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\fron
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\controller\VariateController.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\service\impl\VariateGradeServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontBanner\controller\FrontBannerController.java
+D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontAppoint\vo\BeGoodAt.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\msgManage\service\impl\SendMsgServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\videoAnalysis\service\IReviewVideoAnalysisService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\question\entity\ReviewQuestion.java

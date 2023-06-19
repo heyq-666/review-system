@@ -27,7 +27,8 @@
             c.visit_date AS visitDate,
             DATE_FORMAT( c.begin_time, '%H:%i' ) AS beginTime,
             DATE_FORMAT( c.end_time, '%H:%i' ) AS endTime,
-            DATE_FORMAT( c.create_time, '%Y-%m-%e %H:%i:%S' ) AS createTime
+            DATE_FORMAT( c.create_time, '%Y-%m-%e %H:%i:%S' ) AS createTime,
+            month(c.visit_date) as visitDateMonth, DAY(c.visit_date) as visitDateDay
         FROM
             review_expert_calendar c
         WHERE

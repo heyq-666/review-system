@@ -11,6 +11,7 @@ com\review\manage\question\service\IReviewQuestionAnswerService.class
 com\review\manage\report\service\impl\ReportGradeImpl.class
 com\review\manage\report\service\impl\ReportServiceImpl.class
 com\review\front\dongliangReview\vo\UserInfo.class
+com\review\front\frontAppoint\vo\BeGoodAt.class
 com\review\manage\userManage\entity\ReviewResult.class
 com\review\manage\question\entity\ReviewQuestionAnswerEntity.class
 com\review\manage\intake\mapper\IntakeContactRecordsMapper.class
@@ -172,6 +173,7 @@ com\review\front\frontBanner\controller\FrontBannerController.class
 com\review\manage\intake\service\IntakeContactRecordsService.class
 com\review\front\frontAppoint\controller\AppointExpertController.class
 com\review\manage\reviewClass\mapper\ReviewClassMapper.class
+com\review\front\frontAppoint\vo\VisitDate.class
 com\review\manage\banner\controller\ReviewBannerController.class
 com\review\manage\project\mapper\ReviewProjectMapper.class
 com\review\manage\question\mapper\ReviewQuestionAnswerMapper.class

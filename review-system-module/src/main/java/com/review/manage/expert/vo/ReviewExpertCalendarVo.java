@@ -1,8 +1,11 @@
 package com.review.manage.expert.vo;
 
+import com.review.front.frontAppoint.vo.VisitDate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author javabage
@@ -50,4 +53,9 @@ public class ReviewExpertCalendarVo {
 
     @ApiModelProperty(value = "周期")
     private Integer cycle;
+
+    private Integer visitDateMonth;
+    private Integer visitDateDay;
+    private String visitDateNew;
+    private List<VisitDate> visitDateList;
 }

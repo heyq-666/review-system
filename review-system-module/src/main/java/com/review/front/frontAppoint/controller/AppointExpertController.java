@@ -261,7 +261,6 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         appointExpertService.handleTime(reviewAppointList);
         return Result.OK("查询成功",reviewAppointList);
     }
-
     /**
      * 小程序-咨询师确认预约
      * @param consultationVO
@@ -292,21 +291,26 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
 
     /**
      * 小程序-获取专家擅长领域
-     * @param expertId
+     * @param reviewExpert
      * @return
      */
     @AutoLog(value = "小程序-获取专家擅长领域")
     @PostMapping(value = "getExpertFieldGroup")
-    public Result<List<String>> getExpertFieldGroup(@RequestBody String expertId) {
-        String expert_field_group = reviewExpertReserveService.getExpertFieldGroup(expertId);
-        String dictId = reviewExpertReserveService.getDictId(expert_field_group);
-        String[] dictIdSpl = dictId.split(",");
+    public Result<String> getExpertFieldGroup(@RequestBody ReviewExpert reviewExpert) {
+        String expert_field_group = reviewExpertReserveService.getExpertFieldGroup(reviewExpert.getId());
+        String dictId = reviewExpertReserveService.getDictId("expert_field_group");
+        String[] dictIdSpl = expert_field_group.split(",");
         List<Integer> dictIdList = new ArrayList<>();
         for (int i = 0; i < dictIdSpl.length; i++) {
             dictIdList.add(Integer.valueOf(dictIdSpl[i]));
         }
-        List<String> dictTextList = reviewExpertReserveService.getDictText(dictId,dictIdList);
-        return Result.OK(dictTextList);
+        List<BeGoodAt> dictTextList = reviewExpertReserveService.getDictText(dictId,dictIdList);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < dictTextList.size(); i++) {
+            stringBuilder.append(dictTextList.get(i).getDictName() + ",");
+        }
+        String substring = stringBuilder.substring(0,stringBuilder.length() - 1);
+        return Result.OK(substring);
     }
 
     /**

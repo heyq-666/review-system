@@ -137,5 +137,13 @@ public class ReviewExpert implements Serializable {
     @ApiModelProperty(value = "咨询师线下预约地址")
     private String offlineReservationAddress;
 
+    @Excel(name = "咨询师从业年限", width = 15)
+    @ApiModelProperty(value = "咨询师从业年限")
+    private Integer workingYears;
+
+    @Excel(name = "咨询师服务时长", width = 15)
+    @ApiModelProperty(value = "咨询师服务时长")
+    private Long serviceDuration;
+
     private transient List<BeGoodAt> beGoodAtList;
 }

@@ -33,11 +33,11 @@ public interface ReviewExpertReserveMapper extends BaseMapper<ReviewExpertReserv
      * @param expertId
      * @return
      */
-    String getExpertFieldGroup(String expertId);
+    String getExpertFieldGroup(Integer expertId);
 
     String getDictId(String expertFieldGroup);
 
-    List<String> getDictText(String dictId,List<Integer> dictIdList);
+    List<BeGoodAt> getDictText(String dictId,List<Integer> dictIdList);
 
     List<BeGoodAt> getBeGoodAtList(Integer expertId);
 
