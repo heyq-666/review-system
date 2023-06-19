@@ -7,6 +7,7 @@ import com.review.common.Constants;
 import com.review.front.frontAppoint.entity.ReviewExpertReserveEntity;
 import com.review.front.frontAppoint.mapper.ReviewExpertReserveMapper;
 import com.review.front.frontAppoint.service.IReviewExpertReserveService;
+import com.review.front.frontAppoint.vo.BeGoodAt;
 import com.review.front.frontAppoint.vo.ConsultationVO;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
 import com.review.manage.expert.entity.ReviewExpert;
@@ -92,6 +93,31 @@ public class ReviewExpertReserveServiceImpl extends ServiceImpl<ReviewExpertRese
         }else {
             reviewExpertReserveList.get(0).setIsConfirmByExpert("N");
         }
+    }
+
+    @Override
+    public String getExpertFieldGroup(String expertId) {
+        return reviewExpertReserveMapper.getExpertFieldGroup(expertId);
+    }
+
+    @Override
+    public String getDictId(String expertFieldGroup) {
+        return reviewExpertReserveMapper.getDictId(expertFieldGroup);
+    }
+
+    @Override
+    public List<String> getDictText(String dictId,List<Integer> dictIdList) {
+        return reviewExpertReserveMapper.getDictText(dictId,dictIdList);
+    }
+
+    @Override
+    public List<BeGoodAt> getBeGoodAtList(Integer expertId) {
+        return reviewExpertReserveMapper.getBeGoodAtList(expertId);
+    }
+
+    @Override
+    public List<BeGoodAt> getBeGoodAtNameList(List<String> beGoodAtListNew) {
+        return reviewExpertReserveMapper.getBeGoodAtNameList(beGoodAtListNew);
     }
 
     /**

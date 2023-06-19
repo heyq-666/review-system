@@ -3,6 +3,7 @@ package com.review.manage.expert.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.review.front.frontAppoint.vo.BeGoodAt;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,6 +15,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description: review_expert
@@ -134,4 +136,6 @@ public class ReviewExpert implements Serializable {
     @Excel(name = "咨询师线下预约地址", width = 15)
     @ApiModelProperty(value = "咨询师线下预约地址")
     private String offlineReservationAddress;
+
+    private transient List<BeGoodAt> beGoodAtList;
 }

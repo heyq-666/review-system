@@ -2,7 +2,9 @@ package com.review.front.frontAppoint.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.review.front.frontAppoint.entity.ReviewExpertReserveEntity;
+import com.review.front.frontAppoint.vo.BeGoodAt;
 import com.review.front.frontAppoint.vo.ConsultationVO;
+import com.review.manage.expert.entity.ReviewExpert;
 
 import java.util.List;
 
@@ -44,4 +46,28 @@ public interface IReviewExpertReserveService extends IService<ReviewExpertReserv
      * @return
      */
     void isConfirmByExpert(ConsultationVO consultationVO,List<ConsultationVO> reviewExpertReserveList);
+
+    /**
+     * 获取咨询师擅长领域id
+     * @return
+     */
+    String getExpertFieldGroup(String expertId);
+
+    String getDictId(String expertFieldGroup);
+
+    List<String> getDictText(String dictId,List<Integer> dictIdList);
+
+    /**
+     * 获取咨询师擅长方向标签
+     * @param expertId
+     * @return
+     */
+    List<BeGoodAt> getBeGoodAtList(Integer expertId);
+
+    /**
+     * 获取咨询师擅长方向标签名称
+     * @param beGoodAtListNew
+     * @return
+     */
+    List<BeGoodAt> getBeGoodAtNameList(List<String> beGoodAtListNew);
 }

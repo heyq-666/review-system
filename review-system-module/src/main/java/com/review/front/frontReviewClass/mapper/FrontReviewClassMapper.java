@@ -53,4 +53,10 @@ public interface FrontReviewClassMapper extends BaseMapper<ReviewClass> {
     List<ReviewResultVO> getReportResults(Map param);
 
     List<ReviewClass> getPsychoMetrics();
+
+    /**
+     * 获取量表测评人数
+     * @return
+     */
+    Integer getReviewClassNumber(String classId);
 }

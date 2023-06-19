@@ -135,4 +135,26 @@
         ORDER BY
             rer.create_time DESC
     </select>
+    <select id="getExpertFieldGroup" parameterType="String" resultType="String">
+        select expert_field_group from review_expert where id = #{expertId}
+    </select>
+    <select id="getDictId" parameterType="String" resultType="String">
+        select id from sys_dict where dict_code = #{expertFieldGroup}
+    </select>
+    <select id="getDictText" parameterType="map" resultType="map">
+        select item_text from sys_dict_item where dict_id = #{dictId} and item_value in
+        <foreach collection="dictIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getBeGoodAtList" parameterType="Integer" resultType="com.review.front.frontAppoint.vo.BeGoodAt">
+        select be_good_at_emotion,be_good_at_relation,be_good_at_family_trouble,be_good_at_marriage
+        from review_expert where id = #{expertId}
+    </select>
+    <select id="getBeGoodAtNameList" parameterType="map" resultType="com.review.front.frontAppoint.vo.BeGoodAt">
+        select dict_name from sys_dict where dict_code in
+        <foreach collection="beGoodAtListNew" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.review.front.frontReviewClass.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.aliyuncs.kms.transform.v20160120.GetParametersForImportResponseUnmarshaller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.review.common.Constants;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
@@ -21,14 +22,12 @@ import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.vo.LoginUser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -118,6 +117,8 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
         }
         if (reviewClassInfo.getCharge() != null && reviewClassInfo.getCharge() == Constants.ClassCharge) {
             reviewClassInfo.setRealPrice(reviewClassInfo.getOrgPrice().subtract(reviewClassInfo.getDicountPrice()));
+        }else {
+            reviewClassInfo.setRealPrice(BigDecimal.valueOf(0.00));
         }
         ReviewClassPage reviewClassVO = new ReviewClassPage();
         BeanUtils.copyProperties(reviewClassInfo, reviewClassVO);
@@ -154,6 +155,13 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     @PostMapping(value = "/getPsychoMetrics")
     public Result<List<ReviewClass>> getPsychoMetrics() {
         List<ReviewClass> reviewClassList = frontReviewClassService.getPsychoMetrics();
+        for (int i = 0; i < reviewClassList.size(); i++) {
+            if (reviewClassList.get(i).getCharge() != null && reviewClassList.get(i).getCharge() == Constants.ClassCharge) {
+                reviewClassList.get(i).setRealPrice(reviewClassList.get(i).getOrgPrice().subtract(reviewClassList.get(i).getDicountPrice()));
+            }else {
+                reviewClassList.get(i).setRealPrice(BigDecimal.valueOf(0.0));
+            }
+        }
         return Result.OK(reviewClassList);
     }
     @AutoLog(value = "小程序-模糊查询量表")
@@ -164,5 +172,11 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
         List<ReviewClass> classList = frontReviewClassService.list(queryWrapper);
         classList.removeIf(reviewClass1 -> reviewClass1.getStatus() == 0);
         return Result.OK(classList);
+    }
+    @AutoLog(value = "小程序-获取量表测评人数")
+    @PostMapping(value = "/getReviewClassNumber")
+    public Result<Integer> getReviewClassNumber(@RequestBody String classId) {
+        Integer count = frontReviewClassService.getReviewClassNumber(classId);
+        return Result.OK(count);
     }
 }

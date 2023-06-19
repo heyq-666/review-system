@@ -71,4 +71,6 @@ public interface IFrontReviewClassService extends IService<ReviewClass> {
      * @return
      */
     List<ReviewClass> getPsychoMetrics();
+
+    Integer getReviewClassNumber(String classId);
 }

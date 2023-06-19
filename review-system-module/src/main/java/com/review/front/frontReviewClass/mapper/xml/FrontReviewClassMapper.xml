@@ -118,4 +118,7 @@
     <select id="getPsychoMetrics" resultType="com.review.manage.reviewClass.entity.ReviewClass">
         select * from review_class where recommend_type = 1 LIMIT 2
     </select>
+    <select id="getReviewClassNumber" resultType="Integer" parameterType="String">
+        select COUNT(DISTINCT user_id) from review_result where class_id = #{classId}
+    </select>
 </mapper>

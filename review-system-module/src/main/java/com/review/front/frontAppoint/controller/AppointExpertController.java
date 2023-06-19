@@ -3,6 +3,7 @@ package com.review.front.frontAppoint.controller;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,6 +12,7 @@ import com.review.front.frontAppoint.entity.ReviewExpertReserveEntity;
 import com.review.front.frontAppoint.service.IAppointExpertService;
 import com.review.front.frontAppoint.service.IFrontReviewExpertCalendarService;
 import com.review.front.frontAppoint.service.IReviewExpertReserveService;
+import com.review.front.frontAppoint.vo.BeGoodAt;
 import com.review.front.frontAppoint.vo.ConsultationVO;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
 import com.review.manage.expert.entity.ExpertLongDistanceTrain;
@@ -21,6 +23,7 @@ import com.review.manage.expert.vo.ReviewExpertCalendarVo;
 import com.review.manage.userManage.entity.ReviewUser;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.util.StringUtil;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
@@ -36,9 +39,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author javabage
@@ -82,6 +84,35 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         QueryWrapper<ReviewExpert> queryWrapper = QueryGenerator.initQueryWrapper(reviewExpert, req.getParameterMap());
         Page<ReviewExpert> page = new Page<ReviewExpert>(pageNo, pageSize);
         IPage<ReviewExpert> pageList = appointExpertService.page(page, queryWrapper);
+        List<ReviewExpert> record = pageList.getRecords();
+        for (int i = 0; i < record.size(); i++) {
+            List<BeGoodAt> beGoodAtList = reviewExpertReserveService.getBeGoodAtList(record.get(i).getId());
+            List<String> beGoodAtCodeList = new ArrayList<>();
+            for (int j = 0; j < beGoodAtList.size(); j++) {
+                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtEmotion())){
+                    beGoodAtCodeList.add("be_good_at_emotion");
+                }
+                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtRelation())){
+                    beGoodAtCodeList.add("be_good_at_relation");
+                }
+                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtFamilyTrouble())){
+                    beGoodAtCodeList.add("be_good_at_family_trouble");
+                }
+                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtMarriage())){
+                    beGoodAtCodeList.add("be_good_at_marriage");
+                }
+            }
+            List<BeGoodAt> beGoodAtNameList = reviewExpertReserveService.getBeGoodAtNameList(beGoodAtCodeList);
+            for (int k = 0; k < beGoodAtNameList.size(); k++) {
+                beGoodAtNameList.get(k).setId(record.get(i).getId());
+            }
+            if (beGoodAtNameList != null && beGoodAtNameList.size() > 3){
+                List<BeGoodAt> beGoodAtNameListLimit = beGoodAtNameList.stream().skip(0).limit(3).collect(Collectors.toList());
+                record.get(i).setBeGoodAtList(beGoodAtNameListLimit);
+            }else {
+                record.get(i).setBeGoodAtList(beGoodAtNameList);
+            }
+        }
         return Result.OK(pageList);
     }
 
@@ -258,4 +289,42 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         List<ExpertLongDistanceTrain> list = distanceTrainService.list(queryWrapper);
         return Result.OK(list);
     }
+
+    /**
+     * 小程序-获取专家擅长领域
+     * @param expertId
+     * @return
+     */
+    @AutoLog(value = "小程序-获取专家擅长领域")
+    @PostMapping(value = "getExpertFieldGroup")
+    public Result<List<String>> getExpertFieldGroup(@RequestBody String expertId) {
+        String expert_field_group = reviewExpertReserveService.getExpertFieldGroup(expertId);
+        String dictId = reviewExpertReserveService.getDictId(expert_field_group);
+        String[] dictIdSpl = dictId.split(",");
+        List<Integer> dictIdList = new ArrayList<>();
+        for (int i = 0; i < dictIdSpl.length; i++) {
+            dictIdList.add(Integer.valueOf(dictIdSpl[i]));
+        }
+        List<String> dictTextList = reviewExpertReserveService.getDictText(dictId,dictIdList);
+        return Result.OK(dictTextList);
+    }
+
+    /**
+     * 小程序-获取专家擅长方向标签
+     * @param expertId
+     * @return
+     */
+    /*@AutoLog(value = "小程序-获取专家擅长方向标签")
+    @PostMapping(value = "getBeGoodAtList")
+    public Result<List<String>> getBeGoodAtList(@RequestBody String expertId) {
+        List<String> beGoodAtList = reviewExpertReserveService.getBeGoodAtList(expertId);
+        List<String> beGoodAtListNew = beGoodAtList.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        List<String> beGoodAtNameList = reviewExpertReserveService.getBeGoodAtNameList(beGoodAtListNew);
+        if (beGoodAtNameList != null && beGoodAtNameList.size() > 3){
+            List<String> beGoodAtNameListLimit = beGoodAtNameList.stream().skip(0).limit(3).collect(Collectors.toList());
+            return Result.OK(beGoodAtNameListLimit);
+        }else {
+            return Result.OK(beGoodAtNameList);
+        }
+    }*/
 }
