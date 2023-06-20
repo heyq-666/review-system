@@ -6,11 +6,13 @@ import com.review.front.frontOrder.service.IFrontOrderService;
 import com.review.front.frontOrder.vo.PreOrderVO;
 import com.review.manage.reviewOrder.entity.ReviewOrder;
 import com.review.manage.reviewOrder.vo.ReviewOrderVO;
+import com.review.manage.userManage.entity.ReviewUser;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.BrowserUtils;
@@ -21,7 +23,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -45,14 +50,17 @@ public class FrontOrderController extends JeecgController<ReviewOrder, IFrontOrd
     @AutoLog(value = "小程序-创建预支付订单")
     @PostMapping(value = "createPrePayOrder")
     public Result<PreOrderVO> createPrePayOrder(@RequestBody ReviewOrderVO reviewOrder){
-        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        reviewOrder.setUserId(sysUser.getId());
-        reviewOrder.setOperator(sysUser.getUsername());
-        reviewOrder.setGroupId(sysUser.getOrgCode());
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest();
+        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        //LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        reviewOrder.setUserId(reviewUserEntity.getUserId());
+        reviewOrder.setOperator(reviewUserEntity.getUserName());
+        reviewOrder.setGroupId(reviewUserEntity.getGroupId());
         reviewOrder.setOpenid("");
         reviewOrder.setIpAddr(IpUtils.getIpAddr(SpringContextUtils.getHttpServletRequest()));
         reviewOrder.setBroswer(BrowserUtils.checkBrowse(SpringContextUtils.getHttpServletRequest()));
-        reviewOrder.setMobilePhone(sysUser.getPhone());
+        reviewOrder.setMobilePhone(reviewUserEntity.getMobilePhone());
         //创建预支付订单
         PreOrderVO preOrderVO = frontOrderService.createPrePayOrder(reviewOrder);
         return preOrderVO == null ? Result.error(400,"创建失败") : Result.OK("创建成功",preOrderVO);

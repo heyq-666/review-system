@@ -102,6 +102,9 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
         if (reviewClass == null) {
             log.warn("classId {} is not exists", reviewClass.getClassId());
             return null;
+        }else if (reviewClass.getOrgPrice() == null){
+            reviewClass.setOrgPrice(BigDecimal.valueOf(0));
+            reviewClass.setDicountPrice(BigDecimal.valueOf(0));
         }
         //生成订单号
         long orderNo = IdUtil.getSnowflake(0,0).nextId();
