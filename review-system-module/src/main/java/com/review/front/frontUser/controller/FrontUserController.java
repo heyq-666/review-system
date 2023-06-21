@@ -87,17 +87,26 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
         if (reviewUser == null) {
             return Result.error(300,"用户信息为空");
         }
-        String redisKey = CommonConstant.PHONE_REDIS_KEY_PRE + reviewUser.getMobilePhone();
-        Object object= redisUtil.get(redisKey);
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest();
+        Object object = request.getSession().getAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);
         if(null==object) {
             return Result.error("短信验证码失效！");
         }
         if(!reviewUser.getMsgCode().equals(object.toString())) {
             return Result.error("短信验证码不匹配！");
         }
+        /*String redisKey = CommonConstant.PHONE_REDIS_KEY_PRE + reviewUser.getMobilePhone();
+        Object object= redisUtil.get(redisKey);
+        if(null==object) {
+            return Result.error("短信验证码失效！");
+        }
+        if(!reviewUser.getMsgCode().equals(object.toString())) {
+            return Result.error("短信验证码不匹配！");
+        }*/
         Result result = frontUserService.register(reviewUser);
-        if (result.getCode() != 200) {
-            result.setCode(301);
+        if (result.getCode() == 200) {
+            request.getSession().removeAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);
         }
         return result;
     }
