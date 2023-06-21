@@ -47,7 +47,7 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
 
     private static final String dongLiangApiurlPro = "http://www.xinzhaitongxing.com:9998/api/commitTest";*/
 
-    private static final String reportUrl = "https://www.xinzhaitongxing.com/review/upload2";
+    private static final String reportUrl = "https://wlj.xinzhaitongxing.com/review/upload2";
 
     @Autowired
     private IDongLiangReviewService dongLiangReviewService;

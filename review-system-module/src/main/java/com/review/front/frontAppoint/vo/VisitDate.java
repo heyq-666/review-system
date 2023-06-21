@@ -9,10 +9,13 @@ import lombok.Data;
 @Data
 public class VisitDate {
 
-    private Long id;
+    private Long calendarId;
     private Long expertId;
     private Integer status;
     private String visitDateNew;
     private String time;
     private Boolean isChooseFlag;
+    private String beginTime;
+    private String endTime;
+    private String visitDate;
 }

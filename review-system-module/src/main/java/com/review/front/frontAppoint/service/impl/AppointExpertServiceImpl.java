@@ -84,6 +84,10 @@ public class AppointExpertServiceImpl extends ServiceImpl<AppointExpertMapper, R
                 VisitDate visitDate = new VisitDate();
                 visitDate.setTime(list2.get(j).getBeginTime() + "-" + list2.get(j).getEndTime());
                 visitDate.setIsChooseFlag(list2.get(j).getStatus() == 1 ? true : false);
+                visitDate.setCalendarId(list2.get(j).getId());
+                visitDate.setBeginTime(list2.get(j).getBeginTime());
+                visitDate.setEndTime(list2.get(j).getEndTime());
+                visitDate.setVisitDate(list2.get(j).getVisitDate());
                 visitDateList.add(visitDate);
             }
             calenda.setVisitDateList(visitDateList);

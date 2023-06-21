@@ -21,9 +21,10 @@ public class WxAppletsUtils {
 
     public final static String accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 
-    public final static String appId = "wx3d03d72c4fc3614f";
+    public final static String appId = "wx5c0cb023244b6007";
 
-    public final static String appSecret = "f95e7676a11f1fbcd2be34f8ea01fed5";
+    //public final static String appSecret = "f95e7676a11f1fbcd2be34f8ea01fed5";
+    public final static String appSecret = "994d504be2dc39634df03fe9889701b7";
 
     public final static String qrCodeUrl = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s";
 

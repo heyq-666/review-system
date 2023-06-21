@@ -17,7 +17,7 @@ public class ConsultationVO implements Serializable {
     /**
         日历id
      */
-    private Integer calendarId;
+    private Long calendarId;
     /**
         用户id
      */

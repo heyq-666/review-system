@@ -40,7 +40,7 @@ public class ReviewExpertReserveEntity implements Serializable {
 
 	/**日历id*/
 	@ApiModelProperty(value = "日历id")
-	private Integer calendarId;
+	private Long calendarId;
 
 	/**预约状态(1:待问诊；2:问诊结束；3:取消预约)*/
 	@ApiModelProperty(value = "预约状态")
