@@ -94,6 +94,10 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     @PostMapping(value = "/getReviewClass")
     public Result<List<ReviewClassPage>> getReviewClassByProjectId(@RequestBody ReviewClassPage reviewClass) {
         List<ReviewClassPage> reviewClassList = frontReviewClassService.getReviewClassByProjectId(reviewClass.getProjectId());
+        for (int i = 0; i < reviewClassList.size(); i++) {
+            Integer count = frontReviewClassService.getReviewClassNumber(reviewClassList.get(i).getClassId());
+            reviewClassList.get(i).setReviewCount(count);
+        }
         return Result.OK("查询成功",reviewClassList);
     }
 
@@ -161,6 +165,8 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
             }else {
                 reviewClassList.get(i).setRealPrice(BigDecimal.valueOf(0.0));
             }
+            Integer count = frontReviewClassService.getReviewClassNumber(reviewClassList.get(i).getClassId());
+            reviewClassList.get(i).setReviewCount(count);
         }
         return Result.OK(reviewClassList);
     }
@@ -175,8 +181,8 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     }
     @AutoLog(value = "小程序-获取量表测评人数")
     @PostMapping(value = "/getReviewClassNumber")
-    public Result<Integer> getReviewClassNumber(@RequestBody String classId) {
-        Integer count = frontReviewClassService.getReviewClassNumber(classId);
+    public Result<Integer> getReviewClassNumber(@RequestBody ReviewClass reviewClass) {
+        Integer count = frontReviewClassService.getReviewClassNumber(reviewClass.getClassId());
         return Result.OK(count);
     }
 }

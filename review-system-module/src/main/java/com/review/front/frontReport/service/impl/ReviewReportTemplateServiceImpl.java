@@ -21,8 +21,6 @@ public class ReviewReportTemplateServiceImpl extends ServiceImpl<ReviewReportTem
 
     @Override
     public ReviewClassPage getByClassId(String classId) {
-        /*List<ReviewReportTemplateEntity> list = this.listByMap(
-                    (Map<String, Object>) new HashMap<>().put("class_id",classId));*/
         QueryWrapper<ReviewReportTemplateEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("class_id",classId);
         List<ReviewReportTemplateEntity> list = this.list(queryWrapper);

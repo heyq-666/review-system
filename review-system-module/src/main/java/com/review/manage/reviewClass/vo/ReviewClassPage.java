@@ -113,4 +113,9 @@ public class ReviewClassPage {
 
 	private List<ReviewReportTemplateEntity> reportTemplateList;
 
+	/**
+	 * 测评人数
+	 */
+	private transient Integer reviewCount;
+
 }

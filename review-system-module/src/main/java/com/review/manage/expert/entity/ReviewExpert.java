@@ -146,4 +146,6 @@ public class ReviewExpert implements Serializable {
     private Long serviceDuration;
 
     private transient List<BeGoodAt> beGoodAtList;
+
+    private transient BigDecimal realPrice;
 }

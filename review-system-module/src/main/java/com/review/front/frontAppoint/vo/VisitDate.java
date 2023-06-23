@@ -1,5 +1,7 @@
 package com.review.front.frontAppoint.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -9,6 +11,7 @@ import lombok.Data;
 @Data
 public class VisitDate {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long calendarId;
     private Long expertId;
     private Integer status;

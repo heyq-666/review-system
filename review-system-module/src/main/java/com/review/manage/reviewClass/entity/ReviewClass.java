@@ -104,4 +104,8 @@ public class ReviewClass implements Serializable {
     private transient String reportTitle;
 
     private transient String explanation;
+    /**
+     * 测评人数
+     */
+    private transient Integer reviewCount;
 }

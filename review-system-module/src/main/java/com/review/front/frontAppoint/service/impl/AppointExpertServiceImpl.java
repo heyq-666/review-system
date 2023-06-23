@@ -57,17 +57,15 @@ public class AppointExpertServiceImpl extends ServiceImpl<AppointExpertMapper, R
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
         for (int i = 0; i < reviewExpertCalendarList.size(); i++) {
-            if (reviewExpertCalendarList.get(i).getVisitDate().equals(formatter.format(new Date()))){
-                int beginTimeHour = Integer.valueOf(reviewExpertCalendarList.get(i).getBeginTime().split(":")[0]);
-                if(beginTimeHour < hour){
-                    reviewExpertCalendarList.remove(i);
-                    i--;
-                    continue;
-                }
+            if (reviewExpertCalendarList.get(i).getVisitDate().compareTo(formatter.format(new Date())) < 0 ){
+                reviewExpertCalendarList.remove(i);
+                i--;
+                continue;
+            }else {
+                reviewExpertCalendarList.get(i).setVisitDateNew(reviewExpertCalendarList.get(i).getVisitDateMonth()
+                        + "月" + reviewExpertCalendarList.get(i).getVisitDateDay()
+                        + "日" + "(" + reviewExpertCalendarList.get(i).getWeekDayName() + ")");
             }
-            reviewExpertCalendarList.get(i).setVisitDateNew(reviewExpertCalendarList.get(i).getVisitDateMonth()
-                    + "月" + reviewExpertCalendarList.get(i).getVisitDateDay()
-                    + "日" + "(" + reviewExpertCalendarList.get(i).getWeekDayName() + ")");
         }
         List<ReviewExpertCalendarVo> list1 = reviewExpertCalendarList.stream().collect(Collectors.collectingAndThen(
                 Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ReviewExpertCalendarVo::getVisitDate))), ArrayList::new));
@@ -83,7 +81,15 @@ public class AppointExpertServiceImpl extends ServiceImpl<AppointExpertMapper, R
             for (int j = 0; j < list2.size(); j++) {
                 VisitDate visitDate = new VisitDate();
                 visitDate.setTime(list2.get(j).getBeginTime() + "-" + list2.get(j).getEndTime());
-                visitDate.setIsChooseFlag(list2.get(j).getStatus() == 1 ? true : false);
+                if (list2.get(j).getStatus() == 1) {
+                    if (list2.get(j).getVisitDate().compareTo(formatter.format(new Date())) > 0){
+                        visitDate.setIsChooseFlag(true);
+                    }else {
+                        visitDate.setIsChooseFlag(Integer.valueOf(list2.get(j).getBeginTime().split(":")[0]) > hour ? true : false);
+                    }
+                }else {
+                    visitDate.setIsChooseFlag(false);
+                }
                 visitDate.setCalendarId(list2.get(j).getId());
                 visitDate.setBeginTime(list2.get(j).getBeginTime());
                 visitDate.setEndTime(list2.get(j).getEndTime());

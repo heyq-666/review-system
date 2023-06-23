@@ -112,6 +112,7 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
             }else {
                 record.get(i).setBeGoodAtList(beGoodAtNameList);
             }
+            record.get(i).setRealPrice(record.get(i).getOrgPrice().subtract(record.get(i).getDicountPrice()));
         }
         return Result.OK(pageList);
     }
@@ -125,6 +126,7 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
     @PostMapping(value = "detail")
     public Result<ReviewExpert> detail(@RequestBody ReviewExpert reviewExpert) {
         ReviewExpert reviewExpert1 = appointExpertService.getById(reviewExpert.getId());
+        reviewExpert1.setRealPrice(reviewExpert1.getOrgPrice().subtract(reviewExpert1.getDicountPrice()));
         return Result.OK("查询成功",reviewExpert1);
     }
 
@@ -179,6 +181,10 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
     public Result<List<ConsultationVO>> queryMyConsultation(@RequestBody ConsultationVO consultationVO) {
         List<ConsultationVO> reviewExpertReserveList = reviewExpertReserveService.getMyConsultation(consultationVO.getUserId());
         return Result.OK("查询成功",reviewExpertReserveList);
+        /*QueryWrapper<ReviewExpertReserveEntity> queryWrapper = new QueryWrapper<ReviewExpertReserveEntity>();
+        queryWrapper.eq("user_id",consultationVO.getUserId());
+        List<ReviewExpertReserveEntity> expertReserveEntityList = reviewExpertReserveService.list(queryWrapper);
+        return null;*/
     }
 
     /**
