@@ -161,9 +161,6 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
             reviewQuestionAnswerList.clear();
         }
         //查询某分类下的报告
-        /*Map param = new HashMap();
-        param.put("classId",classId);
-        List<ReviewReportEntity> reportList = reportService.listByMap(param);*/
         QueryWrapper<ReviewReportEntity> queryWrapper = new QueryWrapper<ReviewReportEntity>();
         queryWrapper.eq("class_id",classId);
         List<ReviewReportEntity> reportList = reportService.list(queryWrapper);
@@ -195,7 +192,6 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         for(Map.Entry<String, Double> entry : map.entrySet()) {
             variateEntity = variateService.getById(entry.getKey());
             reportResult = new ReviewReportResultEntity();
-            //variateGradeList = variateGradeService.listByMap((Map<String, Object>) new HashMap<>().put("variate_id",entry.getKey()));
             QueryWrapper<ReviewVariateGradeEntity> queryWrapper1 = new QueryWrapper<>();
             queryWrapper1.eq("variate_id",entry.getKey());
             variateGradeList = variateGradeService.list(queryWrapper1);
@@ -247,13 +243,17 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         for(ReviewReportEntity report : reportList) {
             grade = 0.0;
             reportResult = new ReviewReportResultEntity();
-            reportVariateList = reviewReportVariateService.listByMap((Map<String, Object>) new HashMap<>().put("reportId",report.getReportId()));
+            QueryWrapper<ReviewReportVariateEntity> queryWrapper1 = new QueryWrapper<ReviewReportVariateEntity>();
+            queryWrapper1.eq("report_id",report.getReportId());
+            reportVariateList = reviewReportVariateService.list(queryWrapper1);
             for (int i = 0; i < reportVariateList.size() - 1; i++) {
                 grade = calVariateGrade(reportVariateList.get(i).getCalSymbol(),variateTotalGradeTemp.get(i),variateTotalGradeTemp.get(i+1));
             }
             grade = new BigDecimal(grade).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
             int levelGrade = 0;
-            gradeList = reportGradeService.listByMap((Map<String, Object>) new HashMap<>().put("reportId",report.getReportId()));
+            QueryWrapper<ReviewReportGradeEntity> queryWrapper2 = new QueryWrapper<ReviewReportGradeEntity>();
+            queryWrapper2.eq("report_id",report.getReportId());
+            gradeList = reportGradeService.list(queryWrapper2);
             for(ReviewReportGradeEntity reportGrade : gradeList) {
                 if(grade <= reportGrade.getGradeBig() && grade >= reportGrade.getGradeSmall()) {
                     reportResult.setExplainResult(reportGrade.getResultExplain());

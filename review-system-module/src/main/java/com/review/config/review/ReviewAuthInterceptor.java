@@ -34,6 +34,7 @@ public class ReviewAuthInterceptor implements HandlerInterceptor {
         System.out.println("自定义拦截器执行了");
         HttpSession sessoin = request.getSession();
         String userId = request.getHeader("userId");
+        System.out.println(userId);
         if (StringUtils.isNotBlank(userId)) {
             ReviewUser reviewUser = iFrontUserService.getById(userId);
             /*String token = JwtUtil.sign(reviewUser.getUserName(),"123456");

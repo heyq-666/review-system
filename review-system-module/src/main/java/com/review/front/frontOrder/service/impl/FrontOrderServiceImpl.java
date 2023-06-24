@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.review.common.Constants;
@@ -156,8 +157,12 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
     public boolean updateStatusByPayId(Long orderNo,String payId, Integer status, String transactionId, String payResultCode,
                                    String payResultMsg, Integer totalFee) {
         //检查订单是否存在
-        List<ReviewOrder> map = this.listByMap((Map<String, Object>) new HashMap<>().put("order_no",orderNo));
-        List<ReviewOrder> map1 = this.listByMap((Map<String, Object>) new HashMap<>().put("pay_id",payId));
+        QueryWrapper<ReviewOrder> queryWrapper = new QueryWrapper<ReviewOrder>();
+        QueryWrapper<ReviewOrder> queryWrapper1 = new QueryWrapper<ReviewOrder>();
+        queryWrapper.eq("order_no",orderNo);
+        queryWrapper1.eq("pay_id",payId);
+        List<ReviewOrder> map = this.list(queryWrapper);
+        List<ReviewOrder> map1 = this.list(queryWrapper1);
         if (map.size() == 0 || map == null) {
             if (map1.size() == 0 || map1 == null) {
                 log.warn("payId:{} is not exist", payId);

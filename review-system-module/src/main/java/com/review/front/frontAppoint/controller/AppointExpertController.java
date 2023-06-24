@@ -21,6 +21,7 @@ import com.review.manage.expert.entity.ReviewExpertCalendarEntity;
 import com.review.manage.expert.service.IExpertLongDistanceTrainService;
 import com.review.manage.expert.vo.ReviewExpertCalendarVo;
 import com.review.manage.userManage.entity.ReviewUser;
+import com.review.manage.userManage.service.IReviewUserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.util.StringUtil;
@@ -244,7 +245,9 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
     @AutoLog(value = "小程序-判断是否为专家")
     @PostMapping(value = "isExpert")
     public Result<Boolean> isExpert(@RequestBody ReviewUser reviewUser) {
-        List<ReviewExpert> list = appointExpertService.listByMap((Map<String, Object>) new HashMap<>().put("mobilePhone",reviewUser.getMobilePhone()));
+        QueryWrapper<ReviewExpert> queryWrapper = new QueryWrapper<ReviewExpert>();
+        queryWrapper.eq("mobile_phone",reviewUser.getMobilePhone());
+        List<ReviewExpert> list = appointExpertService.list(queryWrapper);
         boolean isExpert = list.size() > 0 ? true : false;
         return Result.OK("查询成功",isExpert);
     }

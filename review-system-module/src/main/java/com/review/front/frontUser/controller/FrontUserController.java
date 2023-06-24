@@ -160,7 +160,6 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
     @AutoLog(value = "小程序-用户是否注册")
     @PostMapping(value = "getUserInfoByOpenid")
     public Result<?> getUserInfoByOpenid(@RequestBody ReviewUser reviewUser) {
-        //List<ReviewUser> reviewUserList = frontUserService.listByMap((Map<String, Object>) new HashMap<>().put("openid",reviewUser.getOpenid()));
         QueryWrapper<ReviewUser> queryWrapper = new QueryWrapper<ReviewUser>();
         queryWrapper.eq("openid",reviewUser.getOpenid());
         ReviewUser reviewUser1 = frontUserService.getOne(queryWrapper);

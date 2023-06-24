@@ -60,8 +60,9 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
     @AutoLog(value = "栋梁测评-测评码验证")
     @PostMapping(value = "verifyEvalCode")
     public Result<?> verifyEvalCode(EvalCodeEntity evalCodeEntity) {
-        List<EvalCodeEntity> list = dongLiangReviewService.
-                listByMap((Map<String, Object>) new HashMap<>().put("evalCode",evalCodeEntity.getEvalCode()));
+        QueryWrapper<EvalCodeEntity> queryWrapper = new QueryWrapper<EvalCodeEntity>();
+        queryWrapper.eq("eval_code",evalCodeEntity.getEvalCode());
+        List<EvalCodeEntity> list = dongLiangReviewService.list(queryWrapper);
         List<EvalCodeEntity> list1 = list.stream().filter(item -> item.getStatus() == 1 || item.getStatus() == 3).collect(Collectors.toList());
         return list1.size() > 0 ? Result.OK("测评码有效") : Result.OK("测评码无效或不存在");
     }
