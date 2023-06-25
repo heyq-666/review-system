@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.review.common.Constants;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
 import com.review.front.frontReviewClass.vo.ReviewResultVO;
+import com.review.front.frontUser.service.IFrontUserService;
 import com.review.manage.question.vo.QuestionVO;
 import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewClass.vo.ReviewClassPage;
@@ -43,6 +44,8 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
 
     @Autowired
     private IFrontReviewClassService frontReviewClassService;
+    @Autowired
+    private IFrontUserService frontUserService;
 
     /**
      * 小程序-根据分类ID查询分类下的问题及选项
@@ -73,7 +76,9 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     @PostMapping(value = "/completeReview")
     public Result<ReviewResult> completeReview(@RequestBody QuestionVO[] resultArr, HttpServletRequest request) {
 
-        ReviewUser user = (ReviewUser) request.getSession().getAttribute(Constants.REVIEW_LOGIN_USER);
+        Object userId = request.getSession().getAttribute(Constants.REVIEW_LOGIN_USER);
+        //ReviewUser user = (ReviewUser) request.getSession().getAttribute(Constants.REVIEW_LOGIN_USER);
+        ReviewUser user = frontUserService.getById(userId.toString());
         ReviewResult reviewResult = null;
         List<QuestionVO> resultList = Arrays.asList(resultArr);
         if (user == null) {
@@ -127,8 +132,9 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
         ReviewClassPage reviewClassVO = new ReviewClassPage();
         BeanUtils.copyProperties(reviewClassInfo, reviewClassVO);
         //session获取userId
-        //LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        ReviewUser reviewUser = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        Object userId = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        ReviewUser reviewUser = frontUserService.getById(userId.toString());
+        //ReviewUser reviewUser = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         if (reviewUser != null && StrUtil.isNotBlank(reviewUser.getUserId()) && reviewClassInfo.getCharge() == Constants.ClassCharge) {
             //判断用户是否已经购买了课程
             reviewClassVO.setBuy(frontReviewClassService.userBuy(reviewClass.getClassId(), reviewUser.getUserId()));

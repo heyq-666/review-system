@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.review.common.Constants;
 import com.review.front.frontOrder.service.IFrontOrderService;
 import com.review.front.frontOrder.vo.PreOrderVO;
+import com.review.front.frontUser.service.IFrontUserService;
 import com.review.manage.reviewOrder.entity.ReviewOrder;
 import com.review.manage.reviewOrder.vo.ReviewOrderVO;
 import com.review.manage.userManage.entity.ReviewUser;
@@ -42,6 +43,8 @@ public class FrontOrderController extends JeecgController<ReviewOrder, IFrontOrd
 
     @Autowired
     private IFrontOrderService frontOrderService;
+    @Autowired
+    private IFrontUserService frontUserService;
     /**
      * 小程序-创建预支付订单
      * @param reviewOrder
@@ -52,8 +55,9 @@ public class FrontOrderController extends JeecgController<ReviewOrder, IFrontOrd
     public Result<PreOrderVO> createPrePayOrder(@RequestBody ReviewOrderVO reviewOrder){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
-        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
-        //LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        Object userId = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        ReviewUser reviewUserEntity = frontUserService.getById(userId.toString());
+        //ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         reviewOrder.setUserId(reviewUserEntity.getUserId());
         reviewOrder.setOperator(reviewUserEntity.getUserName());
         reviewOrder.setGroupId(reviewUserEntity.getGroupId());

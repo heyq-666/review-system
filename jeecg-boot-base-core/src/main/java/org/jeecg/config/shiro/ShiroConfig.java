@@ -18,6 +18,7 @@ import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.config.JeecgBaseConfig;
 import org.jeecg.config.shiro.filters.CustomShiroFilterFactoryBean;
 import org.jeecg.config.shiro.filters.JwtFilter;
+import org.jeecg.config.shiro.filters.ReviewFilter;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -165,8 +166,34 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/review/reviewFront/subject/getReviewSubjectClass", "jwt");
         filterChainDefinitionMap.put("/review/reviewFront/project/getReviewProjectDetail","jwt");
         filterChainDefinitionMap.put("/review/reviewFront/user/getOpenid","jwt");*/
-
         filterChainDefinitionMap.put("/**", "jwt");
+        Map<String, Filter> reviewFilterMap = new HashMap<String, Filter>(1);
+        List<String> ex = new ArrayList<>();
+        ex.add("/review/reviewFront/user/register");
+        ex.add("/review/reviewFront/user/getUserInfoByOpenid");
+        ex.add("/review/reviewFront/reviewClass/getReviewClass");
+        ex.add("/review/reviewFront/user/getOpenid");
+        ex.add("/review/reviewFront/project/getReviewProjectDetail");
+        ex.add("/review/reviewFront/subject/getReviewSubjectClass");
+        ex.add("/review/reviewFront/sendMsg/SendMsgCode");
+        ex.add("/review/reviewFront/notice/list");
+        ex.add("/review/reviewFront/notice/detail");
+        ex.add("/review/reviewFront/banner/list");
+        reviewFilterMap.put("review",new ReviewFilter(ex));
+        shiroFilterFactoryBean.setFilters(reviewFilterMap);
+        /*filterChainDefinitionMap.put("/reviewFront/**", "review");
+        filterChainDefinitionMap.put("/reviewFront/user/register", "review");
+        filterChainDefinitionMap.put("/reviewFront/user/getUserInfoByOpenid", "review");
+        filterChainDefinitionMap.put("/reviewFront/reviewClass/getReviewClass", "review");
+        filterChainDefinitionMap.put("/reviewFront/user/getOpenid", "review");
+        filterChainDefinitionMap.put("/reviewFront/project/getReviewProjectDetail", "review");
+        filterChainDefinitionMap.put("/reviewFront/subject/getReviewSubjectClass", "review");
+        filterChainDefinitionMap.put("/reviewFront/sendMsg/SendMsgCode", "review");
+        filterChainDefinitionMap.put("/reviewFront/notice/list", "review");
+        filterChainDefinitionMap.put("/reviewFront/notice/detail", "review");
+        filterChainDefinitionMap.put("/reviewFront/banner/list", "review");*/
+        filterChainDefinitionMap.put("/reviewFront/**", "review");
+        filterChainDefinitionMap.put("/**", "review");
 
         //未授权界面返回JSON
         shiroFilterFactoryBean.setUnauthorizedUrl("/sys/common/403");

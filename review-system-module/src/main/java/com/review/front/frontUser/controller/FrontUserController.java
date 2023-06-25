@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.review.common.Constants;
+import com.review.common.MyBeanUtils;
 import com.review.common.WxAppletsUtils;
 import com.review.front.frontProject.service.IFrontProjectService;
 import com.review.front.frontUser.service.IFrontUserService;
@@ -31,7 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -90,20 +93,9 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
         Object object = request.getSession().getAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);
-        if(null==object) {
-            return Result.error("短信验证码失效！");
+        if(null==object || !reviewUser.getMsgCode().equals(object.toString())) {
+            return Result.error("短信验证码不正确或已过期！");
         }
-        if(!reviewUser.getMsgCode().equals(object.toString())) {
-            return Result.error("短信验证码不匹配！");
-        }
-        /*String redisKey = CommonConstant.PHONE_REDIS_KEY_PRE + reviewUser.getMobilePhone();
-        Object object= redisUtil.get(redisKey);
-        if(null==object) {
-            return Result.error("短信验证码失效！");
-        }
-        if(!reviewUser.getMsgCode().equals(object.toString())) {
-            return Result.error("短信验证码不匹配！");
-        }*/
         Result result = frontUserService.register(reviewUser);
         if (result.getCode() == 200) {
             request.getSession().removeAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);
@@ -118,37 +110,40 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
      */
     @AutoLog(value = "小程序-修改用户信息")
     @PostMapping(value = "update")
-    public Result<?> updUserInfo(@RequestBody ReviewUser reviewUser) {
+    public Result<?> updUserInfo(HttpServletRequest request, @RequestBody ReviewUser reviewUser) {
 
         if (reviewUser == null || StrUtil.isBlank(reviewUser.getUserId())) {
             return Result.error(300,"用户信息为空");
         }
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                .getRequest();
-        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        Object userId = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        ReviewUser reviewUserEntity = frontUserService.getById(userId.toString());
+        //ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         if (!reviewUser.getUserId().equals(reviewUserEntity.getUserId())) {
             return Result.error(400,"非本人登陆，不允许修改");
         }
-        ReviewUser reviewUserOld = frontUserService.getById(reviewUser.getUserId());
-        if (reviewUserOld == null) {
-            return Result.error(404,"用户不存在");
-        }
-        /*if (!reviewUserOld.getOpenid().equals(reviewUser.getOpenid())) {
-            return Result.error(400,"用户openid不可修改");
-        }*/
-        //需要修改手机号
-        if(!reviewUserOld.getMobilePhone().equals(reviewUser.getMobilePhone())) {
-            //check 验证码
-            /*String redisKey1 = CommonConstant.PHONE_REDIS_KEY_PRE + reviewUser.getMobilePhone();
-            Object object1= redisUtil.get(redisKey1);*/
-            String msgCode = (String)request.getSession().getAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);
-            if (StringUtils.isBlank(msgCode) || !msgCode.equals(reviewUser.getMsgCode())) {
-                return Result.error(301,"短信验证码不正确或已过期");
+        try {
+            ReviewUser reviewUserOld = frontUserService.getById(reviewUser.getUserId());
+            if (reviewUserOld == null) {
+                return Result.error(404,"用户不存在");
             }
+            if (!reviewUserOld.getOpenid().equals(reviewUser.getOpenid())) {
+                return Result.error(400,"用户openid不可修改");
+            }
+            //需要修改手机号
+            if(!reviewUserOld.getMobilePhone().equals(reviewUser.getMobilePhone())) {
+                //check 验证码
+                String msgCode = (String)request.getSession().getAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);
+                if (StringUtils.isBlank(msgCode) || !msgCode.equals(reviewUser.getMsgCode())) {
+                    return Result.error(301,"短信验证码不正确或已过期");
+                }
+            }
+            MyBeanUtils.copyBeanNotNull2Bean(reviewUser, reviewUserOld);
+            reviewUserOld.setUpdateTime(new Date());
+            frontUserService.saveOrUpdate(reviewUserOld);
+            request.getSession().removeAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);
+        } catch (Exception e) {
+            return Result.error("用户信息修改失败");
         }
-        BeanUtils.copyProperties(reviewUser, reviewUserOld);
-        reviewUserOld.setUpdateTime(new Date());
-        frontUserService.saveOrUpdate(reviewUserOld);
         return Result.OK("用户信息修改成功");
     }
 

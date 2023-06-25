@@ -15,11 +15,13 @@ import com.review.front.frontAppoint.service.IReviewExpertReserveService;
 import com.review.front.frontAppoint.vo.BeGoodAt;
 import com.review.front.frontAppoint.vo.ConsultationVO;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
+import com.review.front.frontUser.service.IFrontUserService;
 import com.review.manage.expert.entity.ExpertLongDistanceTrain;
 import com.review.manage.expert.entity.ReviewExpert;
 import com.review.manage.expert.entity.ReviewExpertCalendarEntity;
 import com.review.manage.expert.service.IExpertLongDistanceTrainService;
 import com.review.manage.expert.vo.ReviewExpertCalendarVo;
+import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.userManage.entity.ReviewUser;
 import com.review.manage.userManage.service.IReviewUserService;
 import io.swagger.annotations.Api;
@@ -40,6 +42,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,6 +70,8 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
 
     @Autowired
     private IExpertLongDistanceTrainService distanceTrainService;
+    @Autowired
+    private IFrontUserService frontUserService;
 
     /**
      * 小程序-专家列表查询
@@ -116,6 +121,44 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
             record.get(i).setRealPrice(record.get(i).getOrgPrice().subtract(record.get(i).getDicountPrice()));
         }
         return Result.OK(pageList);
+    }
+
+    @AutoLog(value = "小程序-专家列表模糊查询")
+    @PostMapping(value = "listByLike")
+    public Result<List<ReviewExpert>> listByLike(@RequestBody ReviewExpert reviewExpert, HttpServletRequest req) {
+        QueryWrapper<ReviewExpert> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("expert_name",reviewExpert.getExpertName());
+        List<ReviewExpert> record = appointExpertService.list(queryWrapper);
+        for (int i = 0; i < record.size(); i++) {
+            List<BeGoodAt> beGoodAtList = reviewExpertReserveService.getBeGoodAtList(record.get(i).getId());
+            List<String> beGoodAtCodeList = new ArrayList<>();
+            for (int j = 0; j < beGoodAtList.size(); j++) {
+                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtEmotion())){
+                    beGoodAtCodeList.add("be_good_at_emotion");
+                }
+                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtRelation())){
+                    beGoodAtCodeList.add("be_good_at_relation");
+                }
+                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtFamilyTrouble())){
+                    beGoodAtCodeList.add("be_good_at_family_trouble");
+                }
+                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtMarriage())){
+                    beGoodAtCodeList.add("be_good_at_marriage");
+                }
+            }
+            List<BeGoodAt> beGoodAtNameList = reviewExpertReserveService.getBeGoodAtNameList(beGoodAtCodeList);
+            for (int k = 0; k < beGoodAtNameList.size(); k++) {
+                beGoodAtNameList.get(k).setId(record.get(i).getId());
+            }
+            if (beGoodAtNameList != null && beGoodAtNameList.size() > 3){
+                List<BeGoodAt> beGoodAtNameListLimit = beGoodAtNameList.stream().skip(0).limit(3).collect(Collectors.toList());
+                record.get(i).setBeGoodAtList(beGoodAtNameListLimit);
+            }else {
+                record.get(i).setBeGoodAtList(beGoodAtNameList);
+            }
+            record.get(i).setRealPrice(record.get(i).getOrgPrice().subtract(record.get(i).getDicountPrice()));
+        }
+        return Result.OK(record);
     }
 
     /**
@@ -201,7 +244,9 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         String userId = user.getId();*/
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
-        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        //ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        Object userId1 = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        ReviewUser reviewUserEntity = frontUserService.getById(userId1.toString());
         String userId = reviewUserEntity.getUserId();
         if (StrUtil.isNotBlank(reviewExpertReserveList.get(0).getUserId()) && reviewExpertReserveList.get(0).getCharge() == Constants.ClassCharge) {
             //判断用户是否支付了问诊费用

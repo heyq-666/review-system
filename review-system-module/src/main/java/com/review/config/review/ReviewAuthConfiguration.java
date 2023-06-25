@@ -19,8 +19,18 @@ public class ReviewAuthConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //小程序端需要拦截的url
-        /*String uniAppUrl = "/reviewFront/notice/list";
-        registry.addInterceptor(reviewAuthInterceptor()).addPathPatterns(uniAppUrl);*/
+        //小程序端不需要拦截的url
+        /*List<String> excludePathPatternsList = new ArrayList<String>();
+        excludePathPatternsList.add("review/reviewFront/user/register");
+        excludePathPatternsList.add("review/reviewFront/user/getUserInfoByOpenid");
+        excludePathPatternsList.add("review/reviewFront/reviewClass/getReviewClass");
+        excludePathPatternsList.add("review/reviewFront/user/getOpenid");
+        excludePathPatternsList.add("review/reviewFront/project/getReviewProjectDetail");
+        excludePathPatternsList.add("review/reviewFront/subject/getReviewSubjectClass");
+        excludePathPatternsList.add("review/reviewFront/sendMsg/SendMsgCode");
+        excludePathPatternsList.add("review/reviewFront/notice/list");
+        excludePathPatternsList.add("review/reviewFront/notice/detail");
+        excludePathPatternsList.add("review/reviewFront/banner/list");
+        registry.addInterceptor(reviewAuthInterceptor()).excludePathPatterns(excludePathPatternsList);*/
     }
 }
