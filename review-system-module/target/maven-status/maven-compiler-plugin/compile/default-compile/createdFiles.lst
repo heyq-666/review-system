@@ -183,7 +183,6 @@ com\review\front\frontOrder\service\impl\ReviewPayLogServiceImpl.class
 com\review\manage\project\entity\ReviewProjectClassEntity.class
 com\review\common\httpclient\HttpClientUtils.class
 com\review\manage\reviewOrder\entity\ReviewOrder.class
-com\review\config\review\ReviewAuthInterceptor.class
 com\review\manage\subject\service\IReviewSubjectService.class
 com\review\front\frontProject\service\IFrontProjectService.class
 com\review\manage\expert\mapper\ReviewExpertCalendarMapper.class
@@ -201,7 +200,6 @@ com\review\common\PayUtils.class
 com\review\manage\banner\vo\ReviewBannerVo.class
 com\review\manage\expert\service\impl\ReviewExpertCalendarImpl.class
 com\review\common\httpclient\HttpClientBuilder$1.class
-com\review\config\review\ReviewAuthConfiguration.class
 com\review\front\frontOrder\service\IReviewPayLogService.class
 com\review\manage\project\controller\ReviewProjectController.class
 com\review\front\frontReviewClass\vo\ReviewResultVO.class

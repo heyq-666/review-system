@@ -62,6 +62,7 @@ public class ShiroConfig {
     @Bean("shiroFilterFactoryBean")
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
         CustomShiroFilterFactoryBean shiroFilterFactoryBean = new CustomShiroFilterFactoryBean();
+        ShiroFilterFactoryBean shiroFilterFactoryBean1 = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // 拦截器
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
@@ -132,7 +133,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/jmreport/**", "anon");
         filterChainDefinitionMap.put("/**/*.js.map", "anon");
         filterChainDefinitionMap.put("/**/*.css.map", "anon");
-        
+
         //大屏模板例子
         filterChainDefinitionMap.put("/test/bigScreen/**", "anon");
         filterChainDefinitionMap.put("/bigscreen/template1/**", "anon");
@@ -158,42 +159,29 @@ public class ShiroConfig {
         //如果cloudServer为空 则说明是单体 需要加载跨域配置【微服务跨域切换】
         Object cloudServer = env.getProperty(CommonConstant.CLOUD_SERVER_KEY);
         filterMap.put("jwt", new JwtFilter(cloudServer==null));
+
+        // 添加自己的过滤器并且取名为review
+        //Map<String, Filter> reviewFilterMap = new HashMap<String, Filter>();
+        List<String> ex = new ArrayList<>();
+        filterMap.put("review",new ReviewFilter(ex));
+
         shiroFilterFactoryBean.setFilters(filterMap);
         // <!-- 过滤链定义，从上向下顺序执行，一般将/**放在最为下边
-        /*filterChainDefinitionMap.put("/review/reviewFront/notice/list", "jwt");
-        filterChainDefinitionMap.put("/review/reviewFront/banner/list", "jwt");
-        filterChainDefinitionMap.put("/review/reviewFront/reviewClass/getReviewClass", "jwt");
-        filterChainDefinitionMap.put("/review/reviewFront/subject/getReviewSubjectClass", "jwt");
-        filterChainDefinitionMap.put("/review/reviewFront/project/getReviewProjectDetail","jwt");
-        filterChainDefinitionMap.put("/review/reviewFront/user/getOpenid","jwt");*/
         filterChainDefinitionMap.put("/**", "jwt");
-        Map<String, Filter> reviewFilterMap = new HashMap<String, Filter>(1);
-        List<String> ex = new ArrayList<>();
-        ex.add("/review/reviewFront/user/register");
-        ex.add("/review/reviewFront/user/getUserInfoByOpenid");
-        ex.add("/review/reviewFront/reviewClass/getReviewClass");
-        ex.add("/review/reviewFront/user/getOpenid");
-        ex.add("/review/reviewFront/project/getReviewProjectDetail");
-        ex.add("/review/reviewFront/subject/getReviewSubjectClass");
-        ex.add("/review/reviewFront/sendMsg/SendMsgCode");
-        ex.add("/review/reviewFront/notice/list");
-        ex.add("/review/reviewFront/notice/detail");
-        ex.add("/review/reviewFront/banner/list");
-        reviewFilterMap.put("review",new ReviewFilter(ex));
-        shiroFilterFactoryBean.setFilters(reviewFilterMap);
-        /*filterChainDefinitionMap.put("/reviewFront/**", "review");
-        filterChainDefinitionMap.put("/reviewFront/user/register", "review");
-        filterChainDefinitionMap.put("/reviewFront/user/getUserInfoByOpenid", "review");
-        filterChainDefinitionMap.put("/reviewFront/reviewClass/getReviewClass", "review");
-        filterChainDefinitionMap.put("/reviewFront/user/getOpenid", "review");
-        filterChainDefinitionMap.put("/reviewFront/project/getReviewProjectDetail", "review");
-        filterChainDefinitionMap.put("/reviewFront/subject/getReviewSubjectClass", "review");
-        filterChainDefinitionMap.put("/reviewFront/sendMsg/SendMsgCode", "review");
-        filterChainDefinitionMap.put("/reviewFront/notice/list", "review");
-        filterChainDefinitionMap.put("/reviewFront/notice/detail", "review");
-        filterChainDefinitionMap.put("/reviewFront/banner/list", "review");*/
+
+        /*shiroFilterFactoryBean.setFilters(reviewFilterMap);*/
         filterChainDefinitionMap.put("/reviewFront/**", "review");
-        filterChainDefinitionMap.put("/**", "review");
+
+        /*ex.add("/reviewFront/user/register");
+        ex.add("/reviewFront/user/getUserInfoByOpenid");
+        ex.add("/reviewFront/reviewClass/getReviewClass");
+        ex.add("/reviewFront/user/getOpenid");
+        ex.add("/reviewFront/project/getReviewProjectDetail");
+        ex.add("/reviewFront/subject/getReviewSubjectClass");
+        ex.add("/reviewFront/sendMsg/SendMsgCode");
+        ex.add("/reviewFront/notice/list");
+        ex.add("/reviewFront/notice/detail");
+        ex.add("/reviewFront/banner/list");*/
 
         //未授权界面返回JSON
         shiroFilterFactoryBean.setUnauthorizedUrl("/sys/common/403");
@@ -298,7 +286,7 @@ public class ShiroConfig {
             //update-begin--Author:scott Date:20210531 for：修改集群模式下未设置redis密码的bug issues/I3QNIC
             if (oConvertUtils.isNotEmpty(lettuceConnectionFactory.getPassword())) {
                 JedisCluster jedisCluster = new JedisCluster(portSet, 2000, 2000, 5,
-                    lettuceConnectionFactory.getPassword(), new GenericObjectPoolConfig());
+                        lettuceConnectionFactory.getPassword(), new GenericObjectPoolConfig());
                 redisManager.setPassword(lettuceConnectionFactory.getPassword());
                 redisManager.setJedisCluster(jedisCluster);
             } else {

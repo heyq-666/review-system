@@ -30,9 +30,12 @@ public class WxAppletsUtils {
 
     public final static String openidUrl = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&grant_type=authorization_code&&js_code=%s";
 
-    public final static String payKey = "xinzhaitongxing18510801311paykey";
+    //public final static String payKey = "xinzhaitongxing18510801311paykey";
+    public final static String payKey = "wolianji18510801311wolianji01311";
 
-    public final static String mchID = "1635457862";
+    //public final static String mchID = "1635457862";
+
+    public final static String mchID = "1647976610";
 
     public final static String notifyUrl = ResourceUtil.getConfigByName("wx_pay_notify_url");
 
