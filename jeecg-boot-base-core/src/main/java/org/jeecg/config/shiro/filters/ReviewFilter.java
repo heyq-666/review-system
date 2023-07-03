@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.jeecg.modules.base.entity.ReviewUser;
 import org.jeecg.modules.base.service.BaseCommonService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -17,16 +14,13 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2023/6/25
  */
 @Slf4j
-@Component
+/*@Component*/
 public class ReviewFilter extends BasicHttpAuthenticationFilter{
-
-    private static BaseCommonService baseCommonService;
-
-    @Autowired
-    public void setBaseCommonService(BaseCommonService baseCommonService){
-        ReviewFilter.baseCommonService = baseCommonService;
+    private BaseCommonService baseCommonService;
+    public ReviewFilter(){};
+    public ReviewFilter(BaseCommonService baseCommonService){
+        this.baseCommonService = baseCommonService;
     }
-
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;

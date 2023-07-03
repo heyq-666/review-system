@@ -19,6 +19,7 @@ import org.jeecg.config.JeecgBaseConfig;
 import org.jeecg.config.shiro.filters.CustomShiroFilterFactoryBean;
 import org.jeecg.config.shiro.filters.JwtFilter;
 import org.jeecg.config.shiro.filters.ReviewFilter;
+import org.jeecg.modules.base.service.BaseCommonService;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -50,6 +51,9 @@ public class ShiroConfig {
     private Environment env;
     @Resource
     private JeecgBaseConfig jeecgBaseConfig;
+
+    @Resource
+    private BaseCommonService baseCommonService;
 
     /**
      * Filter Chain定义说明
@@ -160,7 +164,7 @@ public class ShiroConfig {
         filterMap.put("jwt", new JwtFilter(cloudServer==null));
 
         // 添加自己的过滤器并且取名为review
-        filterMap.put("review",new ReviewFilter());
+        filterMap.put("review",new ReviewFilter(baseCommonService));
 
         shiroFilterFactoryBean.setFilters(filterMap);
         // <!-- 过滤链定义，从上向下顺序执行，一般将/**放在最为下边
