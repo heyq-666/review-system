@@ -21,7 +21,6 @@ import org.jeecg.config.shiro.filters.JwtFilter;
 import org.jeecg.config.shiro.filters.ReviewFilter;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -161,27 +160,13 @@ public class ShiroConfig {
         filterMap.put("jwt", new JwtFilter(cloudServer==null));
 
         // 添加自己的过滤器并且取名为review
-        //Map<String, Filter> reviewFilterMap = new HashMap<String, Filter>();
-        List<String> ex = new ArrayList<>();
-        filterMap.put("review",new ReviewFilter(ex));
+        filterMap.put("review",new ReviewFilter());
 
         shiroFilterFactoryBean.setFilters(filterMap);
         // <!-- 过滤链定义，从上向下顺序执行，一般将/**放在最为下边
         filterChainDefinitionMap.put("/**", "jwt");
 
-        /*shiroFilterFactoryBean.setFilters(reviewFilterMap);*/
         filterChainDefinitionMap.put("/reviewFront/**", "review");
-
-        /*ex.add("/reviewFront/user/register");
-        ex.add("/reviewFront/user/getUserInfoByOpenid");
-        ex.add("/reviewFront/reviewClass/getReviewClass");
-        ex.add("/reviewFront/user/getOpenid");
-        ex.add("/reviewFront/project/getReviewProjectDetail");
-        ex.add("/reviewFront/subject/getReviewSubjectClass");
-        ex.add("/reviewFront/sendMsg/SendMsgCode");
-        ex.add("/reviewFront/notice/list");
-        ex.add("/reviewFront/notice/detail");
-        ex.add("/reviewFront/banner/list");*/
 
         //未授权界面返回JSON
         shiroFilterFactoryBean.setUnauthorizedUrl("/sys/common/403");

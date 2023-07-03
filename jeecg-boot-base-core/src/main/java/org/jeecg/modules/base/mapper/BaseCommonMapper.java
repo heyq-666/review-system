@@ -3,6 +3,7 @@ package org.jeecg.modules.base.mapper;
 import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.common.api.dto.LogDTO;
+import org.jeecg.modules.base.entity.ReviewUser;
 
 /**
  * @Description: BaseCommonMapper
@@ -17,4 +18,5 @@ public interface BaseCommonMapper {
     @InterceptorIgnore(illegalSql = "true", tenantLine = "true")
     void saveLog(@Param("dto")LogDTO dto);
 
+    ReviewUser getUserInfoByUserId(@Param("userId")String userId);
 }

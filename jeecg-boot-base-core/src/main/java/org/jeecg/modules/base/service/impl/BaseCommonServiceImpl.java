@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.dto.LogDTO;
+import org.jeecg.modules.base.entity.ReviewUser;
 import org.jeecg.modules.base.mapper.BaseCommonMapper;
 import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.common.system.vo.LoginUser;
@@ -85,6 +86,10 @@ public class BaseCommonServiceImpl implements BaseCommonService {
         addLog(logContent, logType, operateType, null);
     }
 
+    @Override
+    public ReviewUser getUserInfoByUserId(String userId) {
+        return baseCommonMapper.getUserInfoByUserId(userId);
+    }
 
 
 }

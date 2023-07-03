@@ -22,5 +22,7 @@
             #{dto.createBy,jdbcType=VARCHAR}
         )
     </insert>
-
+    <select id="getUserInfoByUserId" parameterType="String" resultType="org.jeecg.modules.base.entity.ReviewUser">
+        select * from review_user where user_id = #{userId}
+    </select>
 </mapper>

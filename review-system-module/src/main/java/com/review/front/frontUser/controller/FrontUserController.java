@@ -115,9 +115,9 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
         if (reviewUser == null || StrUtil.isBlank(reviewUser.getUserId())) {
             return Result.error(300,"用户信息为空");
         }
-        Object userId = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
-        ReviewUser reviewUserEntity = frontUserService.getById(userId.toString());
-        //ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        /*Object userId = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        ReviewUser reviewUserEntity = frontUserService.getById(userId.toString());*/
+        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         if (!reviewUser.getUserId().equals(reviewUserEntity.getUserId())) {
             return Result.error(400,"非本人登陆，不允许修改");
         }

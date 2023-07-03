@@ -240,13 +240,9 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
     @PostMapping(value = "queryMyConsultationDetail")
     public Result<List<ConsultationVO>> queryMyConsultationDetail(@RequestBody ConsultationVO consultationVO) {
         List<ConsultationVO> reviewExpertReserveList = reviewExpertReserveService.getMyConsultationDetail(consultationVO.getId());
-        /*LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        String userId = user.getId();*/
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
-        //ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
-        Object userId1 = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
-        ReviewUser reviewUserEntity = frontUserService.getById(userId1.toString());
+        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         String userId = reviewUserEntity.getUserId();
         if (StrUtil.isNotBlank(reviewExpertReserveList.get(0).getUserId()) && reviewExpertReserveList.get(0).getCharge() == Constants.ClassCharge) {
             //判断用户是否支付了问诊费用

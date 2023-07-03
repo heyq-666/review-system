@@ -1,7 +1,6 @@
 package com.review.front.frontReviewClass.controller;
 
 import cn.hutool.core.util.StrUtil;
-import com.aliyuncs.kms.transform.v20160120.GetParametersForImportResponseUnmarshaller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.review.common.Constants;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
@@ -15,17 +14,16 @@ import com.review.manage.userManage.entity.ReviewUser;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.base.controller.JeecgController;
-import org.jeecg.common.system.vo.LoginUser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -76,9 +74,7 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     @PostMapping(value = "/completeReview")
     public Result<ReviewResult> completeReview(@RequestBody QuestionVO[] resultArr, HttpServletRequest request) {
 
-        Object userId = request.getSession().getAttribute(Constants.REVIEW_LOGIN_USER);
-        //ReviewUser user = (ReviewUser) request.getSession().getAttribute(Constants.REVIEW_LOGIN_USER);
-        ReviewUser user = frontUserService.getById(userId.toString());
+        ReviewUser user = (ReviewUser) request.getSession().getAttribute(Constants.REVIEW_LOGIN_USER);
         ReviewResult reviewResult = null;
         List<QuestionVO> resultList = Arrays.asList(resultArr);
         if (user == null) {
@@ -131,10 +127,8 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
         }
         ReviewClassPage reviewClassVO = new ReviewClassPage();
         BeanUtils.copyProperties(reviewClassInfo, reviewClassVO);
-        //session获取userId
-        Object userId = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
-        ReviewUser reviewUser = frontUserService.getById(userId.toString());
-        //ReviewUser reviewUser = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        /*MyBeanUtils.copyBean2Bean(reviewClassVO,reviewClassInfo);*/
+        org.jeecg.modules.base.entity.ReviewUser reviewUser = (org.jeecg.modules.base.entity.ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         if (reviewUser != null && StrUtil.isNotBlank(reviewUser.getUserId()) && reviewClassInfo.getCharge() == Constants.ClassCharge) {
             //判断用户是否已经购买了课程
             reviewClassVO.setBuy(frontReviewClassService.userBuy(reviewClass.getClassId(), reviewUser.getUserId()));

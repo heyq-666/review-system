@@ -128,7 +128,6 @@ D:\jeecg-review\review-system\jeecg-boot-base-core\src\main\java\org\jeecg\commo
 D:\jeecg-review\review-system\jeecg-boot-base-core\src\main\java\org\jeecg\common\aspect\annotation\AutoLowApp.java
 D:\jeecg-review\review-system\jeecg-boot-base-core\src\main\java\org\jeecg\config\AutoPoiDictConfig.java
 D:\jeecg-review\review-system\jeecg-boot-base-core\src\main\java\org\jeecg\config\mybatis\MybatisPlusSaasConfig.java
-D:\jeecg-review\review-system\jeecg-boot-base-core\src\main\java\org\jeecg\modules\base\service\IFrontUserService.java
 D:\jeecg-review\review-system\jeecg-boot-base-core\src\main\java\org\jeecg\common\system\query\QueryCondition.java
 D:\jeecg-review\review-system\jeecg-boot-base-core\src\main\java\org\jeecg\common\constant\ServiceNameConstants.java
 D:\jeecg-review\review-system\jeecg-boot-base-core\src\main\java\org\jeecg\config\thirdapp\ThirdAppTypeItemVo.java

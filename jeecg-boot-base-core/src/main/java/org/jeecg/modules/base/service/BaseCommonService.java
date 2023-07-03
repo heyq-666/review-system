@@ -2,6 +2,7 @@ package org.jeecg.modules.base.service;
 
 import org.jeecg.common.api.dto.LogDTO;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.modules.base.entity.ReviewUser;
 
 /**
  * common接口
@@ -32,4 +33,10 @@ public interface BaseCommonService {
      */
     void addLog(String logContent, Integer logType, Integer operateType);
 
+    /**
+     * 通过userId获取用户信息
+     * @param userId
+     * @return
+     */
+    ReviewUser getUserInfoByUserId(String userId);
 }

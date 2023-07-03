@@ -7,7 +7,6 @@ import com.review.front.frontOrder.vo.PreOrderVO;
 import com.review.front.frontUser.service.IFrontUserService;
 import com.review.manage.reviewOrder.entity.ReviewOrder;
 import com.review.manage.reviewOrder.vo.ReviewOrderVO;
-import com.review.manage.userManage.entity.ReviewUser;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -55,13 +54,11 @@ public class FrontOrderController extends JeecgController<ReviewOrder, IFrontOrd
     public Result<PreOrderVO> createPrePayOrder(@RequestBody ReviewOrderVO reviewOrder){
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
-        Object userId = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
-        ReviewUser reviewUserEntity = frontUserService.getById(userId.toString());
-        //ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        org.jeecg.modules.base.entity.ReviewUser reviewUserEntity = (org.jeecg.modules.base.entity.ReviewUser) request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         reviewOrder.setUserId(reviewUserEntity.getUserId());
         reviewOrder.setOperator(reviewUserEntity.getUserName());
         reviewOrder.setGroupId(reviewUserEntity.getGroupId());
-        reviewOrder.setOpenid("");
+        reviewOrder.setOpenid(reviewUserEntity.getOpenid());
         reviewOrder.setIpAddr(IpUtils.getIpAddr(SpringContextUtils.getHttpServletRequest()));
         reviewOrder.setBroswer(BrowserUtils.checkBrowse(SpringContextUtils.getHttpServletRequest()));
         reviewOrder.setMobilePhone(reviewUserEntity.getMobilePhone());
