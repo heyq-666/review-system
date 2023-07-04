@@ -1,11 +1,10 @@
 package org.jeecg.modules.system.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.modules.system.entity.SysDepartRole;
 import org.jeecg.modules.system.mapper.SysDepartRoleMapper;
 import org.jeecg.modules.system.service.ISysDepartRoleService;
 import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.util.List;
 

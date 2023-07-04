@@ -44,4 +44,9 @@ public class ReviewSubjectEntity implements Serializable {
     private String operator;
 
     private transient String classIds;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

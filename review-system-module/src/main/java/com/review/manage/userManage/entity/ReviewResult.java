@@ -70,4 +70,9 @@ public class ReviewResult implements Serializable {
 	@Excel(name = "group_id", width = 15)
     @ApiModelProperty(value = "groupId")
     private String groupId;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

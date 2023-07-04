@@ -1,6 +1,7 @@
 package org.jeecg.modules.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.common.util.IpUtils;
 import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.common.util.oConvertUtils;
@@ -8,8 +9,6 @@ import org.jeecg.modules.system.entity.SysDepartRolePermission;
 import org.jeecg.modules.system.mapper.SysDepartRolePermissionMapper;
 import org.jeecg.modules.system.service.ISysDepartRolePermissionService;
 import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;

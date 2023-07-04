@@ -117,4 +117,9 @@ public class SysDataSource {
     @Excel(name = "所属部门", width = 15)
     @ApiModelProperty(value = "所属部门")
     private java.lang.String sysOrgCode;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

@@ -19,6 +19,16 @@ public class SysPermissionTree implements Serializable {
 	 */
 	private String id;
 
+	/**
+	 * 租户ID
+	 */
+	private java.lang.Long tenantId;
+
+	/**
+	 * 是否是基础菜单 1是0否  如果是1 新增租户的时候需要复制
+	 */
+	private java.lang.Boolean baseFlag;
+
 	private String key;
 	private String title;
 
@@ -230,6 +240,22 @@ public class SysPermissionTree implements Serializable {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Long getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(Long tenantId) {
+		this.tenantId = tenantId;
+	}
+
+	public Boolean getBaseFlag() {
+		return baseFlag;
+	}
+
+	public void setBaseFlag(Boolean baseFlag) {
+		this.baseFlag = baseFlag;
 	}
 
 	public String getParentId() {

@@ -59,4 +59,9 @@ public class ReviewVariateEntity implements Serializable {
     private Integer sortNum;
 
 	private transient String className;
+
+	/**
+	 * 租户ID
+	 */
+	private Long tenantId;
 } 

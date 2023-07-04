@@ -48,4 +48,9 @@ public class ReviewBannerEntity {
 
     @ApiModelProperty(value = "创建人")
     private String operator;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

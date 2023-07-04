@@ -4,7 +4,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.exceptions.ClientException;
 import com.review.common.Constants;
-import com.review.common.WxAppletsUtils;
+import org.jeecg.common.util.WxAppletsUtils;
 import com.review.common.httpclient.HttpClientUtils;
 import com.review.front.frontAppoint.entity.ReviewExpertReserveEntity;
 import com.review.front.frontAppoint.service.IReviewExpertReserveService;

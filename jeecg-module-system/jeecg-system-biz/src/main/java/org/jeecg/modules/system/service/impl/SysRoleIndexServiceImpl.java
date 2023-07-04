@@ -1,11 +1,10 @@
 package org.jeecg.modules.system.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.modules.system.entity.SysRoleIndex;
 import org.jeecg.modules.system.mapper.SysRoleIndexMapper;
 import org.jeecg.modules.system.service.ISysRoleIndexService;
 import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 /**
  * @Description: 角色首页配置

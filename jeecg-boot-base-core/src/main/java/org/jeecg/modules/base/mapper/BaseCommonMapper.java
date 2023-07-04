@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.common.api.dto.LogDTO;
 import org.jeecg.modules.base.entity.ReviewUser;
+import org.jeecg.modules.base.entity.SysTenantVO;
 
 /**
  * @Description: BaseCommonMapper
@@ -19,4 +20,6 @@ public interface BaseCommonMapper {
     void saveLog(@Param("dto")LogDTO dto);
 
     ReviewUser getUserInfoByUserId(@Param("userId")String userId);
+
+    SysTenantVO getSysTenantInfo(@Param("id")Long tenantId);
 }

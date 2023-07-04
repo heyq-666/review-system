@@ -1,15 +1,14 @@
 package org.jeecg.modules.system.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -81,5 +80,10 @@ public class SysDict implements Serializable {
      */
     private Date updateTime;
 
+    /**租户ID*/
+    private Long tenantId;
+    
+    /** 关联的低代码应用ID */
+    private String lowAppId;
 
 }

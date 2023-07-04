@@ -278,7 +278,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
 	@Override
 	public boolean checkPermDuplication(String id, String url,Boolean alwaysShow) {
 		QueryWrapper<SysPermission> qw=new QueryWrapper();
-		qw.lambda().eq(true, SysPermission::getUrl,url).ne(oConvertUtils.isNotEmpty(id), SysPermission::getId,id).eq(true, SysPermission::isAlwaysShow,alwaysShow);
+		qw.lambda().eq(true,SysPermission::getUrl,url).ne(oConvertUtils.isNotEmpty(id),SysPermission::getId,id).eq(true,SysPermission::isAlwaysShow,alwaysShow);
 		return count(qw)==0;
 	}
 

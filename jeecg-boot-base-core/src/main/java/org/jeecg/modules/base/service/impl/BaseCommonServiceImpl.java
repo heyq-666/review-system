@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.dto.LogDTO;
+import org.jeecg.common.util.DateUtils;
 import org.jeecg.modules.base.entity.ReviewUser;
+import org.jeecg.modules.base.entity.SysTenantVO;
 import org.jeecg.modules.base.mapper.BaseCommonMapper;
 import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.IpUtils;
 import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.common.util.oConvertUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,6 +28,8 @@ import java.util.*;
 @Service
 @Slf4j
 public class BaseCommonServiceImpl implements BaseCommonService {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource
     private BaseCommonMapper baseCommonMapper;
@@ -91,5 +97,30 @@ public class BaseCommonServiceImpl implements BaseCommonService {
         return baseCommonMapper.getUserInfoByUserId(userId);
     }
 
+    @Override
+    public SysTenantVO getSysTenantById(Long tenantId) {
+        return baseCommonMapper.getSysTenantInfo(tenantId);
+    }
 
+    @Override
+    public boolean checkSysTenant(Long tenantId) {
+        if (tenantId != -1) {
+            SysTenantVO sysTenantVO = this.getSysTenantById(tenantId);
+            if (sysTenantVO == null) {
+                logger.warn("tenantIdL:%d is not exist", tenantId);
+                return false;
+            }
+            Date now = DateUtils.getDate();
+            if (sysTenantVO.getBeginDate() != null && sysTenantVO.getEndDate() != null) {
+                if (now.before(sysTenantVO.getEndDate()) && now.after(sysTenantVO.getBeginDate())) {
+                    return true;
+                }
+                return false;
+            } else {
+                logger.warn("tenantIdL:%d is not exist", tenantId);
+                return false;
+            }
+        }
+        return true;
+    }
 }

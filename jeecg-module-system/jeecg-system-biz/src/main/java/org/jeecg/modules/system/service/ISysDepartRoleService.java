@@ -1,7 +1,7 @@
 package org.jeecg.modules.system.service;
 
-import org.jeecg.modules.system.entity.SysDepartRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.system.entity.SysDepartRole;
 
 import java.util.List;
 

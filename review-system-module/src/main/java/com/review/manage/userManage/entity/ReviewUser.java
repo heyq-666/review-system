@@ -100,4 +100,9 @@ public class ReviewUser implements Serializable {
     private transient Map<String, Object> extraObj;
 
     private transient Long projectId;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

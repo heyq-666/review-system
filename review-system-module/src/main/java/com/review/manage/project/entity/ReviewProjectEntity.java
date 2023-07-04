@@ -63,4 +63,9 @@ public class ReviewProjectEntity implements Serializable {
     /*private transient List<String> classIds;*/
 
     private transient String classIds;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

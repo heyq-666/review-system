@@ -88,4 +88,314 @@ TD.Exception { background: #A2AEE8; font-family: courier, monospace;}
 </tr>
 
 </table>
+</body></html><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>Logback Log Messages</title>
+<style  type="text/css">
+table { margin-left: 2em; margin-right: 2em; border-left: 2px solid #AAA; }
+TR.even { background: #FFFFFF; }
+TR.odd { background: #EAEAEA; }
+TR.warn TD.Level, TR.error TD.Level, TR.fatal TD.Level {font-weight: bold; color: #FF4040 }
+TD { padding-right: 1ex; padding-left: 1ex; border-right: 2px solid #AAA; }
+TD.Time, TD.Date { text-align: right; font-family: courier, monospace; font-size: smaller; }
+TD.Thread { text-align: left; }
+TD.Level { text-align: right; }
+TD.Logger { text-align: left; }
+TR.header { background: #596ED5; color: #FFF; font-weight: bold; font-size: larger; }
+TD.Exception { background: #A2AEE8; font-family: courier, monospace;}
+</style>
+
+  </head>
+<body>
+<hr/>
+<p>Log session start time Sun Jul 02 23:02:18 CST 2023</p><p></p>
+
+<table cellspacing="0">
+<tr class="header">
+<td class="Level">Level</td>
+<td class="Date">Date</td>
+<td class="Message">Message</td>
+<td class="MethodOfCaller">MethodOfCaller</td>
+<td class="FileOfCaller">FileOfCaller</td>
+<td class="LineOfCaller">LineOfCaller</td>
+</tr>
+
+
+<tr class="error even">
+<td class="Level">ERROR</td>
+<td class="Date">2023-07-02 23:02:24,223</td>
+<td class="Message">Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name &#39;org.apache.shiro.spring.config.web.autoconfigure.ShiroWebFilterConfiguration&#39;: Unsatisfied dependency expressed through field &#39;filterMap&#39;; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#39;shiroFilterFactoryBean&#39;: FactoryBean threw exception on object creation; nested exception is java.lang.IllegalArgumentException: There is no filter with name &#39;xxx&#39; to apply to chain [/reviewFront/**] in the pool of available Filters.  Ensure a filter with that name/path has first been registered with the addFilter method(s).</td>
+<td class="MethodOfCaller">onStartup</td>
+<td class="FileOfCaller">TomcatStarter.java</td>
+<td class="LineOfCaller">61</td>
+</tr>
+
+<tr class="error odd">
+<td class="Level">ERROR</td>
+<td class="Date">2023-07-02 23:02:24,451</td>
+<td class="Message">Application run failed</td>
+<td class="MethodOfCaller">reportFailure</td>
+<td class="FileOfCaller">SpringApplication.java</td>
+<td class="LineOfCaller">830</td>
+</tr>
+<tr><td class="Exception" colspan="6">org.springframework.context.ApplicationContextException: Unable to start web server; nested exception is org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:163)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:577)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:145)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:740)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:415)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.run(SpringApplication.java:303)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.run(SpringApplication.java:1312)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.run(SpringApplication.java:1301)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.jeecg.JeecgSystemApplication.main(JeecgSystemApplication.java:33)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.lang.reflect.Method.invoke(Method.java:498)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:49)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.loader.Launcher.launch(Launcher.java:108)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.loader.Launcher.launch(Launcher.java:58)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:88)
+<br />Caused by: org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:142)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.&lt;init&gt;(TomcatWebServer.java:104)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:478)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:211)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:182)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:160)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;	... 16 common frames omitted
+<br />Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name &#39;org.apache.shiro.spring.config.web.autoconfigure.ShiroWebFilterConfiguration&#39;: Unsatisfied dependency expressed through field &#39;filterMap&#39;; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#39;shiroFilterFactoryBean&#39;: FactoryBean threw exception on object creation; nested exception is java.lang.IllegalArgumentException: There is no filter with name &#39;xxx&#39; to apply to chain [/reviewFront/**] in the pool of available Filters.  Ensure a filter with that name/path has first been registered with the addFilter method(s).
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:659)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:639)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:119)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1431)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:619)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:410)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:213)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:212)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:203)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addServletContextInitializerBeans(ServletContextInitializerBeans.java:97)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.ServletContextInitializerBeans.&lt;init&gt;(ServletContextInitializerBeans.java:86)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.getServletContextInitializerBeans(ServletWebServerApplicationContext.java:260)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:234)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatStarter.onStartup(TomcatStarter.java:53)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5219)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1396)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1386)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:919)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:835)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1396)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1386)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:919)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:263)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardService.startInternal(StandardService.java:432)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:927)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.startup.Tomcat.start(Tomcat.java:486)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:123)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;	... 21 common frames omitted
+<br />Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#39;shiroFilterFactoryBean&#39;: FactoryBean threw exception on object creation; nested exception is java.lang.IllegalArgumentException: There is no filter with name &#39;xxx&#39; to apply to chain [/reviewFront/**] in the pool of available Filters.  Ensure a filter with that name/path has first been registered with the addFilter method(s).
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.FactoryBeanRegistrySupport.doGetObjectFromFactoryBean(FactoryBeanRegistrySupport.java:176)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.FactoryBeanRegistrySupport.getObjectFromFactoryBean(FactoryBeanRegistrySupport.java:101)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.getObjectForBeanInstance(AbstractBeanFactory.java:1884)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.getObjectForBeanInstance(AbstractAutowireCapableBeanFactory.java:1284)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:267)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.addCandidateEntry(DefaultListableBeanFactory.java:1607)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.findAutowireCandidates(DefaultListableBeanFactory.java:1571)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveMultipleBeans(DefaultListableBeanFactory.java:1490)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1347)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1309)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:656)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;	... 71 common frames omitted
+<br />Caused by: java.lang.IllegalArgumentException: There is no filter with name &#39;xxx&#39; to apply to chain [/reviewFront/**] in the pool of available Filters.  Ensure a filter with that name/path has first been registered with the addFilter method(s).
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.web.filter.mgt.DefaultFilterChainManager.addToChain(DefaultFilterChainManager.java:285)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.web.filter.mgt.DefaultFilterChainManager.createChain(DefaultFilterChainManager.java:168)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.spring.web.ShiroFilterFactoryBean.createFilterChainManager(ShiroFilterFactoryBean.java:439)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.jeecg.config.shiro.filters.CustomShiroFilterFactoryBean.createInstance(CustomShiroFilterFactoryBean.java:43)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.spring.web.ShiroFilterFactoryBean.getObject(ShiroFilterFactoryBean.java:382)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.spring.web.ShiroFilterFactoryBean.getObject(ShiroFilterFactoryBean.java:122)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.FactoryBeanRegistrySupport.doGetObjectFromFactoryBean(FactoryBeanRegistrySupport.java:169)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;	... 83 common frames omitted
+</td></tr></table>
+</body></html><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title>Logback Log Messages</title>
+<style  type="text/css">
+table { margin-left: 2em; margin-right: 2em; border-left: 2px solid #AAA; }
+TR.even { background: #FFFFFF; }
+TR.odd { background: #EAEAEA; }
+TR.warn TD.Level, TR.error TD.Level, TR.fatal TD.Level {font-weight: bold; color: #FF4040 }
+TD { padding-right: 1ex; padding-left: 1ex; border-right: 2px solid #AAA; }
+TD.Time, TD.Date { text-align: right; font-family: courier, monospace; font-size: smaller; }
+TD.Thread { text-align: left; }
+TD.Level { text-align: right; }
+TD.Logger { text-align: left; }
+TR.header { background: #596ED5; color: #FFF; font-weight: bold; font-size: larger; }
+TD.Exception { background: #A2AEE8; font-family: courier, monospace;}
+</style>
+
+  </head>
+<body>
+<hr/>
+<p>Log session start time Sun Jul 02 23:16:50 CST 2023</p><p></p>
+
+<table cellspacing="0">
+<tr class="header">
+<td class="Level">Level</td>
+<td class="Date">Date</td>
+<td class="Message">Message</td>
+<td class="MethodOfCaller">MethodOfCaller</td>
+<td class="FileOfCaller">FileOfCaller</td>
+<td class="LineOfCaller">LineOfCaller</td>
+</tr>
+
+
+<tr class="error even">
+<td class="Level">ERROR</td>
+<td class="Date">2023-07-02 23:16:55,949</td>
+<td class="Message">Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name &#39;org.apache.shiro.spring.config.web.autoconfigure.ShiroWebFilterConfiguration&#39;: Unsatisfied dependency expressed through field &#39;filterMap&#39;; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#39;shiroFilterFactoryBean&#39;: FactoryBean threw exception on object creation; nested exception is java.lang.IllegalArgumentException: There is no filter with name &#39;xxx&#39; to apply to chain [/reviewFront/**] in the pool of available Filters.  Ensure a filter with that name/path has first been registered with the addFilter method(s).</td>
+<td class="MethodOfCaller">onStartup</td>
+<td class="FileOfCaller">TomcatStarter.java</td>
+<td class="LineOfCaller">61</td>
+</tr>
+
+<tr class="error odd">
+<td class="Level">ERROR</td>
+<td class="Date">2023-07-02 23:16:56,149</td>
+<td class="Message">Application run failed</td>
+<td class="MethodOfCaller">reportFailure</td>
+<td class="FileOfCaller">SpringApplication.java</td>
+<td class="LineOfCaller">830</td>
+</tr>
+<tr><td class="Exception" colspan="6">org.springframework.context.ApplicationContextException: Unable to start web server; nested exception is org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:163)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:577)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:145)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:740)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:415)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.run(SpringApplication.java:303)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.run(SpringApplication.java:1312)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.SpringApplication.run(SpringApplication.java:1301)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.jeecg.JeecgSystemApplication.main(JeecgSystemApplication.java:33)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.lang.reflect.Method.invoke(Method.java:498)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:49)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.loader.Launcher.launch(Launcher.java:108)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.loader.Launcher.launch(Launcher.java:58)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.loader.JarLauncher.main(JarLauncher.java:88)
+<br />Caused by: org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:142)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.&lt;init&gt;(TomcatWebServer.java:104)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:478)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:211)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:182)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:160)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;	... 16 common frames omitted
+<br />Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name &#39;org.apache.shiro.spring.config.web.autoconfigure.ShiroWebFilterConfiguration&#39;: Unsatisfied dependency expressed through field &#39;filterMap&#39;; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#39;shiroFilterFactoryBean&#39;: FactoryBean threw exception on object creation; nested exception is java.lang.IllegalArgumentException: There is no filter with name &#39;xxx&#39; to apply to chain [/reviewFront/**] in the pool of available Filters.  Ensure a filter with that name/path has first been registered with the addFilter method(s).
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:659)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:639)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:119)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1431)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:619)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:410)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:213)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:212)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:203)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.ServletContextInitializerBeans.addServletContextInitializerBeans(ServletContextInitializerBeans.java:97)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.ServletContextInitializerBeans.&lt;init&gt;(ServletContextInitializerBeans.java:86)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.getServletContextInitializerBeans(ServletWebServerApplicationContext.java:260)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.selfInitialize(ServletWebServerApplicationContext.java:234)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatStarter.onStartup(TomcatStarter.java:53)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5219)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1396)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1386)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:919)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:835)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1396)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1386)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:134)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:919)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:263)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardService.startInternal(StandardService.java:432)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:927)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.catalina.startup.Tomcat.start(Tomcat.java:486)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:123)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;	... 21 common frames omitted
+<br />Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#39;shiroFilterFactoryBean&#39;: FactoryBean threw exception on object creation; nested exception is java.lang.IllegalArgumentException: There is no filter with name &#39;xxx&#39; to apply to chain [/reviewFront/**] in the pool of available Filters.  Ensure a filter with that name/path has first been registered with the addFilter method(s).
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.FactoryBeanRegistrySupport.doGetObjectFromFactoryBean(FactoryBeanRegistrySupport.java:176)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.FactoryBeanRegistrySupport.getObjectFromFactoryBean(FactoryBeanRegistrySupport.java:101)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.getObjectForBeanInstance(AbstractBeanFactory.java:1884)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.getObjectForBeanInstance(AbstractAutowireCapableBeanFactory.java:1284)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:267)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.addCandidateEntry(DefaultListableBeanFactory.java:1607)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.findAutowireCandidates(DefaultListableBeanFactory.java:1571)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveMultipleBeans(DefaultListableBeanFactory.java:1490)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1347)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1309)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:656)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;	... 71 common frames omitted
+<br />Caused by: java.lang.IllegalArgumentException: There is no filter with name &#39;xxx&#39; to apply to chain [/reviewFront/**] in the pool of available Filters.  Ensure a filter with that name/path has first been registered with the addFilter method(s).
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.web.filter.mgt.DefaultFilterChainManager.addToChain(DefaultFilterChainManager.java:285)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.web.filter.mgt.DefaultFilterChainManager.createChain(DefaultFilterChainManager.java:168)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.spring.web.ShiroFilterFactoryBean.createFilterChainManager(ShiroFilterFactoryBean.java:439)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.jeecg.config.shiro.filters.CustomShiroFilterFactoryBean.createInstance(CustomShiroFilterFactoryBean.java:43)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.spring.web.ShiroFilterFactoryBean.getObject(ShiroFilterFactoryBean.java:382)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.apache.shiro.spring.web.ShiroFilterFactoryBean.getObject(ShiroFilterFactoryBean.java:122)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;at org.springframework.beans.factory.support.FactoryBeanRegistrySupport.doGetObjectFromFactoryBean(FactoryBeanRegistrySupport.java:169)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;	... 83 common frames omitted
+</td></tr></table>
 </body></html>

@@ -1,7 +1,7 @@
 package org.jeecg.modules.system.service;
 
-import org.jeecg.modules.system.entity.SysDepartRolePermission;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.system.entity.SysDepartRolePermission;
 
 /**
  * @Description: 部门角色权限

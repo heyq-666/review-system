@@ -42,4 +42,9 @@ public class ReviewReportEntity implements Serializable{
 	private String createBy;
 
 	private transient String className;
+
+	/**
+	 * 租户ID
+	 */
+	private Long tenantId;
 }

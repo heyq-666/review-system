@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.review.common.Constants;
 import com.review.common.MyBeanUtils;
-import com.review.common.WxAppletsUtils;
+import org.jeecg.common.util.WxAppletsUtils;
 import com.review.front.frontProject.service.IFrontProjectService;
 import com.review.front.frontUser.service.IFrontUserService;
 import com.review.manage.project.entity.ReviewProjectEntity;
@@ -18,11 +18,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.RedisUtil;
+import org.jeecg.common.util.oConvertUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -96,6 +98,8 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
         if(null==object || !reviewUser.getMsgCode().equals(object.toString())) {
             return Result.error("短信验证码不正确或已过期！");
         }
+        long tenantId = oConvertUtils.getLong(TenantContext.getTenant(), -1);
+        reviewUser.setTenantId(tenantId);
         Result result = frontUserService.register(reviewUser);
         if (result.getCode() == 200) {
             request.getSession().removeAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);

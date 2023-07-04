@@ -1,7 +1,7 @@
 package org.jeecg.modules.system.service;
 
-import org.jeecg.modules.system.entity.SysDepartPermission;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.system.entity.SysDepartPermission;
 import org.jeecg.modules.system.entity.SysPermissionDataRule;
 
 import java.util.List;

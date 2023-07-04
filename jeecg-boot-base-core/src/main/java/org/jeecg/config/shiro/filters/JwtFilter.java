@@ -8,6 +8,7 @@ import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.config.shiro.JwtToken;
+import org.jeecg.modules.base.service.BaseCommonService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
+    private BaseCommonService baseCommonService;
+
     /**
      * 默认开启跨域设置（使用单体）
      * 微服务情况下，此属性设置为false
@@ -32,8 +35,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     private boolean allowOrigin = true;
 
     public JwtFilter(){}
-    public JwtFilter(boolean allowOrigin){
+    public JwtFilter(boolean allowOrigin, BaseCommonService baseCommonService){
         this.allowOrigin = allowOrigin;
+        this.baseCommonService = baseCommonService;
     }
 
     /**
@@ -103,6 +107,12 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         //update-begin-author:taoyan date:20200708 for:多租户用到
         String tenantId = httpServletRequest.getHeader(CommonConstant.TENANT_ID);
         TenantContext.setTenant(tenantId);
+        //判断租户是否过期
+        Long tenantIdL =  oConvertUtils.getLong(tenantId, -1);
+        if (!baseCommonService.checkSysTenant(tenantIdL)) {
+            return false;
+        }
+
         //update-end-author:taoyan date:20200708 for:多租户用到
 
         return super.preHandle(request, response);

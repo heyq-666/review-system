@@ -1,9 +1,5 @@
 package org.jeecg.common.util;
 
-import org.jeecg.config.StaticConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
@@ -12,6 +8,9 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import org.jeecg.config.StaticConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created on 17/6/7.
@@ -62,6 +61,8 @@ public class DySmsHelper {
 
         //update-begin-author：taoyan date:20200811 for:配置类数据获取
         StaticConfig staticConfig = SpringContextUtils.getBean(StaticConfig.class);
+        logger.info("阿里大鱼短信秘钥 accessKeyId：" + staticConfig.getAccessKeyId());
+        logger.info("阿里大鱼短信秘钥 accessKeySecret："+ staticConfig.getAccessKeySecret());
         setAccessKeyId(staticConfig.getAccessKeyId());
         setAccessKeySecret(staticConfig.getAccessKeySecret());
         //update-end-author：taoyan date:20200811 for:配置类数据获取
@@ -116,9 +117,9 @@ public class DySmsHelper {
     }
     
 
-    public static void main(String[] args) throws ClientException, InterruptedException {
-    	JSONObject obj = new JSONObject();
-    	obj.put("code", "1234");
-    	sendSms("13800138000", obj, DySmsEnum.SMS_VERIFICATION_CODE);
-    }
+//    public static void main(String[] args) throws ClientException, InterruptedException {
+//    	JSONObject obj = new JSONObject();
+//    	obj.put("code", "1234");
+//    	sendSms("13800138000", obj, DySmsEnum.FORGET_PASSWORD_TEMPLATE_CODE);
+//    }
 }

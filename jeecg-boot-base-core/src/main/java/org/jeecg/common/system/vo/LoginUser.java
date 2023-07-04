@@ -1,6 +1,7 @@
 package org.jeecg.common.system.vo;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.jeecg.common.desensitization.annotation.SensitiveField;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -126,5 +127,10 @@ public class LoginUser {
 
 	/**设备id uniapp推送用*/
 	private String clientId;
+
+	/**
+	 * 角色编码集合
+	 */
+	private Set<String> roleCodes;
 
 }

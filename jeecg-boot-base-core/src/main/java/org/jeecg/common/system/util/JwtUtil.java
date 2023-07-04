@@ -1,5 +1,6 @@
 package org.jeecg.common.system.util;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -243,6 +244,14 @@ public class JwtUtil {
 		//update-end-author:taoyan date:20210330 for:多租户ID作为系统变量
 		if(returnValue!=null){returnValue = returnValue + moshi;}
 		return returnValue;
+	}
+
+	public static boolean userIsAdmin() {
+		LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+		if (user != null && CollectionUtil.isNotEmpty(user.getRoleCodes()) && user.getRoleCodes().contains("admin")) {
+			return true;
+		}
+		return false;
 	}
 	
 //	public static void main(String[] args) {

@@ -28,42 +28,42 @@ public class SysThirdAccount {
 	/**编号*/
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "编号")
-	private java.lang.String id;
+	private String id;
 	/**第三方登录id*/
 	@Excel(name = "第三方登录id", width = 15)
 	@ApiModelProperty(value = "第三方登录id")
-	private java.lang.String sysUserId;
+	private String sysUserId;
 	/**登录来源*/
 	@Excel(name = "登录来源", width = 15)
 	@ApiModelProperty(value = "登录来源")
-	private java.lang.String thirdType;
+	private String thirdType;
 	/**头像*/
 	@Excel(name = "头像", width = 15)
 	@ApiModelProperty(value = "头像")
-	private java.lang.String avatar;
+	private String avatar;
 	/**状态(1-正常,2-冻结)*/
 	@Excel(name = "状态(1-正常,2-冻结)", width = 15)
 	@ApiModelProperty(value = "状态(1-正常,2-冻结)")
-	private java.lang.Integer status;
+	private Integer status;
 	/**删除状态(0-正常,1-已删除)*/
 	@Excel(name = "删除状态(0-正常,1-已删除)", width = 15)
 	@ApiModelProperty(value = "删除状态(0-正常,1-已删除)")
-	private java.lang.Integer delFlag;
+	private Integer delFlag;
 	/**真实姓名*/
 	@Excel(name = "真实姓名", width = 15)
 	@ApiModelProperty(value = "真实姓名")
-	private java.lang.String realname;
+	private String realname;
 	/**第三方用户uuid*/
 	@Excel(name = "第三方用户uuid", width = 15)
 	@ApiModelProperty(value = "第三方用户uuid")
-	private java.lang.String thirdUserUuid;
+	private String thirdUserUuid;
 	/**第三方用户账号*/
 	@Excel(name = "第三方用户账号", width = 15)
 	@ApiModelProperty(value = "第三方用户账号")
-	private java.lang.String thirdUserId;
+	private String thirdUserId;
     /**创建人*/
     @Excel(name = "创建人", width = 15)
-    private java.lang.String createBy;
+    private String createBy;
     /**创建日期*/
     @Excel(name = "创建日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
@@ -71,7 +71,7 @@ public class SysThirdAccount {
     private java.util.Date createTime;
     /**修改人*/
     @Excel(name = "修改人", width = 15)
-    private java.lang.String updateBy;
+    private String updateBy;
     /**修改日期*/
     @Excel(name = "修改日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")

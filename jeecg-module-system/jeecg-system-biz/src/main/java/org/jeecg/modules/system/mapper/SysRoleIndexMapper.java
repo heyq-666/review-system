@@ -1,10 +1,7 @@
 package org.jeecg.modules.system.mapper;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-import org.jeecg.modules.system.entity.SysRoleIndex;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.jeecg.modules.system.entity.SysRoleIndex;
 
 /**
  * @Description: 角色首页配置

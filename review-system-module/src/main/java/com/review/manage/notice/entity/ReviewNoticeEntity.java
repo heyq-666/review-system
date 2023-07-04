@@ -45,4 +45,9 @@ public class ReviewNoticeEntity {
 
     @ApiModelProperty(value = "修改时间")
     private Date updateTime;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

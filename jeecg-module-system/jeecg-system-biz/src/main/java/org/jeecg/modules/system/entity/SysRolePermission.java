@@ -56,6 +56,11 @@ public class SysRolePermission implements Serializable {
     private Date operateDate;
 
     /**
+     * 租户ID
+     */
+    private Long tenantId;
+
+    /**
      * 操作ip
      */
     private String operateIp;

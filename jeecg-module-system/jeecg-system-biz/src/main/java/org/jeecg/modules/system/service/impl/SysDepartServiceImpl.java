@@ -4,17 +4,22 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
-import org.jeecg.common.constant.CacheConstant;
+import org.apache.shiro.SecurityUtils;
+import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.constant.FillRuleConstant;
 import org.jeecg.common.constant.SymbolConstant;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.FillRuleUtil;
 import org.jeecg.common.util.YouBianCodeUtil;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.jeecg.modules.system.entity.*;
 import org.jeecg.modules.system.mapper.*;
 import org.jeecg.modules.system.model.DepartIdModel;
@@ -22,7 +27,6 @@ import org.jeecg.modules.system.model.SysDepartTreeModel;
 import org.jeecg.modules.system.service.ISysDepartService;
 import org.jeecg.modules.system.util.FindsDepartsChildrenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +57,8 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 	private SysDepartRoleUserMapper departRoleUserMapper;
 	@Autowired
 	private SysUserMapper sysUserMapper;
+	@Autowired
+	private SysDepartMapper departMapper;
 
 	@Override
 	public List<SysDepartTreeModel> queryMyDeptTreeList(String departIds) {
@@ -63,6 +69,14 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 			query.or().likeRight(SysDepart::getOrgCode,codeArr[i]);
 		}
 		query.eq(SysDepart::getDelFlag, CommonConstant.DEL_FLAG_0.toString());
+		
+		//------------------------------------------------------------------------------------------------
+		//是否开启系统管理模块的 SASS 控制
+		if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+			query.eq(SysDepart::getTenantId, oConvertUtils.getLong(TenantContext.getTenant(), -1));
+		}
+		//------------------------------------------------------------------------------------------------
+		
 		query.orderByAsc(SysDepart::getDepartOrder);
 		//将父节点ParentId设为null
 		List<SysDepart> listDepts = this.list(query);
@@ -82,9 +96,15 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 	 * queryTreeList 对应 queryTreeList 查询所有的部门数据,以树结构形式响应给前端
 	 */
 	@Override
-	@Cacheable(value = CacheConstant.SYS_DEPARTS_CACHE)
+	//@Cacheable(value = CacheConstant.SYS_DEPARTS_CACHE)
 	public List<SysDepartTreeModel> queryTreeList() {
 		LambdaQueryWrapper<SysDepart> query = new LambdaQueryWrapper<SysDepart>();
+		//------------------------------------------------------------------------------------------------
+		//是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+		if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+			query.eq(SysDepart::getTenantId, oConvertUtils.getLong(TenantContext.getTenant(), -1));
+		}   
+		//------------------------------------------------------------------------------------------------
 		query.eq(SysDepart::getDelFlag, CommonConstant.DEL_FLAG_0.toString());
 		query.orderByAsc(SysDepart::getDepartOrder);
 		List<SysDepart> list = this.list(query);
@@ -108,6 +128,12 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 		if(oConvertUtils.isNotEmpty(ids)){
 			query.in(true,SysDepart::getId,ids.split(","));
 		}
+		//------------------------------------------------------------------------------------------------
+		//是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+		if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+			query.eq(SysDepart::getTenantId, oConvertUtils.getLong(TenantContext.getTenant(), -1));
+		}
+		//------------------------------------------------------------------------------------------------
 		query.orderByAsc(SysDepart::getDepartOrder);
 		List<SysDepart> list= this.list(query);
 		for (SysDepart depart : list) {
@@ -117,11 +143,17 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 
 	}
 
-	@Cacheable(value = CacheConstant.SYS_DEPART_IDS_CACHE)
+	//@Cacheable(value = CacheConstant.SYS_DEPART_IDS_CACHE)
 	@Override
 	public List<DepartIdModel> queryDepartIdTreeList() {
 		LambdaQueryWrapper<SysDepart> query = new LambdaQueryWrapper<SysDepart>();
 		query.eq(SysDepart::getDelFlag, CommonConstant.DEL_FLAG_0.toString());
+		//------------------------------------------------------------------------------------------------
+		//是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+		if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+			query.eq(SysDepart::getTenantId, oConvertUtils.getLong(TenantContext.getTenant(), -1));
+		}
+		//------------------------------------------------------------------------------------------------
 		query.orderByAsc(SysDepart::getDepartOrder);
 		List<SysDepart> list = this.list(query);
 		// 调用wrapTreeDataToTreeList方法生成树状数据
@@ -136,9 +168,14 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 	@Transactional(rollbackFor = Exception.class)
 	public void saveDepartData(SysDepart sysDepart, String username) {
 		if (sysDepart != null && username != null) {
-			if (sysDepart.getParentId() == null) {
+			//update-begin---author:wangshuai ---date:20230216  for：[QQYUN-4163]给部门表加个是否有子节点------------
+			if (oConvertUtils.isEmpty(sysDepart.getParentId())) {
 				sysDepart.setParentId("");
+			}else{
+				//将父部门的设成不是叶子结点
+				departMapper.setMainLeaf(sysDepart.getParentId(),CommonConstant.NOT_LEAF);
 			}
+			//update-end---author:wangshuai ---date:20230216  for：[QQYUN-4163]给部门表加个是否有子节点------------
 			//String s = UUID.randomUUID().toString().replace("-", "");
 			sysDepart.setId(IdWorker.getIdStr(sysDepart));
 			// 先判断该对象有无父级ID,有则意味着不是最高级,否则意味着是最高级
@@ -154,6 +191,8 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 			sysDepart.setOrgType(String.valueOf(orgType));
 			sysDepart.setCreateTime(new Date());
 			sysDepart.setDelFlag(CommonConstant.DEL_FLAG_0.toString());
+			//新添加的部门是叶子节点
+			sysDepart.setIzLeaf(CommonConstant.IS_LEAF);
 			this.save(sysDepart);
             //update-begin---author:wangshuai ---date:20220307  for：[JTC-119]在部门管理菜单下设置部门负责人 创建用户的时候不需要处理
 			//新增部门的时候新增负责部门
@@ -272,6 +311,8 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 		for(String id: ids) {
 			idList.add(id);
 			this.checkChildrenExists(id, idList);
+			//删除部门设置父级的叶子结点
+			this.setIzLeaf(id);
 		}
 		this.removeByIds(idList);
 		//根据部门id获取部门角色id
@@ -427,6 +468,12 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 		LambdaQueryWrapper<SysDepart> query = new LambdaQueryWrapper<SysDepart>();
 		query.eq(SysDepart::getDelFlag, CommonConstant.DEL_FLAG_0.toString());
 		query.in(SysDepart::getId, Arrays.asList(departIds.split(",")));
+		//------------------------------------------------------------------------------------------------
+		//是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+		if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+			query.eq(SysDepart::getTenantId, oConvertUtils.getLong(TenantContext.getTenant(), -1));
+		}
+		//------------------------------------------------------------------------------------------------
 		query.orderByAsc(SysDepart::getOrgCode);
 		List<SysDepart> list = this.list(query);
 		//查找根部门
@@ -527,6 +574,12 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
 			}
 		};
 		LambdaQueryWrapper<SysDepart> lqw=new LambdaQueryWrapper<>();
+		//------------------------------------------------------------------------------------------------
+		//是否开启系统管理模块的 SASS 控制
+		if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+			lqw.eq(SysDepart::getTenantId, oConvertUtils.getLong(TenantContext.getTenant(), -1));
+		}
+		//------------------------------------------------------------------------------------------------
 		lqw.eq(true,SysDepart::getDelFlag,CommonConstant.DEL_FLAG_0.toString());
 		lqw.func(square);
         //update-begin---author:wangshuai ---date:20220527  for：[VUEN-1143]排序不对，vue3和2应该都有问题，应该按照升序排------------
@@ -543,13 +596,6 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
             SysDepartTreeModel treeModel = new SysDepartTreeModel(depart);
             //TODO 异步树加载key拼接__+时间戳,以便于每次展开节点会刷新数据
 			//treeModel.setKey(treeModel.getKey()+"__"+System.currentTimeMillis());
-			treeModel.setKey(treeModel.getKey());
-            Integer count=this.baseMapper.queryCountByPid(depart.getId());
-            if(count>0){
-                treeModel.setIsLeaf(false);
-            }else{
-                treeModel.setIsLeaf(true);
-            }
             records.add(treeModel);
         }
 		return records;
@@ -764,4 +810,85 @@ public class SysDepartServiceImpl extends ServiceImpl<SysDepartMapper, SysDepart
     }
     //update-end---author:wangshuai ---date:20200308  for：[JTC-119]在部门管理菜单下设置部门负责人，新增方法添加部门负责人、删除负责部门负责人、查询部门对应的负责人
 
+    /**
+     * 获取我的部门已加入的公司
+     * @return
+     */
+    @Override
+    public List<SysDepart> getMyDepartList() {
+        LoginUser user = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        String userId = user.getId();
+        //字典code集合
+        List<String> list = new ArrayList<>();
+        //查询我加入的部门
+        List<SysDepart> sysDepartList = this.baseMapper.queryUserDeparts(userId);
+        for (SysDepart sysDepart : sysDepartList) {
+            //获取一级部门编码
+            String orgCode = sysDepart.getOrgCode();
+            if (YouBianCodeUtil.ZHANWEI_LENGTH <= orgCode.length()) {
+                int length = YouBianCodeUtil.ZHANWEI_LENGTH;
+                String companyOrgCode = orgCode.substring(0, length);
+                list.add(companyOrgCode);
+            }
+        }
+        //字典code集合不为空
+        if (oConvertUtils.isNotEmpty(list)) {
+            //查询一级部门的数据
+            LambdaQueryWrapper<SysDepart> query = new LambdaQueryWrapper<>();
+            query.select(SysDepart::getDepartName, SysDepart::getId, SysDepart::getOrgCode);
+            query.eq(SysDepart::getDelFlag, String.valueOf(CommonConstant.DEL_FLAG_0));
+            query.in(SysDepart::getOrgCode, list);
+            return this.baseMapper.selectList(query);
+        }
+        return null;
+    }
+
+	@Override
+	public void deleteDepart(String id) {
+    	//删除部门设置父级的叶子结点
+		this.setIzLeaf(id);
+		this.delete(id);
+		//删除部门用户关系表
+		LambdaQueryWrapper<SysUserDepart> query = new LambdaQueryWrapper<SysUserDepart>()
+				.eq(SysUserDepart::getDepId, id);
+		this.userDepartMapper.delete(query);
+	}
+
+	@Override
+	public List<SysDepartTreeModel> queryBookDepTreeSync(String parentId, Long tenantId, String departName) {
+		List<SysDepart> list = departMapper.queryBookDepTreeSync(parentId,tenantId,departName);
+		List<SysDepartTreeModel> records = new ArrayList<>();
+		for (int i = 0; i < list.size(); i++) {
+			SysDepart depart = list.get(i);
+			SysDepartTreeModel treeModel = new SysDepartTreeModel(depart);
+			records.add(treeModel);
+		}
+		return records;
+	}
+
+	@Override
+	public SysDepart getDepartById(String id) {
+		return departMapper.getDepartById(id);
+	}
+
+	@Override
+	public IPage<SysDepart> getMaxCodeDepart(Page<SysDepart> page, String parentId) {
+		return page.setRecords(departMapper.getMaxCodeDepart(page,parentId));
+	}
+
+	/**
+	 * 设置父级节点是否存在叶子结点
+	 * @param id
+	 */
+	private void setIzLeaf(String id) {
+		SysDepart depart = this.getDepartById(id);
+		String parentId = depart.getParentId();
+		if(oConvertUtils.isNotEmpty(parentId)){
+			Long count = this.count(new QueryWrapper<SysDepart>().lambda().eq(SysDepart::getParentId, parentId));
+			if(count == 1){
+				//若父节点无其他子节点，则该父节点是叶子节点
+				departMapper.setMainLeaf(parentId, CommonConstant.IS_LEAF);
+			}
+		}
+	}
 }

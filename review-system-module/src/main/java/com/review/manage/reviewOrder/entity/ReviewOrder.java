@@ -123,4 +123,9 @@ public class ReviewOrder implements Serializable {
 	@Excel(name = "支付结果信息", width = 15)
     @ApiModelProperty(value = "支付结果信息")
     private String payResultMsg;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

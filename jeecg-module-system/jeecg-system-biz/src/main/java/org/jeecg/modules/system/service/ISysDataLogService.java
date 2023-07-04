@@ -1,8 +1,7 @@
 package org.jeecg.modules.system.service;
 
-import org.jeecg.modules.system.entity.SysDataLog;
-
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.system.entity.SysDataLog;
 
 /**
  * @Description: 数据日志service接口

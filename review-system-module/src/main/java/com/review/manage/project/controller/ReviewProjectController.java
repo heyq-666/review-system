@@ -3,7 +3,7 @@ package com.review.manage.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.review.common.WxAppletsUtils;
+import org.jeecg.common.util.WxAppletsUtils;
 import com.review.manage.project.entity.ReviewProjectEntity;
 import com.review.manage.project.service.IReviewProjectService;
 import io.swagger.annotations.Api;
@@ -123,7 +123,7 @@ public class ReviewProjectController extends JeecgController<ReviewProjectEntity
             return result;
         }
         //生成二维码
-        String qrCodePath = WxAppletsUtils.geneAppletsQrCode("pages/index/index", "projectId=" + reviewProject.getId());
+        String qrCodePath = WxAppletsUtils.geneAppletsQrCode("pages/index/indexNew", "projectId=" + reviewProject.getId());
         reviewProject.setAppletsQrCodeLink(qrCodePath);
         reviewProject.setUpdateTime(new Date());
         reviewProjectService.saveOrUpdate(reviewProject);

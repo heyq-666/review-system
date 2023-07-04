@@ -145,6 +145,11 @@ public class ReviewExpert implements Serializable {
     @ApiModelProperty(value = "咨询师服务时长")
     private Long serviceDuration;
 
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
+
     private transient List<BeGoodAt> beGoodAtList;
 
     private transient BigDecimal realPrice;

@@ -1,10 +1,157 @@
-版本升级方法？
+####多租户模式 数据库表变更####
 
-  JeecgBoot属于平台级产品，每次升级改动内容较多，目前做不到平滑升级。
+//角色权限表
+alter table sys_role_permission
+	add tenant_id bigint null comment '租户ID' after data_rule_ids;
+create index idx_tenant_id
+	on sys_role_permission (tenant_id);
 
-  这里给用户的升级建议是这样的：
-  1.代码升级  => 本地版本通过svn或者git做好主干，在分支上做业务开发，jeecg每次版本发布，可以手工覆盖主干的代码，对比代码进行提交；
-  2.数据库升级 => 针对数据库我们每次发布会提供增量升级SQL，可以通过增量SQL实现数据库的升级。
-  3.兼容问题 => 每次版本发布会针对不兼容地方标注说明，需要手工修改不兼容的代码。
+//系统菜单表
+alter table sys_permission
+	add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id
+	on sys_permission (tenant_id);
 
-  注意： 升级sql目前只提供mysql版本，执行完脚步后，新菜单需要手工进行角色授权，刷新首页才会出现。
+//系统菜单表V2
+alter table sys_permission_v2
+	add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id
+	on sys_permission_v2 (tenant_id);
+
+alter table sys_role_permission alter column tenant_id set default -1;
+alter table sys_permission alter column tenant_id set default -1;
+alter table sys_permission_v2 alter column tenant_id set default -1;
+
+
+//系统角色表
+alter table sys_role add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on sys_role (tenant_id);
+
+alter table sys_depart add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on sys_depart (tenant_id);
+
+alter table sys_data_log add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on sys_data_log (tenant_id);
+
+alter table sys_log add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on sys_log (tenant_id);
+
+alter table sys_sms add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on sys_sms (tenant_id);
+
+alter table sys_user add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on sys_user (tenant_id);
+
+alter table sys_announcement add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on sys_announcement (tenant_id);
+
+alter table sys_role alter column tenant_id set default -1;
+alter table sys_depart alter column tenant_id set default -1;
+alter table sys_data_log alter column tenant_id set default -1;
+alter table sys_log alter column tenant_id set default -1;
+alter table sys_sms alter column tenant_id set default -1;
+alter table sys_user alter column tenant_id set default -1;
+alter table sys_announcement alter column tenant_id set default -1;
+
+
+##测评业务相关表##
+alter table review_answer add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_answer (tenant_id);
+
+alter table review_banner add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_banner (tenant_id);
+
+alter table review_class add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_class (tenant_id);
+
+alter table review_eval_code add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_eval_code (tenant_id);
+
+alter table review_expert add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_expert (tenant_id);
+
+alter table review_notice add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_notice (tenant_id);
+
+alter table review_order add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_order (tenant_id);
+
+alter table review_project add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_project (tenant_id);
+
+alter table review_question add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_question (tenant_id);
+
+alter table review_question_answer add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_question_answer (tenant_id);
+
+alter table review_report add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_report (tenant_id);
+
+alter table review_report_grade add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_report_grade (tenant_id);
+
+alter table review_report_result add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_report_result (tenant_id);
+
+alter table review_report_variate add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_report_variate (tenant_id);
+
+alter table review_result add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_result (tenant_id);
+
+alter table review_subject add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_subject (tenant_id);
+
+alter table review_user add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_user (tenant_id);
+
+alter table review_variate add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_variate (tenant_id);
+
+alter table review_video_analysis add tenant_id bigint null comment '租户ID';
+create index idx_tenant_id on review_video_analysis (tenant_id);
+
+alter table review_answer alter column tenant_id set default -1;
+alter table review_banner alter column tenant_id set default -1;
+alter table review_class alter column tenant_id set default -1;
+alter table review_eval_code alter column tenant_id set default -1;
+alter table review_expert alter column tenant_id set default -1;
+alter table review_notice alter column tenant_id set default -1;
+alter table review_order alter column tenant_id set default -1;
+alter table review_project alter column tenant_id set default -1;
+alter table review_question alter column tenant_id set default -1;
+alter table review_question_answer alter column tenant_id set default -1;
+alter table review_report alter column tenant_id set default -1;
+alter table review_report_grade alter column tenant_id set default -1;
+alter table review_report_result alter column tenant_id set default -1;
+alter table review_report_variate alter column tenant_id set default -1;
+alter table review_result alter column tenant_id set default -1;
+alter table review_subject alter column tenant_id set default -1;
+alter table review_user alter column tenant_id set default -1;
+alter table review_variate alter column tenant_id set default -1;
+alter table review_video_analysis alter column tenant_id set default -1;
+
+alter table sys_permission
+	add base_flag tinyint(1) null comment '是否为基础菜单';
+
+-- auto-generated definition
+create table sys_tenant
+(
+    id          bigint       not null comment '租户编码'
+        primary key,
+    name        varchar(100) null comment '租户名称',
+    create_time datetime     null comment '创建时间',
+    create_by   varchar(100) null comment '创建人',
+    begin_date  datetime     null comment '开始时间',
+    end_date    datetime     null comment '结束时间',
+    status      int(1)       null comment '状态 1正常 0冻结',
+    pre_code    varchar(50)  null comment '角色编码前缀'
+)
+    comment '多租户信息表';
+
+alter table sys_user
+	add login_tenant_id bigint null comment '上次登录租户ID';
+
+alter table sys_tenant
+	add applets_qr_code_path varchar(500) null comment '小程序二维码路径';

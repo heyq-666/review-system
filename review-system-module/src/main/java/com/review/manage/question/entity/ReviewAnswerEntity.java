@@ -55,4 +55,9 @@ public class ReviewAnswerEntity implements Serializable{
     @Excel(name = "图片地址", width = 15)
     @ApiModelProperty(value = "图片地址")
     private String pictureAttach;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

@@ -77,4 +77,9 @@ public class ReviewQuestionAnswerEntity implements java.io.Serializable {
 
 	@ApiModelProperty(value = "创建时间")
 	private Date createTime;
+
+	/**
+	 * 租户ID
+	 */
+	private Long tenantId;
 }

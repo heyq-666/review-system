@@ -1,21 +1,18 @@
 package org.jeecg.modules.system.service.impl;
 
-import java.util.*;
-
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.common.util.IpUtils;
 import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.system.entity.SysRolePermission;
 import org.jeecg.modules.system.mapper.SysRolePermissionMapper;
 import org.jeecg.modules.system.service.ISysRolePermissionService;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * <p>

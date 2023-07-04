@@ -151,6 +151,12 @@ public class ShiroRealm extends AuthorizingRealm {
             }
         }
         //update-end-author:taoyan date:20210609 for:校验用户的tenant_id和前端传过来的是否一致
+
+        // 设置用户拥有的角色集合，比如“admin,test”
+        Set<String> roleSet = commonApi.queryUserRoles(username);
+        //System.out.println(roleSet.toString());
+        loginUser.setRoleCodes(roleSet);
+
         return loginUser;
     }
 

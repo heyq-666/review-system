@@ -65,4 +65,9 @@ public class ReviewQuestion implements Serializable {
     private String pictureAttach;
 
     private transient String className;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

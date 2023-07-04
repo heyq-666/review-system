@@ -1,7 +1,7 @@
 package org.jeecg.modules.system.service;
 
-import org.jeecg.modules.system.entity.SysRoleIndex;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.system.entity.SysRoleIndex;
 
 /**
  * @Description: 角色首页配置

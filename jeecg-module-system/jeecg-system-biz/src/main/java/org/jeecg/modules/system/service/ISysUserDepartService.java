@@ -1,15 +1,13 @@
 package org.jeecg.modules.system.service;
 
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.system.entity.SysUserDepart;
 import org.jeecg.modules.system.model.DepartIdModel;
 
-
-import com.baomidou.mybatisplus.extension.service.IService;
+import java.util.List;
 
 /**
  * <p>
@@ -57,11 +55,24 @@ public interface ISysUserDepartService extends IService<SysUserDepart> {
 
     /**
      * 获取用户信息
+	 * @param tenantId
      * @param departId
      * @param keyword
      * @param pageSize
      * @param pageNo
      * @return
      */
-    IPage<SysUser> getUserInformation(String departId, String keyword, Integer pageSize, Integer pageNo);
+    IPage<SysUser> getUserInformation(Long tenantId, String departId, String keyword, Integer pageSize, Integer pageNo);
+
+	/**
+	 * 获取用户信息
+	 * @param tenantId
+	 * @param departId
+	 * @param roleId
+	 * @param keyword
+	 * @param pageSize
+	 * @param pageNo
+	 * @return
+	 */
+	IPage<SysUser> getUserInformation(Long tenantId,String departId,String roleId, String keyword, Integer pageSize, Integer pageNo);
 }

@@ -108,4 +108,9 @@ public class ReviewClass implements Serializable {
      * 测评人数
      */
     private transient Integer reviewCount;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

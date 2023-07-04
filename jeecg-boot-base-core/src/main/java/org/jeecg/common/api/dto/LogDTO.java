@@ -1,6 +1,8 @@
 package org.jeecg.common.api.dto;
+
 import lombok.Data;
 import org.jeecg.common.system.vo.LoginUser;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -49,6 +51,11 @@ public class LogDTO implements Serializable {
 
     /**操作人用户账户*/
     private String userid;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 
     public LogDTO(){
 

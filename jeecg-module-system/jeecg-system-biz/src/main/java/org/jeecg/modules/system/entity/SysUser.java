@@ -1,24 +1,20 @@
 package org.jeecg.modules.system.entity;
 
-import java.util.Date;
-
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.jeecg.common.aspect.annotation.Dict;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.io.Serializable;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+import java.util.Date;
 
 /**
  * <p>
@@ -99,9 +95,13 @@ public class SysUser implements Serializable {
     private String phone;
 
     /**
-     * 部门code(当前选择登录部门)
+     * 登录选择部门编码
      */
     private String orgCode;
+    /**
+     * 登录选择租户ID
+     */
+    private Long loginTenantId;
 
     /**部门名称*/
     private transient String orgCodeTxt;
@@ -177,8 +177,9 @@ public class SysUser implements Serializable {
     private String departIds;
 
     /**
-     * 多租户id配置，编辑用户的时候设置
+     * 多租户ids临时用，不持久化数据库(数据库字段不存在)
      */
+    @TableField(exist = false)
     private String relTenantIds;
 
     /**设备id uniapp推送用*/
@@ -189,4 +190,20 @@ public class SysUser implements Serializable {
      */
     @TableField(exist = false)
     private String homePath;
+
+    /**
+     * 职位名称
+     */
+    @TableField(exist = false)
+    private String postText;
+
+    /**
+     * 流程状态
+     */
+    private String bpmStatus;
+
+    /**
+     *
+     */
+    private Long tenantId;
 }
