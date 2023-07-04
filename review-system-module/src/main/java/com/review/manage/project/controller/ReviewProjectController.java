@@ -123,7 +123,7 @@ public class ReviewProjectController extends JeecgController<ReviewProjectEntity
             return result;
         }
         //生成二维码
-        String qrCodePath = WxAppletsUtils.geneAppletsQrCode("pages/index/index", "projectId=" + reviewProject.getId());
+        String qrCodePath = WxAppletsUtils.geneAppletsQrCode("pages/index/indexNew", "projectId=" + reviewProject.getId());
         reviewProject.setAppletsQrCodeLink(qrCodePath);
         reviewProject.setUpdateTime(new Date());
         reviewProjectService.saveOrUpdate(reviewProject);
