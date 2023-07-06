@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.review.front.frontAppoint.entity.ReviewExpertReserveEntity;
 import com.review.front.frontAppoint.vo.BeGoodAt;
 import com.review.front.frontAppoint.vo.ConsultationVO;
-import com.review.manage.expert.entity.ReviewExpert;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ public interface IReviewExpertReserveService extends IService<ReviewExpertReserv
      * @param id
      * @return
      */
-    List<ConsultationVO> getMyConsultationDetail(Integer id);
+    List<ConsultationVO> getMyConsultationDetail(Long id);
 
     /**
      *  时间格式处理

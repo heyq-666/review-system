@@ -21,19 +21,14 @@ import com.review.manage.expert.entity.ReviewExpert;
 import com.review.manage.expert.entity.ReviewExpertCalendarEntity;
 import com.review.manage.expert.service.IExpertLongDistanceTrainService;
 import com.review.manage.expert.vo.ReviewExpertCalendarVo;
-import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.userManage.entity.ReviewUser;
-import com.review.manage.userManage.service.IReviewUserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.util.StringUtil;
-import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.DySmsEnum;
 import org.jeecg.common.util.DySmsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +37,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -225,10 +220,6 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
     public Result<List<ConsultationVO>> queryMyConsultation(@RequestBody ConsultationVO consultationVO) {
         List<ConsultationVO> reviewExpertReserveList = reviewExpertReserveService.getMyConsultation(consultationVO.getUserId());
         return Result.OK("查询成功",reviewExpertReserveList);
-        /*QueryWrapper<ReviewExpertReserveEntity> queryWrapper = new QueryWrapper<ReviewExpertReserveEntity>();
-        queryWrapper.eq("user_id",consultationVO.getUserId());
-        List<ReviewExpertReserveEntity> expertReserveEntityList = reviewExpertReserveService.list(queryWrapper);
-        return null;*/
     }
 
     /**
@@ -242,7 +233,7 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         List<ConsultationVO> reviewExpertReserveList = reviewExpertReserveService.getMyConsultationDetail(consultationVO.getId());
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
-        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        org.jeecg.modules.base.entity.ReviewUser reviewUserEntity = (org.jeecg.modules.base.entity.ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         String userId = reviewUserEntity.getUserId();
         if (StrUtil.isNotBlank(reviewExpertReserveList.get(0).getUserId()) && reviewExpertReserveList.get(0).getCharge() == Constants.ClassCharge) {
             //判断用户是否支付了问诊费用
@@ -318,7 +309,7 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
      */
     @AutoLog(value = "小程序-咨询师确认预约")
     @PostMapping(value = "postConfirmAppoint")
-    public Result<Integer> postConfirmAppoint(@RequestBody ConsultationVO consultationVO) throws ClientException {
+    public Result<Long> postConfirmAppoint(@RequestBody ConsultationVO consultationVO) throws ClientException {
         //确认预约
         ReviewExpertReserveEntity reserveEntity = new ReviewExpertReserveEntity();
         reserveEntity.setConfirmFlag(1);

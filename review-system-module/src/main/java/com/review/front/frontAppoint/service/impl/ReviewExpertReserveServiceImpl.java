@@ -1,19 +1,13 @@
 package com.review.front.frontAppoint.service.impl;
 
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.review.common.Constants;
 import com.review.front.frontAppoint.entity.ReviewExpertReserveEntity;
 import com.review.front.frontAppoint.mapper.ReviewExpertReserveMapper;
 import com.review.front.frontAppoint.service.IReviewExpertReserveService;
 import com.review.front.frontAppoint.vo.BeGoodAt;
 import com.review.front.frontAppoint.vo.ConsultationVO;
-import com.review.front.frontReviewClass.service.IFrontReviewClassService;
-import com.review.manage.expert.entity.ReviewExpert;
-import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +36,7 @@ public class ReviewExpertReserveServiceImpl extends ServiceImpl<ReviewExpertRese
     }
 
     @Override
-    public List<ConsultationVO> getMyConsultationDetail(Integer id) {
+    public List<ConsultationVO> getMyConsultationDetail(Long id) {
         return reviewExpertReserveMapper.getMyConsultationDetail(id);
     }
 

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.review.front.frontAppoint.entity.ReviewExpertReserveEntity;
 import com.review.front.frontAppoint.vo.BeGoodAt;
 import com.review.front.frontAppoint.vo.ConsultationVO;
-import com.review.manage.expert.entity.ReviewExpert;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ public interface ReviewExpertReserveMapper extends BaseMapper<ReviewExpertReserv
      * @param id
      * @return
      */
-    List<ConsultationVO> getMyConsultationDetail(Integer id);
+    List<ConsultationVO> getMyConsultationDetail(Long id);
 
     /**
      * 获取咨询师擅长领域id

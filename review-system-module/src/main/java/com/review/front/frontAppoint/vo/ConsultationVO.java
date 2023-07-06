@@ -1,5 +1,7 @@
 package com.review.front.frontAppoint.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,10 +15,11 @@ public class ConsultationVO implements Serializable {
     /**
         预约id
      */
-    private Integer id;
+    private Long id;
     /**
         日历id
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long calendarId;
     /**
         用户id

@@ -1,6 +1,7 @@
 package com.review.front.frontOrder.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.review.common.Constants;
 import com.review.front.frontOrder.service.IFrontOrderService;
 import com.review.front.frontOrder.vo.PreOrderVO;
@@ -9,6 +10,7 @@ import com.review.manage.reviewOrder.entity.ReviewOrder;
 import com.review.manage.reviewOrder.vo.ReviewOrderVO;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
@@ -64,7 +66,7 @@ public class FrontOrderController extends JeecgController<ReviewOrder, IFrontOrd
         reviewOrder.setMobilePhone(reviewUserEntity.getMobilePhone());
         //创建预支付订单
         PreOrderVO preOrderVO = frontOrderService.createPrePayOrder(reviewOrder);
-        return preOrderVO == null ? Result.error(400,"创建失败") : Result.OK("创建成功",preOrderVO);
+        return preOrderVO == null ? Result.error(400,preOrderVO.getReturnMsg()) : Result.OK("创建成功",preOrderVO);
     }
 
     /**
@@ -106,14 +108,17 @@ public class FrontOrderController extends JeecgController<ReviewOrder, IFrontOrd
     @AutoLog(value = "小程序咨询预约-创建预支付订单")
     @PostMapping(value = "createPrePayConsultationOrder")
     public Result<PreOrderVO> createPrePayConsultationOrder(@RequestBody ReviewOrderVO reviewOrder){
-        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        reviewOrder.setUserId(sysUser.getId());
-        reviewOrder.setOperator(sysUser.getUsername());
-        reviewOrder.setGroupId(sysUser.getOrgCode());
-        reviewOrder.setOpenid("");
+        //LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest();
+        org.jeecg.modules.base.entity.ReviewUser reviewUserEntity = (org.jeecg.modules.base.entity.ReviewUser) request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        reviewOrder.setUserId(reviewUserEntity.getUserId());
+        reviewOrder.setOperator(reviewUserEntity.getUserName());
+        reviewOrder.setGroupId(reviewUserEntity.getGroupId());
+        reviewOrder.setOpenid(reviewUserEntity.getOpenid());
         reviewOrder.setIpAddr(IpUtils.getIpAddr(SpringContextUtils.getHttpServletRequest()));
         reviewOrder.setBroswer(BrowserUtils.checkBrowse(SpringContextUtils.getHttpServletRequest()));
-        reviewOrder.setMobilePhone(sysUser.getPhone());
+        reviewOrder.setMobilePhone(reviewUserEntity.getMobilePhone());
         //创建预支付订单
         PreOrderVO preOrderVO = frontOrderService.createPrePayConsultationOrder(reviewOrder);
         return preOrderVO == null ? Result.error(400,"创建失败") : Result.OK("创建成功",preOrderVO);
@@ -138,5 +143,18 @@ public class FrontOrderController extends JeecgController<ReviewOrder, IFrontOrd
         //创建预支付订单
         PreOrderVO preOrderVO = frontOrderService.createEvalCodePrePayOrder(reviewOrder);
         return preOrderVO == null ? Result.error(400,"创建失败") : Result.OK("创建成功",preOrderVO);
+    }
+
+    @AutoLog(value = "查询订单详情")
+    @PostMapping(value = "getReviewOrderDetail")
+    public Result<ReviewOrder> getReviewOrderDetail(@RequestBody ReviewOrder reviewOrder) {
+        if (StringUtils.isNotBlank(reviewOrder.getPayId())){
+            QueryWrapper<ReviewOrder> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("pay_id",reviewOrder.getPayId());
+            List<ReviewOrder> reviewOrder1 = frontOrderService.list(queryWrapper);
+            return  reviewOrder1 != null ? Result.OK(reviewOrder1.get(0)) : Result.error("无订单");
+        }else {
+            return Result.error("订单id为空");
+        }
     }
 }

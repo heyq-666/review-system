@@ -183,14 +183,19 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
             return false;
         }
         ReviewOrder reviewOrder = new ReviewOrder();
+        reviewOrder.setId(map1.get(0).getId());
         reviewOrder.setStatus(status);
         reviewOrder.setOperateTime(new Date());
         reviewOrder.setPayTime(Constants.OrderStatus.SUCCESS == status || Constants.OrderStatus.PRE_SUCCESS == status ? new Date() : null);
         reviewOrder.setTransactionId(StrUtil.isNotBlank(transactionId) ? transactionId : null);
         reviewOrder.setPayResultCode(StrUtil.isNotBlank(payResultCode) ? payResultCode : null);
         reviewOrder.setPayResultMsg(StrUtil.isNotBlank(payResultMsg) ? payResultMsg : null);
-        return this.update(reviewOrder,new UpdateWrapper<ReviewOrder>().lambda().
-                eq(ReviewOrder :: getPayId,payId).eq(ReviewOrder :: getStatus,Constants.OrderStatus.SUCCESS));
+        if (status != Constants.OrderStatus.SUCCESS) {
+            int updateCount = frontOrderMapper.updateById(reviewOrder);
+            return updateCount == 1 ? true : false;
+        }else {
+            return false;
+        }
     }
 
     @Override
@@ -208,7 +213,6 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
             log.warn("classId or userID is null");
             return null;
         }
-
         //判断订单是否已存在
         ReviewOrderVO reviewOrderVO = frontReviewClassService.findOneOrder(reviewOrder.getClassId(), reviewOrder.getUserId());
         if (reviewOrderVO != null && StrUtil.isNotBlank(reviewOrderVO.getPayId()) && reviewOrderVO.getStatus() != Constants.OrderStatus.PAY_EXPIRED) {
@@ -279,7 +283,6 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
                 //创建微信预支付订单
                 PreOrderVO preOrder = this.generatePrePayOrder(reviewOrder.getOpenid(), reviewOrder.getIpAddr(),
                         orderEntity.getOrderNo(), orderEntity.getOrderAmount(), orderEntity.getClassName());
-                //preOrder.setOrderNO(orderEntity.getOrderNo());
                 if (Constants.WX_PAY_STATUS_SUCCESS.equals(preOrder.getResultCode()) && Constants.WX_PAY_STATUS_SUCCESS.equals(preOrder.getReturnCode())) {
                     orderEntity.setPayId(preOrder.getPrePayID());
                     this.save(orderEntity);

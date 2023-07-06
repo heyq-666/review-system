@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.review.front.frontReport.mapper.FrontReviewResultMapper">
+    <select id="getReviewResult" parameterType="com.review.front.frontReport.vo.ReviewResultVO" resultType="com.review.front.frontReport.vo.ReviewResultVO">
+        SELECT
+            r.result_id resultId,
+            c.title title,
+            DATE_FORMAT(r.create_time,'%Y-%m-%e %H:%i:%S') createTime,
+            r.review_result reviewResult,
+            r.grade_total gradeTotal
+        FROM
+            review_result r,review_class c
+        WHERE r.class_id = c.class_id
+          AND r.user_id = #{userId}
+          AND r.project_id = #{projectId}
+        ORDER BY r.create_time DESC
+        <choose>
+            <when test="limitId != null and limitId != 0">
+                LIMIT #{limitId} , #{pCount}
+            </when>
+            <otherwise>
+                LIMIT #{pCount}
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getReviewReports" parameterType="map" resultType="com.review.front.frontReport.vo.ReviewResultVO">
+        SELECT
+        r.result_id resultId,
+        r.class_id classId,
+        DATE_FORMAT( r.create_time, '%Y-%m-%e %H:%i:%S' ) createTime,
+        r.grade_total reportGrade,
+        c.banner_img classCover,
+        c.title classTitle,
+        r.review_result reportResult
+        FROM
+        review_result r
+        INNER JOIN review_class c ON r.class_id = c.class_id
+        <choose>
+            <when test="projectId != null and projectId > 0">
+                INNER JOIN (SELECT id FROM review_project WHERE id = #{projectId} AND show_report = 2) p on r.project_id = p.id
+                WHERE r.user_id = #{userId}
+            </when>
+            <otherwise>
+                LEFT JOIN (SELECT id FROM review_project WHERE show_report = 2) p on r.project_id = p.id
+                WHERE r.user_id = #{userId} AND (r.project_id is null or r.project_id = 0 or p.id != null)
+            </otherwise>
+        </choose>
+        ORDER BY r.create_time DESC
+    </select>
+</mapper>
