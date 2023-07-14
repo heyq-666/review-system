@@ -34,7 +34,6 @@ import com.review.manage.variate.service.IVariateService;
 import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.util.Arith;
 import org.jeecg.common.util.DateUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

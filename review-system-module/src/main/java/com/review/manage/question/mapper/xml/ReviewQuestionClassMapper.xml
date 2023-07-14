@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.review.manage.question.mapper.ReviewQuestionClassMapper">
+    <select id="getQuestionByQnum" parameterType="map" resultType="com.review.manage.question.entity.ReviewQuestionClassEntity">
+        SELECT
+            q.question_num questionNum,
+            q.content content,
+            q.create_by createBy,
+            q.question_id questionId
+        FROM
+            review_question q,
+            review_question_class qc
+        WHERE
+            q.question_id = qc.question_id
+          AND qc.class_id = #{classId}
+          AND q.question_num = #{questionNum}
+    </select>
+</mapper>

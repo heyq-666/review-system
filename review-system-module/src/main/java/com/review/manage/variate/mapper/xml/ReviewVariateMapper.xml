@@ -17,4 +17,8 @@
     <delete id="delReportVariate" parameterType="String">
         DELETE FROM review_report_variate WHERE variate_id = #{variateId}
     </delete>
+
+    <select id="getMaxSortNum" parameterType="String" resultType="Integer">
+        SELECT MAX(sort_num) sortNum FROM review_variate WHERE class_id = #{classId}
+    </select>
 </mapper>

@@ -48,4 +48,9 @@ public class VariateServiceImpl extends ServiceImpl<ReviewVariateMapper, ReviewV
     public void delReportVariate(String variateId) {
         reviewVariateMapper.delReportVariate(variateId);
     }
+
+    @Override
+    public Integer getMaxSortNum(String classId) {
+        return reviewVariateMapper.getMaxSortNum(classId);
+    }
 }

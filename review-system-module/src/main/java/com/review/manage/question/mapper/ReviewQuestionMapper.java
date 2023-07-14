@@ -5,6 +5,7 @@ import com.review.manage.question.entity.ReviewQuestion;
 import com.review.manage.question.vo.QuestionVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author javabage
@@ -15,4 +16,10 @@ public interface ReviewQuestionMapper extends BaseMapper<ReviewQuestion> {
     List<ReviewQuestion> getQuestionListByClassId(String classId);
 
     List<QuestionVO> getAnswersByQuestionId(String questionId);
+
+    void deleteQuestion(String classId);
+
+    Integer getMaxQuestionId(String classId);
+
+    ReviewQuestion getQuestionByQnum(Map map);
 }

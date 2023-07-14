@@ -140,7 +140,7 @@ public class ShiroRealm extends AuthorizingRealm {
         String userTenantIds = loginUser.getRelTenantIds();
         if(oConvertUtils.isNotEmpty(userTenantIds)){
             String contextTenantId = TenantContext.getTenant();
-            String str ="0";
+            String str ="-1";
             if(oConvertUtils.isNotEmpty(contextTenantId) && !str.equals(contextTenantId)){
                 //update-begin-author:taoyan date:20211227 for: /issues/I4O14W 用户租户信息变更判断漏洞
                 String[] arr = userTenantIds.split(",");

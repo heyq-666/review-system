@@ -15,4 +15,10 @@ public interface IReviewQuestionService extends IService<ReviewQuestion> {
     List<ReviewQuestion> getQuestionListByClassId(String classId);
 
     List<QuestionVO> getAnswersByQuestionId(String questionId);
+
+    void deleteQuestion(String classId);
+
+    Integer getMaxQuestionId(String classId);
+
+    ReviewQuestion getQuestionByQnum(String classId, Integer maxQuestionNum);
 }

@@ -25,4 +25,11 @@ public interface ReviewVariateMapper extends BaseMapper<ReviewVariateEntity> {
      * @param variateId
      */
     void delReportVariate(String variateId);
+
+    /**
+     * 获取某分类下的因子最大编号
+     * @param classId
+     * @return
+     */
+    Integer getMaxSortNum(String classId);
 }

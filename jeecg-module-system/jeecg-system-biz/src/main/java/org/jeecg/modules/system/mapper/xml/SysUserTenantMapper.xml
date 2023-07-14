@@ -96,7 +96,7 @@
     </select>
     
     <!--根据用户id获取租户id，没有状态-->
-    <select id="getTenantIdsNoStatus" resultType="java.lang.Integer">
+    <select id="getTenantIdsNoStatus" resultType="long">
         SELECT tenant_id FROM sys_user_tenant
         WHERE
         user_id = #{userId}

@@ -38,7 +38,7 @@ public class ReviewQuestion implements Serializable {
 	/**题目类型*/
 	@Excel(name = "题目类型", width = 15)
     @ApiModelProperty(value = "题目类型")
-    private Integer questionType;
+    private String questionType;
 	/**题目内容*/
 	@Excel(name = "题目内容", width = 15)
     @ApiModelProperty(value = "题目内容")
@@ -65,6 +65,8 @@ public class ReviewQuestion implements Serializable {
     private String pictureAttach;
 
     private transient String className;
+
+    private transient String classId;
 
     /**
      * 租户ID

@@ -1,12 +1,20 @@
 package com.review.manage.question.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.review.common.Constants;
+import com.review.front.frontReviewClass.vo.SelectVO;
+import com.review.manage.question.entity.QuestionImportEntity;
+import com.review.manage.question.entity.ReviewAnswerEntity;
 import com.review.manage.question.entity.ReviewQuestion;
+import com.review.manage.question.entity.ReviewQuestionClassEntity;
+import com.review.manage.question.service.IReviewAnswerService;
+import com.review.manage.question.service.IReviewQuestionClassService;
 import com.review.manage.question.service.IReviewQuestionService;
 import com.review.manage.question.vo.QuestionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
@@ -29,9 +37,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +54,12 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
 
     @Autowired
     private IReviewQuestionService reviewQuestionService;
+
+    @Autowired
+    private IReviewQuestionClassService reviewQuestionClassService;
+
+    @Autowired
+    private IReviewAnswerService reviewAnswerService;
 
     /**
      * 通过量表ID查询对应的题目列表
@@ -169,10 +183,14 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
      * 导入
      * @return
      */
-    @RequestMapping(value = "/importReviewQuestion/{mainId}")
-    public Result<?> importReviewQuestion(HttpServletRequest request, HttpServletResponse response, @PathVariable("mainId") String mainId) {
+    @RequestMapping(value = "/importReviewQuestion")
+    public Result<String> importReviewQuestion(HttpServletRequest request, HttpServletResponse response) {
+        long start = System.currentTimeMillis();
+        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        String classId = request.getParameter("classId");
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+        String questionIds = "";
         for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
             // 获取上传文件对象
             MultipartFile file = entity.getValue();
@@ -181,14 +199,42 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
             params.setHeadRows(1);
             params.setNeedSave(true);
             try {
-                List<ReviewQuestion> list = ExcelImportUtil.importExcel(file.getInputStream(), ReviewQuestion.class, params);
-                /*for (ReviewQuestion temp : list) {
-                   temp.setClassId(mainId);
-                }*/
-                long start = System.currentTimeMillis();
-                reviewQuestionService.saveBatch(list);
-                log.info("消耗时间" + (System.currentTimeMillis() - start) + "毫秒");
-                return Result.OK("文件导入成功！数据行数：" + list.size());
+                List<QuestionImportEntity> listQuestions;
+                listQuestions = ExcelImportUtil.importExcel(file.getInputStream(),QuestionImportEntity.class,params);
+                //先删除该分类下的所有题目
+                reviewQuestionService.deleteQuestion(classId);
+                //删除分类题目关联
+                QueryWrapper<ReviewQuestionClassEntity> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("class_id",classId);
+                reviewQuestionClassService.remove(queryWrapper);
+                ReviewQuestion questionEntity = null;
+                ReviewQuestionClassEntity questionClass = null;
+                List<ReviewAnswerEntity> selectList = null;
+                for(QuestionImportEntity questionImport : listQuestions) {
+                    questionEntity = reviewQuestionClassService.getQuestionByQnum(classId,questionImport.getQuestionNum());
+                    if(questionEntity == null) {
+                        questionEntity = new ReviewQuestion();
+                        questionClass = new ReviewQuestionClassEntity();
+                        questionEntity.setQuestionType(questionImport.getQuestionType());
+                        questionEntity.setContent(questionImport.getQuestionContent());
+                        questionEntity.setQuestionNum(questionImport.getQuestionNum());
+                        questionEntity.setCreateTime(new Date());
+                        questionEntity.setCreateBy(sysUser.getUsername());
+                        reviewQuestionService.save(questionEntity);
+                        questionClass.setClassId(classId);
+                        questionClass.setQuestionId(questionEntity.getQuestionId());
+                        reviewQuestionClassService.save(questionClass);
+                        selectList = getSelectInfo(questionEntity.getQuestionId(), questionImport);
+                        if(CollectionUtils.isNotEmpty(selectList)) {
+                            for(ReviewAnswerEntity answerEntity : selectList) {
+                                reviewAnswerService.save(answerEntity);
+                            }
+                        }
+                    }else {
+                        questionIds += questionImport.getQuestionNum() + ",";
+                        continue;
+                    }
+                }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 return Result.error("文件导入失败:" + e.getMessage());
@@ -200,6 +246,149 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
                 }
             }
         }
-        return Result.error("文件导入失败！");
+        if ("".equals(questionIds)){
+            log.info("消耗时间" + (System.currentTimeMillis() - start) + "毫秒");
+            return Result.OK("导入成功！");
+        }else {
+            return Result.OK("题目编号 "+questionIds+"已存在，请修正再导入");
+        }
+    }
+
+    @PostMapping(value = "/addQuestion")
+    public Result<?> addQuestion(@RequestBody QuestionVO question, HttpServletRequest request, HttpServletResponse response) {
+        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        String classId = question.getClassId();
+        //获取该量表最大题目序号
+        Integer maxQuestionNum = reviewQuestionService.getMaxQuestionId(classId);
+        ReviewQuestion reviewQuestion = reviewQuestionService.getQuestionByQnum(classId, maxQuestionNum);
+        if(reviewQuestion == null) {
+            reviewQuestion = new ReviewQuestion();
+            reviewQuestion.setContent(question.getContent());
+            reviewQuestion.setCreateBy(sysUser.getUsername());
+            reviewQuestion.setCreateTime(new Date());
+            reviewQuestion.setIsImportant(0);
+            reviewQuestion.setQuestionType(question.getQuestionType());
+            reviewQuestion.setQuestionNum(maxQuestionNum == null ? 1 : maxQuestionNum + 1);
+            reviewQuestionService.save(reviewQuestion);
+            //添加题目分类
+            ReviewQuestionClassEntity questionClass = new ReviewQuestionClassEntity();
+            questionClass.setClassId(classId);
+            questionClass.setQuestionId(reviewQuestion.getQuestionId());
+            reviewQuestionClassService.save(questionClass);
+            //添加题目选项内容
+            List<SelectVO> selectList = question.getSelectList();
+            SelectVO select = null;
+            ReviewAnswerEntity answerEntity = null;
+            for(int i=0; i<selectList.size();i++) {
+                select = selectList.get(i);
+                answerEntity = new ReviewAnswerEntity();
+                answerEntity.setQuestionId(reviewQuestion.getQuestionId());
+                answerEntity.setAnswerCode(select.getSelCode());
+                answerEntity.setAnswerContent(select.getSelectContent());
+                if(!"".equals(StringUtils.trimToEmpty(select.getSelectGrade()))) {
+                    answerEntity.setGrade(Double.valueOf(select.getSelectGrade()));
+                }
+                reviewAnswerService.save(answerEntity);
+            }
+            return Result.OK("添加成功！");
+        }else {
+            return Result.OK("添加失败！");
+        }
+    }
+
+    @PostMapping(value = "/editQuestion")
+    public Result<?> editQuestion(@RequestBody QuestionVO question,HttpServletRequest request, HttpServletResponse response) {
+        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        //更新题目
+        ReviewQuestion reviewQuestion = reviewQuestionService.getById(question.getQuestionId());
+        reviewQuestion.setContent(question.getContent());
+        reviewQuestion.setCreateBy(sysUser.getUsername());
+        reviewQuestion.setCreateTime(new Date());
+        reviewQuestion.setQuestionType(question.getQuestionType());
+        reviewQuestion.setRightAnswer(question.getRightAnswer());
+        reviewQuestionService.saveOrUpdate(reviewQuestion);
+        //更新选项
+        List<SelectVO> selectList = question.getSelectList();
+        SelectVO select = null;
+        ReviewAnswerEntity answerEntity = null;
+        //先清空再插入
+        QueryWrapper<ReviewAnswerEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("question_id",question.getQuestionId());
+        reviewAnswerService.remove(queryWrapper);
+        for(int i=0; i<selectList.size(); i++) {
+            select = selectList.get(i);
+            /*if(!"".equals(StringUtils.trimToEmpty(select.getSelectId()))) {
+                answerEntity = reviewAnswerService.getById(select.getSelectId());
+            } else {
+                answerEntity = new ReviewAnswerEntity();
+                answerEntity.setQuestionId(reviewQuestion.getQuestionId());
+            }*/
+            answerEntity = new ReviewAnswerEntity();
+            answerEntity.setQuestionId(reviewQuestion.getQuestionId());
+            answerEntity.setAnswerCode(select.getSelCode());
+            answerEntity.setAnswerContent(select.getSelectContent());
+            if(!"".equals(StringUtils.trimToEmpty(select.getSelectGrade()))) {
+                answerEntity.setGrade(Double.valueOf(select.getSelectGrade()));
+            }
+            reviewAnswerService.saveOrUpdate(answerEntity);
+        }
+        return Result.OK("修改成功！");
+    }
+
+    /**
+     * 封装每道题的选项内容
+     * @param questionId
+     * @param questionImport
+     * @return
+     */
+    private List<ReviewAnswerEntity> getSelectInfo(Integer questionId, QuestionImportEntity questionImport) throws Exception{
+        if (!Constants.QuestionType.SingleSelect.getValue().equals(questionImport.getQuestionType()) &&
+                !Constants.QuestionType.MultiSelect.getValue().equals(questionImport.getQuestionType())) {
+            return null;
+        }
+        Field[] fieldArr = QuestionImportEntity.class.getDeclaredFields();
+        Field field = null;
+        String filedName = "";
+        String getMethodName = "";
+        Method getMethod = null;
+        List<ReviewAnswerEntity> selectList = new ArrayList<ReviewAnswerEntity>();
+        Map<String, ReviewAnswerEntity> map = new HashMap<String, ReviewAnswerEntity>();
+        for(int i = 0; i < fieldArr.length; i++) {
+            field = fieldArr[i];
+            filedName = field.getName();
+            if(filedName.contains("select") || filedName.contains("grade")) {
+                getMethodName = "get" + filedName.substring(0, 1).toUpperCase() + filedName.substring(1);
+                getMethod = QuestionImportEntity.class.getMethod(getMethodName);
+                Object obj = getMethod.invoke(questionImport);
+                if(obj == null || "".equals(StringUtils.trimToEmpty(obj.toString()))) {
+                    continue;
+                } else {
+                    String selCode = filedName.substring(filedName.length()-1);
+                    if(map.get(selCode) != null) {
+                        if(field.getType().getName().equals("java.lang.String")) {
+                            map.get(selCode).setAnswerContent(obj.toString());
+                        } else if(field.getType().getName().equals("java.math.BigDecimal")) {
+                            map.get(selCode).setGrade(Double.valueOf(obj.toString()));
+                        }
+                    } else {
+                        map.put(selCode, new ReviewAnswerEntity());
+                        map.get(selCode).setAnswerCode(selCode);
+                        map.get(selCode).setQuestionId(questionId);
+                        if(field.getType().getName().equals("java.lang.String")) {
+                            map.get(selCode).setAnswerContent(obj.toString());
+                        } else if(field.getType().getName().equals("java.math.BigDecimal")) {
+                            map.get(selCode).setGrade(Double.valueOf(obj.toString()));
+                        }
+                    }
+                }
+            }
+        }
+        for(Map.Entry<String, ReviewAnswerEntity> entry : map.entrySet()) {
+            if(entry.getValue() != null) {
+                selectList.add(entry.getValue());
+            }
+
+        }
+        return selectList;
     }
 }

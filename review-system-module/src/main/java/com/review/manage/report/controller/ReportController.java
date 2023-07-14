@@ -7,18 +7,24 @@ import com.review.manage.report.entity.ReviewReportEntity;
 import com.review.manage.report.entity.ReviewReportGradeEntity;
 import com.review.manage.report.service.IReportGradeService;
 import com.review.manage.report.service.IReportService;
-import com.review.manage.variate.entity.ReviewVariateGradeEntity;
+import com.review.manage.report.vo.ReportVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.system.vo.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author javabage
@@ -64,17 +70,60 @@ public class ReportController extends JeecgController<ReviewReportEntity, IRepor
 
     @ApiOperation(value="维度管理-分值列表", notes="维度管理-分值列表")
     @GetMapping(value = "/reportGradeList")
-    public Result<IPage<ReviewReportGradeEntity>> gradeList(ReviewReportGradeEntity reviewReportGrade,
-                                                            @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                                            @RequestParam(name="pageSize", defaultValue="5") Integer pageSize,
-                                                            HttpServletRequest req) {
+    public Result<List<ReviewReportGradeEntity>> gradeList(ReviewReportGradeEntity reviewReportGrade, HttpServletRequest req) {
         if (StringUtils.isNotBlank(reviewReportGrade.getReportId())){
-            QueryWrapper<ReviewReportGradeEntity> queryWrapper = QueryGenerator.initQueryWrapper(reviewReportGrade, req.getParameterMap());
-            Page<ReviewReportGradeEntity> page = new Page<ReviewReportGradeEntity>(pageNo, pageSize);
-            IPage<ReviewReportGradeEntity> pageList = iReportGradeService.page(page, queryWrapper);
-            return Result.OK(pageList);
+            QueryWrapper<ReviewReportGradeEntity> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("report_id",reviewReportGrade.getReportId());
+            List<ReviewReportGradeEntity> list = iReportGradeService.list(queryWrapper);
+            return Result.OK(list);
         }else {
-            return Result.OK(null);
+            List<ReviewReportGradeEntity> list = new ArrayList<>();
+            for(int i=0; i<3; i++){
+                list.add(new ReviewReportGradeEntity());
+            }
+            return Result.OK(list);
         }
+    }
+
+    @ApiOperation(value="添加维度", notes="添加维度")
+    @PostMapping(value = "/addReport")
+    public Result<?> addReport(HttpServletRequest request, HttpServletResponse response, @RequestBody ReportVo report) {
+        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        List<ReviewReportGradeEntity> list = report.getReportGradeList();
+        ReviewReportEntity reportEntity = new ReviewReportEntity();
+        reportEntity.setClassId(report.getClassId());
+        reportEntity.setCreateBy(sysUser.getUsername());
+        reportEntity.setCreateTime(new Date());
+        reportEntity.setReportName(report.getReportName());
+        reportService.save(reportEntity);
+
+        for(ReviewReportGradeEntity reportGrade : list) {
+            reportGrade.setReportId(reportEntity.getReportId());
+            iReportGradeService.save(reportGrade);
+        }
+        return Result.OK("添加成功");
+    }
+
+    @ApiOperation(value="编辑维度", notes="编辑维度")
+    @PostMapping(value = "/editReport")
+    public Result<?> editReport(HttpServletRequest request,HttpServletResponse response, @RequestBody ReportVo report) {
+        LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
+        List<ReviewReportGradeEntity> list = report.getReportGradeList();
+        ReviewReportEntity reportEntity = reportService.getById(report.getReportId());
+        reportEntity.setClassId(report.getClassId());
+        reportEntity.setCreateBy(sysUser.getUsername());
+        reportEntity.setCreateTime(new Date());
+        reportEntity.setReportName(report.getReportName());
+
+        //先删除变量题目关联表
+        QueryWrapper<ReviewReportGradeEntity> reviewReportGrade = new QueryWrapper<>();
+        reviewReportGrade.eq("report_id",report.getReportId());
+        iReportGradeService.remove(reviewReportGrade);
+        for(ReviewReportGradeEntity reportGrade : list) {
+            reportGrade.setReportId(report.getReportId());
+            iReportGradeService.save(reportGrade);
+        }
+        reportService.saveOrUpdate(reportEntity);
+        return Result.OK("更新成功");
     }
 }

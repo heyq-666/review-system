@@ -18,4 +18,11 @@ public interface IVariateService extends IService<ReviewVariateEntity> {
     void delVariateGrade(String variateId);
 
     void delReportVariate(String variateId);
+
+    /**
+     * 获取某分类下的因子最大编号
+     * @param classId
+     * @return
+     */
+    Integer getMaxSortNum(String classId);
 }
