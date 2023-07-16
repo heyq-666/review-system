@@ -36,6 +36,7 @@ com\review\manage\reviewOrder\vo\ReviewOrderVO.class
 com\review\manage\report\service\IReportService.class
 com\review\front\frontAppoint\mapper\AppointExpertMapper.class
 com\review\front\frontOrder\controller\FrontOrderController.class
+com\review\manage\variate\vo\VariateVO.class
 com\review\manage\report\mapper\ReviewReportMapper.class
 com\review\manage\intake\controller\ReviewIntakeController.class
 com\review\manage\question\entity\ReviewQuestionClassEntity.class
@@ -53,6 +54,7 @@ com\review\front\videoAnalysis\entity\ReviewVideoAnalysisEntity.class
 com\review\manage\notice\entity\ReviewNoticeEntity.class
 com\review\manage\subject\entity\ReviewSubjectClassEntity.class
 com\review\manage\intake\controller\IntakeConsultantFeedbackController.class
+com\review\manage\variate\service\IReviewGradeRuleService.class
 com\review\manage\userManage\entity\ReviewUser.class
 com\review\manage\intake\service\impl\ReviewIntakeServiceImpl.class
 com\review\manage\report\entity\ReviewReportEntity.class
@@ -78,7 +80,7 @@ com\review\manage\question\service\impl\ReviewAnswerServiceImpl.class
 com\review\common\Constants$UserSource.class
 com\review\front\dongliangReview\controller\DongLiangApiController.class
 com\review\manage\question\service\IReviewQuestionClassService.class
-com\review\manage\variate\vo\ReviewVariateVo.class
+com\review\manage\variate\service\impl\ReviewGradeRuleServiceImpl.class
 com\review\front\frontProject\mapper\FrontProjectMapper.class
 com\review\front\frontNotice\service\impl\FrontNoticeServiceImpl.class
 com\review\front\videoAnalysis\service\IReviewVideoAnalysisService.class
@@ -161,6 +163,7 @@ com\review\manage\banner\service\impl\ReviewBannerServiceImpl.class
 com\review\manage\intake\mapper\ReviewIntakeMapper.class
 com\review\manage\intake\mapper\IntakeConsultantFeedbackMapper.class
 com\review\front\msgManage\service\ISendMsgService.class
+com\review\manage\variate\entity\ReviewGradeRuleEntity.class
 com\review\front\frontAppoint\service\IAppointExpertService.class
 com\review\front\frontReport\vo\ReviewResultVO.class
 com\review\manage\expert\controller\ReviewExpertController.class
@@ -183,6 +186,7 @@ com\review\manage\variate\controller\VariateController.class
 com\review\manage\reviewOrder\service\impl\ReviewOrderServiceImpl.class
 com\review\manage\question\mapper\ReviewQuestionClassMapper.class
 com\review\front\frontOrder\service\impl\ReviewPayLogServiceImpl.class
+com\review\manage\variate\mapper\ReviewGradeRuleMapper.class
 com\review\manage\project\entity\ReviewProjectClassEntity.class
 com\review\common\httpclient\HttpClientUtils.class
 com\review\manage\reviewOrder\entity\ReviewOrder.class
@@ -199,6 +203,7 @@ com\review\front\frontSubject\service\IFrontSubjectService.class
 com\review\front\videoAnalysis\vo\AnalysisType.class
 com\review\manage\reviewClass\service\impl\ReviewClassServiceImpl.class
 com\review\front\frontBanner\mapper\FrontBannerMapper.class
+com\review\manage\variate\vo\GradeAllVo.class
 com\review\manage\banner\vo\ReviewBannerVo.class
 com\review\manage\expert\service\impl\ReviewExpertCalendarImpl.class
 com\review\common\httpclient\HttpClientBuilder$1.class

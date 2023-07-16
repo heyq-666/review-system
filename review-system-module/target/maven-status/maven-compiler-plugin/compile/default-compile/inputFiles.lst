@@ -6,6 +6,7 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\mana
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontSubject\service\IFrontSubjectService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\videoAnalysis\controller\ReviewVideoAnalysisController.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\msgManage\service\ISendMsgService.java
+D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\vo\VariateVO.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\question\service\IReviewAnswerService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontProject\service\impl\FrontProjectServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\report\vo\ReportVo.java
@@ -29,6 +30,7 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\mana
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\notice\controller\ReviewNoticeController.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\intake\service\impl\ReviewIntakeServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\intake\mapper\ReviewIntakeMapper.java
+D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\entity\ReviewGradeRuleEntity.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\intake\controller\IntakeConsultantFeedbackController.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontAppoint\vo\ConsultationVO.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\intake\entity\ReviewIntake.java
@@ -66,7 +68,6 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\mana
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\msgManage\controller\SendMsgController.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\reviewOrder\mapper\ReviewOrderMapper.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\subject\vo\ReviewSubjectVO.java
-D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\vo\ReviewVariateVo.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\videoAnalysis\mapper\ReviewVideoAnalysisMapper.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\intake\entity\IntakeConsultantFeedback.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\entity\ReviewVariateGradeEntity.java
@@ -99,7 +100,9 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\fron
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\expert\service\IReviewExpertService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontReport\service\IReviewReportTemplateService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\notice\mapper\ReviewNoticeMapper.java
+D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\service\impl\ReviewGradeRuleServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\intake\controller\ReviewIntakeController.java
+D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\vo\GradeAllVo.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\intake\service\IReviewIntakeService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontAppoint\service\IFrontReviewExpertCalendarService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\dongliangReview\vo\UserInfo.java
@@ -149,6 +152,7 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\fron
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontNotice\controller\FrontNoticeController.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontAppoint\mapper\AppointExpertMapper.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontReport\service\impl\ReviewReportTemplateServiceImpl.java
+D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\mapper\ReviewGradeRuleMapper.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\report\service\impl\ReportServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\question\service\impl\ReviewQuestionClassServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontOrder\service\impl\FrontOrderServiceImpl.java
@@ -182,6 +186,7 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\fron
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\expert\vo\ReviewExpertCalendarVo.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\report\service\IReportService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\common\httpclient\HttpClientUtils.java
+D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\service\IReviewGradeRuleService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\reviewClass\entity\ReviewClass.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\variate\service\IVariateService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontAppoint\service\IReviewExpertReserveService.java
