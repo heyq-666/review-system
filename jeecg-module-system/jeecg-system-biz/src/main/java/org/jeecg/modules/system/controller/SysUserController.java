@@ -13,19 +13,18 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.PermissionData;
 import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.constant.SymbolConstant;
-import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
-import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.*;
+import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
+import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.modules.system.entity.*;
 import org.jeecg.modules.system.model.DepartIdModel;
 import org.jeecg.modules.system.model.SysUserSysDepartModel;
@@ -647,13 +646,7 @@ public class SysUserController {
             String sysRoleId = sysUserRoleVO.getRoleId();
             for(String sysUserId:sysUserRoleVO.getUserIdList()) {
                 SysUserRole sysUserRole = new SysUserRole(sysUserId,sysRoleId);
-                QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<SysUserRole>();
-                queryWrapper.eq("role_id", sysRoleId).eq("user_id",sysUserId);
-                SysUserRole one = sysUserRoleService.getOne(queryWrapper);
-                if(one==null){
-                    sysUserRoleService.save(sysUserRole);
-                }
-
+                sysUserRoleService.saveUserRoleByTenant(sysUserRole);
             }
             result.setMessage("添加成功!");
             result.setSuccess(true);

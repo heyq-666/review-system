@@ -1,6 +1,7 @@
 package org.jeecg.modules.system.controller;
 
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -15,10 +16,7 @@ import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
-import org.jeecg.modules.system.entity.SysPermission;
-import org.jeecg.modules.system.entity.SysPermissionDataRule;
-import org.jeecg.modules.system.entity.SysRole;
-import org.jeecg.modules.system.entity.SysRolePermission;
+import org.jeecg.modules.system.entity.*;
 import org.jeecg.modules.system.model.TreeModel;
 import org.jeecg.modules.system.service.*;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
@@ -35,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -62,6 +61,12 @@ public class SysRoleController {
 
     @Autowired
     private ISysUserRoleService sysUserRoleService;
+
+    @Autowired
+    private ISysTenantPackService sysTenantPackService;
+
+	@Autowired
+	private ISysPackPermissionService packPermissionService;
 
 	/**
 	  * 分页列表查询 【系统角色，不做租户隔离】
@@ -126,6 +131,11 @@ public class SysRoleController {
 		Result<SysRole> result = new Result<SysRole>();
 		try {
 			role.setCreateTime(new Date());
+			//是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+			long tenantId = oConvertUtils.getLong(TenantContext.getTenant(), -1);
+			if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL && tenantId != -1){
+				role.setTenantId(tenantId);
+			}
 			sysRoleService.save(role);
 			result.success("添加成功！");
 		} catch (Exception e) {
@@ -188,7 +198,7 @@ public class SysRoleController {
 		}
 		return result;
 	}
-	
+
 	/**
 	  * 通过id查询
 	 * @param id
@@ -427,6 +437,36 @@ public class SysRoleController {
 			LambdaQueryWrapper<SysPermission> query = new LambdaQueryWrapper<SysPermission>();
 			query.eq(SysPermission::getDelFlag, CommonConstant.DEL_FLAG_0);
 			query.orderByAsc(SysPermission::getSortNo);
+
+			Long tenantId = null;
+			//是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+			if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+				tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
+			}
+			//租户只能查询产品关联的菜单
+			if (tenantId != -1) {
+				QueryWrapper<SysTenantPack> queryWrapper = new QueryWrapper<>();
+				queryWrapper.eq("tenant_id", tenantId);
+				List<SysTenantPack> packList = sysTenantPackService.list(queryWrapper);
+
+				if (CollectionUtil.isNotEmpty(packList)) {
+					List<String> packIds = packList.stream().map(SysTenantPack::getId).collect(Collectors.toList());
+					QueryWrapper<SysPackPermission> queryWrapper1 = new QueryWrapper<>();
+					queryWrapper1.in("pack_id", packIds);
+					List<SysPackPermission> packPermissionList = packPermissionService.list(queryWrapper1);
+					if (CollectionUtil.isNotEmpty(packPermissionList)) {
+						List<String> permissionIds = packPermissionList.stream().map(SysPackPermission::getPermissionId).collect(Collectors.toList());
+						query.in(SysPermission::getId, permissionIds);
+					} else {
+						result.setSuccess(true);
+						return result;
+					}
+				} else {
+					result.setSuccess(true);
+					return result;
+				}
+			}
+
 			List<SysPermission> list = sysPermissionService.list(query);
 			for(SysPermission sysPer : list) {
 				ids.add(sysPer.getId());

@@ -12,4 +12,10 @@ import org.jeecg.modules.system.entity.SysUserRole;
  * @since 2018-12-21
  */
 public interface ISysUserRoleService extends IService<SysUserRole> {
+
+    /**
+     * 保存用户角色关联
+     * @param sysUserRole
+     */
+    void saveUserRoleByTenant(SysUserRole sysUserRole);
 }
