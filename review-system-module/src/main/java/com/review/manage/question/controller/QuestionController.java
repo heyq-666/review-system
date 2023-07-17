@@ -260,7 +260,7 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
         String classId = question.getClassId();
         //获取该量表最大题目序号
         Integer maxQuestionNum = reviewQuestionService.getMaxQuestionId(classId);
-        ReviewQuestion reviewQuestion = reviewQuestionService.getQuestionByQnum(classId, maxQuestionNum);
+        ReviewQuestion reviewQuestion = reviewQuestionService.getQuestionByQnum(classId, maxQuestionNum + 1);
         if(reviewQuestion == null) {
             reviewQuestion = new ReviewQuestion();
             reviewQuestion.setContent(question.getContent());
