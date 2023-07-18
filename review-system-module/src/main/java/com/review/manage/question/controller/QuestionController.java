@@ -150,7 +150,7 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
      * 导出
      * @return
      */
-    @RequestMapping(value = "/exportReviewQuestion")
+    @PostMapping(value = "/exportReviewQuestion")
     public ModelAndView exportReviewQuestion(HttpServletRequest request, ReviewQuestion reviewQuestion) {
         // Step.1 组装查询条件
         QueryWrapper<ReviewQuestion> queryWrapper = QueryGenerator.initQueryWrapper(reviewQuestion, request.getParameterMap());
@@ -183,7 +183,7 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
      * 导入
      * @return
      */
-    @RequestMapping(value = "/importReviewQuestion")
+    @PostMapping(value = "/importReviewQuestion")
     public Result<String> importReviewQuestion(HttpServletRequest request, HttpServletResponse response) {
         long start = System.currentTimeMillis();
         LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
@@ -260,7 +260,7 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
         String classId = question.getClassId();
         //获取该量表最大题目序号
         Integer maxQuestionNum = reviewQuestionService.getMaxQuestionId(classId);
-        ReviewQuestion reviewQuestion = reviewQuestionService.getQuestionByQnum(classId, maxQuestionNum + 1);
+        ReviewQuestion reviewQuestion = reviewQuestionService.getQuestionByQnum(classId, maxQuestionNum == null ? 0 : maxQuestionNum + 1);
         if(reviewQuestion == null) {
             reviewQuestion = new ReviewQuestion();
             reviewQuestion.setContent(question.getContent());
