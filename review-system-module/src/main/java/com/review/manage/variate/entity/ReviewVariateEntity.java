@@ -58,6 +58,9 @@ public class ReviewVariateEntity implements Serializable {
 	@ApiModelProperty(value = "序号")
     private Integer sortNum;
 
+	@ApiModelProperty(value = "因子计分设置表达式")
+	private String variateGradeConf;
+
 	private transient String className;
 
 	/**

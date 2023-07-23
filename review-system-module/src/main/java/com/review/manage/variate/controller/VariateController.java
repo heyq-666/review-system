@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.review.manage.question.entity.ReviewQuestion;
+import com.review.manage.question.entity.ReviewQuestionClassEntity;
+import com.review.manage.question.service.IReviewQuestionClassService;
 import com.review.manage.question.service.IReviewQuestionService;
-import com.review.manage.variate.entity.ReviewGradeRuleEntity;
 import com.review.manage.variate.entity.ReviewVariateEntity;
 import com.review.manage.variate.entity.ReviewVariateGradeEntity;
 import com.review.manage.variate.service.IReviewGradeRuleService;
@@ -18,9 +19,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author javabage
@@ -37,6 +42,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/variate/variate")
 public class VariateController extends JeecgController<ReviewVariateEntity, IVariateService>  {
+
+    private static Logger logger = LoggerFactory.getLogger(VariateController.class);
 
     @Autowired
     private IVariateService variateService;
@@ -49,6 +56,9 @@ public class VariateController extends JeecgController<ReviewVariateEntity, IVar
 
     @Autowired
     private IReviewQuestionService questionService;
+
+    @Autowired
+    private IReviewQuestionClassService reviewQuestionClassService;
 
     @ApiOperation(value="因子列表-分页列表查询", notes="因子列表-分页列表查询")
     @GetMapping(value = "/list")
@@ -138,26 +148,42 @@ public class VariateController extends JeecgController<ReviewVariateEntity, IVar
     @PostMapping(value = "/addScoreSet")
     public Result<String> addScoreSet(@RequestBody VariateVO variate) {
         LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
-        List<ReviewGradeRuleEntity> gradeRuleList = variate.getGradeRuleList();
+        ReviewVariateEntity variateEntity = variateService.getById(variate.getVariateId());
+        variateEntity.setCreateBy(sysUser.getUsername());
+        variateEntity.setVariateGradeConf(variate.getVariateGradeConf());
+        variateService.saveOrUpdate(variateEntity);
+        /*List<ReviewGradeRuleEntity> gradeRuleList = variate.getGradeRuleList();
         QueryWrapper<ReviewGradeRuleEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("variate_id", variate.getVariateId());
-        gradeRuleService.remove(queryWrapper);
+        gradeRuleService.remove(queryWrapper);*/
         //更新总条目运算信息
-        ReviewVariateEntity variateEntity = variateService.getById(variate.getVariateId());
+        /*ReviewVariateEntity variateEntity = variateService.getById(variate.getVariateId());
         variateEntity.setCreateBy(sysUser.getUsername());
         variateEntity.setCalSymbol(variate.getGradeAllRule().get(0).getCalSymbol());
         variateEntity.setCalTotal(variate.getGradeAllRule().get(0).getCalTotal());
         variateEntity.setCalSymbol1(variate.getGradeAllRule().get(0).getCalSymbol1());
         variateEntity.setCalTotal1(variate.getGradeAllRule().get(0).getCalTotal1());
-        variateService.saveOrUpdate(variateEntity);
+        variateService.saveOrUpdate(variateEntity);*/
 
-        ReviewQuestion question = null;
+        /*ReviewQuestion question = null;
         for(ReviewGradeRuleEntity gradeRule : gradeRuleList) {
             question = questionService.getQuestionByQnum(variate.getClassId(), gradeRule.getQuestionId());
             gradeRule.setQuestionId(question.getQuestionId());
             gradeRule.setVariateId(variate.getVariateId());
             gradeRuleService.save(gradeRule);
-        }
+        }*/
         return Result.OK("更新成功");
+    }
+    @GetMapping(value = "/getQuestionNumByClassId")
+    public Result<?> getQuestionNumByClassId(@RequestParam(name="classId",required=true) String classId) {
+        if (StringUtils.isBlank(classId)) {
+            throw new JeecgBootException("量表不存在！");
+        }
+        QueryWrapper<ReviewQuestionClassEntity> queryWrapper = new QueryWrapper<ReviewQuestionClassEntity>();
+        queryWrapper.eq("class_id",classId);
+        List<ReviewQuestionClassEntity> questionIdList = reviewQuestionClassService.list(queryWrapper);
+        List<Integer> questionIds = questionIdList.stream().map(ReviewQuestionClassEntity::getQuestionId).collect(Collectors.toList());
+        List<ReviewQuestion> list = questionService.listByIds(questionIds);
+        return Result.OK(list);
     }
 }

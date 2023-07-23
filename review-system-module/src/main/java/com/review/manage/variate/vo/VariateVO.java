@@ -54,4 +54,6 @@ public class VariateVO {
     private Integer sortNum;
 
 	private List<GradeAllVo> gradeAllRule = new ArrayList<>();
+
+	private String variateGradeConf;
 } 
