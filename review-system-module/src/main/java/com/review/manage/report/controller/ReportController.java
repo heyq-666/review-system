@@ -3,8 +3,10 @@ package com.review.manage.report.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.review.front.frontReport.service.IReviewReportVariateService;
 import com.review.manage.report.entity.ReviewReportEntity;
 import com.review.manage.report.entity.ReviewReportGradeEntity;
+import com.review.manage.report.entity.ReviewReportVariateEntity;
 import com.review.manage.report.service.IReportGradeService;
 import com.review.manage.report.service.IReportService;
 import com.review.manage.report.vo.ReportVo;
@@ -40,6 +42,9 @@ public class ReportController extends JeecgController<ReviewReportEntity, IRepor
 
     @Autowired
     private IReportGradeService iReportGradeService;
+
+    @Autowired
+    private IReviewReportVariateService reviewReportVariateService;
 
     @ApiOperation(value="维度列表-分页列表查询", notes="维度列表-分页列表查询")
     @GetMapping(value = "/list")
@@ -125,5 +130,37 @@ public class ReportController extends JeecgController<ReviewReportEntity, IRepor
         }
         reportService.saveOrUpdate(reportEntity);
         return Result.OK("更新成功");
+    }
+
+    @ApiOperation(value="保存维度设置", notes="保存维度设置")
+    @PostMapping(value = "/saveReportSet")
+    public Result<String> saveReportSet(@RequestBody ReportVo report) {
+        List<ReviewReportVariateEntity> reportVariateList = report.getReportVariateList();
+        QueryWrapper<ReviewReportVariateEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("report_id",report.getReportId());
+        reviewReportVariateService.remove(queryWrapper);
+        List<ReviewReportVariateEntity> list = null;
+        for(ReviewReportVariateEntity reportVariate : reportVariateList) {
+            if(!"".equals(StringUtils.trimToEmpty(reportVariate.getVariateId()))) {
+                QueryWrapper<ReviewReportVariateEntity> queryWrapper1 = new QueryWrapper<>();
+                queryWrapper1.eq("variate_id",reportVariate.getVariateId());
+                queryWrapper1.eq("report_id",report.getReportId());
+                list = reviewReportVariateService.list(queryWrapper1);
+                if(list.size() == 0) {
+                    reportVariate.setReportId(report.getReportId());
+                    reviewReportVariateService.save(reportVariate);
+                }
+            }
+        }
+        return Result.OK("添加成功");
+    }
+
+    @ApiOperation(value="获取维度设置", notes="获取维度设置")
+    @GetMapping(value = "/reportSetList")
+    public Result<List<ReviewReportVariateEntity>> reportSetList(@RequestParam(name="reportId",required=true) String reportId) {
+        QueryWrapper<ReviewReportVariateEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("report_id",reportId);
+        List<ReviewReportVariateEntity> list = reviewReportVariateService.list(queryWrapper);
+        return Result.OK(list);
     }
 }

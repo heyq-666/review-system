@@ -175,7 +175,7 @@ public class VariateController extends JeecgController<ReviewVariateEntity, IVar
         return Result.OK("更新成功");
     }
     @GetMapping(value = "/getQuestionNumByClassId")
-    public Result<?> getQuestionNumByClassId(@RequestParam(name="classId",required=true) String classId) {
+    public Result<List<ReviewQuestion>> getQuestionNumByClassId(@RequestParam(name="classId",required=true) String classId) {
         if (StringUtils.isBlank(classId)) {
             throw new JeecgBootException("量表不存在！");
         }
@@ -184,6 +184,14 @@ public class VariateController extends JeecgController<ReviewVariateEntity, IVar
         List<ReviewQuestionClassEntity> questionIdList = reviewQuestionClassService.list(queryWrapper);
         List<Integer> questionIds = questionIdList.stream().map(ReviewQuestionClassEntity::getQuestionId).collect(Collectors.toList());
         List<ReviewQuestion> list = questionService.listByIds(questionIds);
+        return Result.OK(list);
+    }
+
+    @GetMapping(value = "/getVariateListByClassId")
+    public Result<List<ReviewVariateEntity>> getVariateListByClassId(@RequestParam(name="classId",required=true) String classId) {
+        QueryWrapper<ReviewVariateEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("class_id",classId);
+        List<ReviewVariateEntity> list = variateService.list(queryWrapper);
         return Result.OK(list);
     }
 }

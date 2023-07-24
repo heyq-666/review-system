@@ -22,7 +22,6 @@ import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
-import org.jeecg.common.util.oConvertUtils;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -71,7 +70,10 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
     @GetMapping(value = "/listReviewQuestionByMainId")
     public Result<List<ReviewQuestion>> listReviewQuestionByMainId(@RequestParam(name = "classId") String classId, HttpServletRequest req) {
         List<ReviewQuestion> list = reviewQuestionService.getQuestionListByClassId(classId);
-        return Result.OK(list);
+        //剔除questionNum为空的脏数据，暂时这样处理。后续检查并处理导入题目为什么会产生questionNum为空的数据
+        list.removeIf(reviewQuestion -> reviewQuestion.getQuestionNum() == null);
+        List<ReviewQuestion> list1 = list.stream().sorted(Comparator.comparing(ReviewQuestion :: getQuestionNum)).collect(Collectors.toList());
+        return Result.OK(list1);
     }
 
     /**
@@ -84,9 +86,8 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
     @PostMapping(value = "/addReviewQuestion")
     public Result<String> addReviewQuestion(@RequestBody ReviewQuestion reviewQuestion) {
         //查找该量表题目中最大的题目序号
-        //Integer questionNum = reviewQuestionService.getMaxQuestionId(reviewQuestion.getClassId());
-        Integer questionNum = 50;
-        reviewQuestion.setQuestionNum(questionNum);
+        Integer questionNum = reviewQuestionService.getMaxQuestionId(reviewQuestion.getClassId());
+        reviewQuestion.setQuestionNum(questionNum + 1);
         reviewQuestionService.save(reviewQuestion);
         return Result.OK("添加成功！");
     }
@@ -150,30 +151,30 @@ public class QuestionController extends JeecgController<ReviewQuestion, IReviewQ
      * 导出
      * @return
      */
-    @PostMapping(value = "/exportReviewQuestion")
+    @RequestMapping(value = "/exportReviewQuestion")
     public ModelAndView exportReviewQuestion(HttpServletRequest request, ReviewQuestion reviewQuestion) {
         // Step.1 组装查询条件
         QueryWrapper<ReviewQuestion> queryWrapper = QueryGenerator.initQueryWrapper(reviewQuestion, request.getParameterMap());
         LoginUser sysUser = (LoginUser) SecurityUtils.getSubject().getPrincipal();
 
         // Step.2 获取导出数据
-        List<ReviewQuestion> pageList = reviewQuestionService.list(queryWrapper);
-        List<ReviewQuestion> exportList = null;
+        //List<ReviewQuestion> pageList = reviewQuestionService.list(queryWrapper);
+        //List<QuestionImportEntity> pageList = new ArrayList<>();
+        List<QuestionImportEntity> exportList = new ArrayList<>();
 
         // 过滤选中数据
-        String selections = request.getParameter("selections");
+        /*String selections = request.getParameter("selections");
         if (oConvertUtils.isNotEmpty(selections)) {
             List<String> selectionList = Arrays.asList(selections.split(","));
             exportList = pageList.stream().filter(item -> selectionList.contains(item.getQuestionId())).collect(Collectors.toList());
         } else {
             exportList = pageList;
-        }
-
+        }*/
         // Step.3 AutoPoi 导出Excel
         ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
         //此处设置的filename无效,前端会重更新设置一下
         mv.addObject(NormalExcelConstants.FILE_NAME, "问题列表");
-        mv.addObject(NormalExcelConstants.CLASS, ReviewQuestion.class);
+        mv.addObject(NormalExcelConstants.CLASS, QuestionImportEntity.class);
         mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("问题列表报表", "导出人:" + sysUser.getRealname(), "问题列表"));
         mv.addObject(NormalExcelConstants.DATA_LIST, exportList);
         return mv;
