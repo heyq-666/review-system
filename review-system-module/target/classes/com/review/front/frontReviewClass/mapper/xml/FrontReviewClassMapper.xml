@@ -8,18 +8,18 @@
             q.question_num questionNum,
             q.question_type questionType,
             q.picture_attach pictureAttach,
-            qc.class_id classId,
-            ( SELECT GROUP_CONCAT( r.variate_id ) FROM review_grade_rule r WHERE r.question_id = q.question_id ) variateId,
-            (
-                SELECT
-                    GROUP_CONCAT( v.variate_name )
-                FROM
-                    review_grade_rule r,
-                    review_variate v
-                WHERE
-                    r.variate_id = v.variate_id
-                  AND r.question_id = q.question_id
-            ) variateName
+            qc.class_id classId
+--             ,( SELECT GROUP_CONCAT( r.variate_id ) FROM review_grade_rule r WHERE r.question_id = q.question_id ) variateId,
+--             (
+--                 SELECT
+--                     GROUP_CONCAT( v.variate_name )
+--                 FROM
+--                     review_grade_rule r,
+--                     review_variate v
+--                 WHERE
+--                     r.variate_id = v.variate_id
+--                   AND r.question_id = q.question_id
+--             ) variateName
         FROM
             review_question q
                 INNER JOIN review_question_class qc ON q.question_id = qc.question_id

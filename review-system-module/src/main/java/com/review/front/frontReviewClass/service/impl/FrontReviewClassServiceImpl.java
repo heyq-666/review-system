@@ -39,6 +39,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author javabage
@@ -337,6 +340,201 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         return frontReviewClassMapper.getReviewClassNumber(classId);
     }
 
+    @Override
+    public ReviewResult completeReviewNew(List<QuestionVO> resultList, String classId, org.jeecg.modules.base.entity.ReviewUser user) {
+        /******************保存测评结果start*********************/
+        //量表对应的因子设置
+        QueryWrapper<ReviewVariateEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("class_id", classId);
+        List<ReviewVariateEntity> variateGradeConfList = variateService.list(queryWrapper);
+        String regex = "#(.*?)#";//匹配题目序号的正则
+        List<ReviewResult> resultList1 = new ArrayList<>();
+        for (int i = 0; i < variateGradeConfList.size(); i++) {
+            String variateGradeConf = variateGradeConfList.get(i).getVariateGradeConf();//#1#*2+#2#/2
+            //因子表达式中的题目序号集合
+            List<String> questionNumList = getSubUtil(variateGradeConf,regex);//1,2
+            List<String> selectGradeList = new ArrayList<>();
+            //根据题目序号获取分值
+            StringBuffer stringBuffer = new StringBuffer();
+            for (int j = 0; j < questionNumList.size(); j++) {
+                Integer questionNum = Integer.valueOf(questionNumList.get(j));
+                List<String> selectGrade = resultList.stream().filter(item -> item.getQuestionNum() == questionNum).map(QuestionVO::getSelectGrade).collect(Collectors.toList());
+                selectGradeList.add(selectGrade.get(0));
+            }
+            //替换题目序号为对应的分值
+            StringBuffer gradeTotal = replacement(variateGradeConf,regex,selectGradeList);
+            //计算结果
+            double tradeTotalD = getGradeTotal(gradeTotal.toString());
+            //保存计算结果
+            ReviewResult reviewResult = new ReviewResult();
+            reviewResult.setGradeTotal(tradeTotalD);
+            //根据该因子的计算结果匹配是哪个因子项
+            //1、先获取该因子分值范围
+            QueryWrapper<ReviewVariateGradeEntity> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("variate_id", variateGradeConfList.get(i).getVariateId());
+            List<ReviewVariateGradeEntity> reviewVariateGradeList = variateGradeService.list(queryWrapper1);
+            for (int j = 0; j < reviewVariateGradeList.size(); j++) {
+                double gradeSmall = reviewVariateGradeList.get(j).getGradeSamll();
+                double gradeBig = reviewVariateGradeList.get(j).getGradeBig();
+                if (tradeTotalD >= gradeSmall && tradeTotalD <= gradeBig) {
+                    reviewResult.setReviewResult(reviewVariateGradeList.get(j).getResultExplain());
+                }
+            }
+            resultList1.add(reviewResult);
+        }
+        StringBuilder resultExplain = new StringBuilder();
+        for (int i = 0; i < resultList1.size(); i++) {
+            if(resultExplain.length() == 0) {
+                resultExplain.append(variateGradeConfList.get(i).getVariateName())
+                        .append("得分:").append(resultList1.get(i).getGradeTotal())
+                        .append("; 结果:").append(resultList1.get(i).getReviewResult());
+            }else {
+                resultExplain.append("<br>").append(variateGradeConfList.get(i).getVariateName())
+                        .append("得分:").append(resultList1.get(i).getGradeTotal())
+                        .append("; 结果:").append(resultList1.get(i).getReviewResult());
+            }
+        }
+        ReviewResult reviewResult = new ReviewResult();
+        reviewResult.setUserId(user.getUserId());
+        reviewResult.setClassId(classId);
+        reviewResult.setCreateTime(new Date());
+        reviewResult.setCreateBy(user.getUserName());
+        reviewResult.setProjectId(resultList.get(0).getProjectId()); //项目id
+        reviewResult.setGroupId(user.getGroupId());
+        reviewResult.setReviewResult(resultExplain.toString());
+        //保存测评结果
+        frontReviewResultService.save(reviewResult);
+        /******************保存测评结果end*********************/
+
+        /******************保存答题记录start*********************/
+        ReviewProjectEntity reviewProject = null;
+        String groupId = "";
+        if(reviewResult.getProjectId() != null && reviewResult.getProjectId() > 0) {
+            QueryWrapper<ReviewProjectEntity> queryWrapper1 = new QueryWrapper<>();
+            reviewProject = frontProjectService.getById(reviewResult.getProjectId());
+            groupId = reviewProject.getGroupId();
+        }else {
+            groupId = user.getGroupId().split(",")[0];
+        }
+        List<ReviewQuestionAnswerEntity> reviewQuestionAnswerList = new ArrayList<>(1200);
+        Date now = new Date();
+        QuestionVO question = null;
+        for (int i = 0; i < resultList.size(); i++) {
+            question = resultList.get(i);
+            ReviewQuestionAnswerEntity reviewQuestionAnswer = new ReviewQuestionAnswerEntity();
+            try {
+                MyBeanUtils.copyBean2Bean(reviewQuestionAnswer, question);
+                reviewQuestionAnswer.setGroupId(groupId);
+                reviewQuestionAnswer.setUserId(user.getUserId());
+                reviewQuestionAnswer.setUserName(user.getUserName());
+                reviewQuestionAnswer.setMobilePhone(user.getMobilePhone());
+                reviewQuestionAnswer.setSex(user.getSex());
+                reviewQuestionAnswer.setAge(user.getAge());
+                reviewQuestionAnswer.setCreateTime(now);
+                reviewQuestionAnswer.setResultId(reviewResult.getResultId());
+                reviewQuestionAnswerList.add(reviewQuestionAnswer);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            if (StringUtils.isBlank(question.getSelectGrade())) {
+                continue;
+            }
+        }
+        if (reviewQuestionAnswerList.size() > 0) {
+            reviewQuestionAnswerService.saveBatch(reviewQuestionAnswerList);
+            reviewQuestionAnswerList.clear();
+        }
+        /******************保存答题记录end*********************/
+
+        /******************保存因子对应维度的结果start*********************/
+        //查询某分类下的维度设置并保存到报告结果中
+        QueryWrapper<ReviewReportEntity> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("class_id",classId);
+        List<ReviewReportEntity> reportList = reportService.list(queryWrapper1);
+        //维度-因子
+        List<ReviewReportVariateEntity> reportVariateList = null;
+        //维度结果分值范围
+        List<ReviewReportGradeEntity> gradeList = null;
+        ReviewReportResultEntity reportResult = null;
+        for(ReviewReportEntity report : reportList) {
+            Double grade = 0.0;
+            reportResult = new ReviewReportResultEntity();
+            QueryWrapper<ReviewReportVariateEntity> queryWrapper2 = new QueryWrapper<>();
+            queryWrapper2.eq("report_id", report.getReportId());
+            reportVariateList = reviewReportVariateService.list(queryWrapper2);
+            for (int i = 0; i < reportVariateList.size(); i++) {
+                grade = calVariateGrade(reportVariateList.get(i).getCalSymbol(),grade,resultList1.get(i).getGradeTotal());
+            }
+            grade = new BigDecimal(grade).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+            QueryWrapper<ReviewReportGradeEntity> queryWrapper3 = new QueryWrapper<>();
+            queryWrapper3.eq("report_id", report.getReportId());
+            gradeList = reportGradeService.list(queryWrapper3);
+            int levelGrade = 0;
+            for(ReviewReportGradeEntity reportGrade : gradeList) {
+                if(grade <= reportGrade.getGradeBig() && grade >= reportGrade.getGradeSmall()) {
+                    reportResult.setExplainResult(reportGrade.getResultExplain());
+                    if(reportGrade.getLevelGrade() != null) {
+                        levelGrade = reportGrade.getLevelGrade();
+                    }
+                    //拼装报告的结果描述
+                    if(resultExplain.length() == 0) {
+                        resultExplain.append(report.getReportName())
+                                .append("得分:").append(grade)
+                                .append("; 结果:").append(reportGrade.getResultExplain());
+                    } else {
+                        resultExplain.append("<br>").append(report.getReportName())
+                                .append("得分:").append(grade)
+                                .append("; 结果:").append(reportGrade.getResultExplain());
+                    }
+                }
+            }
+            if(gradeList.size() > 0 && grade > 0) {
+                reportResult.setReportId(reviewResult.getResultId());
+                reportResult.setGrade(grade);
+                reportResult.setLevelGrade(levelGrade);
+                reportResult.setCreateTime(report.getCreateTime());
+                reportResult.setReportId(report.getReportId());
+                reportResult.setReportName(report.getReportName());
+                reportResult.setResultId(reviewResult.getResultId());
+                reportResult.setResultType("2");//报告类型
+                reviewReportResultService.save(reportResult);
+            }
+        }
+        /******************保存因子对应维度的结果end*********************/
+        return reviewResult;
+    }
+
+    /**
+     * 正则匹配指定符号之间的数字
+     * @param str
+     * @param regex
+     * @return
+     */
+    private List<String> getSubUtil(String str,String regex){
+        final Pattern p = Pattern.compile(regex);
+        final Matcher m = p.matcher(str);
+        List<String> list = new ArrayList<>();
+        while (m.find()) {
+            int i = 1;
+            list.add(m.group(i));
+        }
+        return list;
+    }
+
+    private StringBuffer replacement(String str,String regex,List<String> selectGradeList){
+        final Pattern p = Pattern.compile(regex);
+        final Matcher m = p.matcher(str);
+        StringBuffer stringBuffer = new StringBuffer();
+        int i = 0;
+        while (m.find()) {
+            String sub = str.substring(m.start(),m.end());
+            m.appendReplacement(stringBuffer,m.group().replace(sub,selectGradeList.get(i)));
+            i++;
+        }
+        m.appendTail(stringBuffer);
+        return stringBuffer;
+    }
+
     /**
      * 按照因子排序
      * @param resultList
@@ -378,5 +576,115 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
             }
         }
         return grade;
+    }
+    private double getGradeTotal(String str) {
+        String ReversePolish = toReversePolish(str);
+        //6 10 3 40.2 + 8 + - 5 * - 8 +
+        String[] expression = ReversePolish.split(" ");
+        Stack<Double> stack = new Stack<>();
+        for (int i = 0; i < expression.length; i++) {
+            switch (expression[i]) {
+                case "+" : {
+                    double num1 = stack.pop();
+                    double num2 = stack.pop();
+                    double result = num1+num2;
+                    stack.push(result);
+                    break;
+                }
+                case "-" : {
+                    double num1 = stack.pop();
+                    double num2 = stack.pop();
+                    double result = num2-num1;
+                    stack.push(result);
+                    break;
+                }
+                case "*" : {
+                    double num1 = stack.pop();
+                    double num2 = stack.pop();
+                    double result = num1*num2;
+                    stack.push(result);
+                    break;
+                }
+                case "/" : {
+                    double num1 = stack.pop();
+                    double num2 = stack.pop();
+                    double result = num2/num1;
+                    stack.push(result);
+                    break;
+                }
+                default: {
+                    Double in = Double.parseDouble(expression[i]);
+                    stack.push(in);
+                }
+            }
+        }
+        double gradeTotal = Double.valueOf(stack.pop());
+        return gradeTotal;
+    }
+    public static String toReversePolish(String expression) {
+        Stack<String> stack1 = new Stack<>();
+        Stack<String> stack2 = new Stack<>();
+
+        String number = "";
+        for (int i = 0; i < expression.length();) {
+            boolean isAll = false;
+            while((expression.charAt(i)>='0' && expression.charAt(i) <= '9') || expression.charAt(i)=='.') {
+                number += expression.charAt(i);
+                i++;
+                if (i == expression.length()) {
+                    isAll = true;
+                    break;
+                }
+            }
+            if (!number.isEmpty()) {
+                stack2.push(new StringBuffer(number).reverse().toString());
+                number = "";
+            }
+            if (isAll) {
+                break;
+            }
+            if (expression.charAt(i) == ')') {
+                while (!stack1.peek().equals("(")) {
+                    stack2.push(stack1.pop());
+                }
+                stack1.pop();
+                i++;
+                continue;
+            }
+
+            while(!(expression.charAt(i)>='0' && expression.charAt(i) <= '9')) {
+                char symbol = expression.charAt(i);
+                if ((stack1.size() == 0) || (stack1.peek().equals("(")) || (symbol=='(')) {
+                    stack1.push(symbol+"");
+                    i++;
+                    break;
+                }
+                if ((symbol == '+') || (symbol == '-')) {
+                    stack2.push(stack1.pop());
+                    continue;
+                } else {
+                    if ((stack1.peek().equals("+")) || (stack1.peek().equals("-"))) {
+                        stack1.push(symbol+"");
+                        i++;
+                        break;
+                    }
+                    if ((stack1.peek().equals("*")) || (stack1.peek().equals("/"))) {
+                        stack2.push(stack1.pop());
+                        continue;
+                    }
+                }
+            }
+        }
+        while(stack1.size() != 0) {
+            stack2.push(stack1.pop());
+        }
+        String s1 = "";
+        while(stack2.size() != 0) {
+            s1 += stack2.pop();
+            if (stack2.size() != 0) {
+                s1 += " ";
+            }
+        }
+        return new StringBuffer(s1).reverse().toString();
     }
 }

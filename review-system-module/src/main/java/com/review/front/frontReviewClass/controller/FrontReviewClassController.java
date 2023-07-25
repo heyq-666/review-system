@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.constant.CommonConstant;
+import org.jeecg.common.exception.JeecgBoot401Exception;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,13 +75,14 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     @PostMapping(value = "/completeReview")
     public Result<ReviewResult> completeReview(@RequestBody QuestionVO[] resultArr, HttpServletRequest request) {
 
-        ReviewUser user = (ReviewUser) request.getSession().getAttribute(Constants.REVIEW_LOGIN_USER);
+        org.jeecg.modules.base.entity.ReviewUser user = (org.jeecg.modules.base.entity.ReviewUser) request.getSession().getAttribute(Constants.REVIEW_LOGIN_USER);
         ReviewResult reviewResult = null;
         List<QuestionVO> resultList = Arrays.asList(resultArr);
         if (user == null) {
-            reviewResult = frontReviewClassService.completeReview(resultList,resultArr[0].getClassId(),new ReviewUser());
+            throw new JeecgBoot401Exception("用户不存在!");
         } else {
-            reviewResult = frontReviewClassService.completeReview(resultList, resultArr[0].getClassId(), user);
+            //reviewResult = frontReviewClassService.completeReview(resultList, resultArr[0].getClassId(), user);
+            reviewResult = frontReviewClassService.completeReviewNew(resultList, resultArr[0].getClassId(), user);
         }
         reviewResult.setReviewResult(null);
         return Result.OK(reviewResult);

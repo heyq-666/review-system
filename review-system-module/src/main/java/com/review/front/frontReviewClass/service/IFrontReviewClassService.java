@@ -73,4 +73,6 @@ public interface IFrontReviewClassService extends IService<ReviewClass> {
     List<ReviewClass> getPsychoMetrics();
 
     Integer getReviewClassNumber(String classId);
+
+    ReviewResult completeReviewNew(List<QuestionVO> resultList, String classId, org.jeecg.modules.base.entity.ReviewUser user);
 }
