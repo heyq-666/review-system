@@ -21,7 +21,8 @@ public class WxAppletsUtils {
     public final static String appId = "wx5c0cb023244b6007";
 
     //public final static String appSecret = "f95e7676a11f1fbcd2be34f8ea01fed5";
-    public final static String appSecret = "994d504be2dc39634df03fe9889701b7";
+    //public final static String appSecret = "994d504be2dc39634df03fe9889701b7";
+    public final static String appSecret = "53b3c8f98a8b8e6351a0f23f028f5eb0";
 
     public final static String qrCodeUrl = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s";
 
