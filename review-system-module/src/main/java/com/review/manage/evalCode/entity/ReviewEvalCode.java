@@ -65,7 +65,7 @@ public class ReviewEvalCode implements Serializable {
 	/**测评人*/
 	@Excel(name = "测评人", width = 15)
     @ApiModelProperty(value = "测评人")
-    private String username;
+    private String userName;
 	/**返回信息*/
 	@Excel(name = "返回信息", width = 15)
     @ApiModelProperty(value = "返回信息")
