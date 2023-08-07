@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.review.front.frontReport.entity.ReviewReportTemplateEntity;
@@ -19,16 +18,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,10 +68,44 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
                                                    @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                    @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                    HttpServletRequest req) {
-       QueryWrapper<ReviewClass> queryWrapper = QueryGenerator.initQueryWrapper(reviewClass, req.getParameterMap());
-       Page<ReviewClass> page = new Page<ReviewClass>(pageNo, pageSize);
-       IPage<ReviewClass> pageList = reviewClassService.page(page, queryWrapper);
-       return Result.OK(pageList);
+       Long tenantId = null;
+       //是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+       if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+           tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
+       }
+       List<ReviewClass> shareClassList = new ArrayList<>();
+       List<ReviewClass> openClassList = new ArrayList<>();
+       List<ReviewClass> list = new ArrayList<>();
+       if (tenantId != null && tenantId != -1) {
+           reviewClass.setTenantId(tenantId);
+           //获取共享量表
+           QueryWrapper<ReviewClass> queryWrapper = new QueryWrapper<>();
+           queryWrapper.eq("is_share",1);
+           shareClassList = reviewClassService.list(queryWrapper);
+           //获取给该租户开放的量表
+           List<String> classIds = reviewClassService.getClassIds(tenantId);
+           for (int i = 0; i < classIds.size(); i++) {
+               ReviewClass reviewClass1 = new ReviewClass();
+               QueryWrapper<ReviewClass> queryWrapper1 = new QueryWrapper<>();
+               queryWrapper1.eq("class_id",classIds.get(i));
+               reviewClass1 = reviewClassService.getOne(queryWrapper1);
+               openClassList.add(reviewClass1);
+           }
+           if (shareClassList != null && shareClassList.size()>0){
+               if (openClassList != null && openClassList.size() > 0) {
+                   shareClassList.addAll(openClassList);
+               }
+           }
+           //去重：给租户绑定量表时，不展示公共量表，所以不需要去重
+           IPage<ReviewClass> pageList = new Page<>();
+           pageList.setRecords(shareClassList);
+           return Result.OK(pageList);
+       }else {
+           QueryWrapper<ReviewClass> queryWrapper = QueryGenerator.initQueryWrapper(reviewClass, req.getParameterMap());
+           Page<ReviewClass> page = new Page<ReviewClass>(pageNo, pageSize);
+           IPage<ReviewClass> pageList = reviewClassService.page(page, queryWrapper);
+           return Result.OK(pageList);
+       }
    }
 
     /**
@@ -91,6 +127,27 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
        result.setResult(pageList);
        return result;
    }
+
+    /**
+     * 获取非共享量表-给租户授权用
+     * @param reviewClass
+     * @param pageNo
+     * @param pageSize
+     * @param req
+     * @return
+     */
+    @RequestMapping(value = "/getReviewClassListShare", method = RequestMethod.GET)
+    public Result<IPage<ReviewClass>> getReviewClassListShare(ReviewClass reviewClass,
+                                                        @RequestParam(name="pageNo", defaultValue="1") Integer pageNo, @RequestParam(name="pageSize", defaultValue="10") Integer pageSize, HttpServletRequest req) {
+        Result<IPage<ReviewClass>> result = new Result<>();
+        reviewClass.setIsShare(0);
+        QueryWrapper<ReviewClass> queryWrapper = QueryGenerator.initQueryWrapper(reviewClass, req.getParameterMap());
+        Page<ReviewClass> page = new Page<ReviewClass>(pageNo, pageSize);
+        IPage<ReviewClass> pageList = reviewClassService.page(page, queryWrapper);
+        result.setSuccess(true);
+        result.setResult(pageList);
+        return result;
+    }
 
    /**
     *   添加

@@ -46,6 +46,7 @@ org\jeecg\modules\system\service\ISysCheckRuleService.class
 org\jeecg\modules\system\mapper\SysDepartPermissionMapper.class
 org\jeecg\modules\system\service\impl\SysPackPermissionServiceImpl.class
 org\jeecg\modules\system\entity\SysFiles.class
+org\jeecg\modules\system\mapper\ReviewClassTenantConfMapper.class
 org\jeecg\modules\system\mapper\SysUserRoleMapper.class
 org\jeecg\modules\system\service\ISysThirdAccountService.class
 org\jeecg\modules\system\mapper\SysRoleIndexMapper.class
@@ -62,6 +63,7 @@ org\jeecg\config\init\TomcatFactoryConfig$1.class
 org\jeecg\modules\system\model\DepartIdModel.class
 org\jeecg\modules\system\service\impl\SysDataLogServiceImpl.class
 org\jeecg\modules\system\service\impl\SysDictServiceImpl.class
+org\jeecg\modules\system\service\IReviewClassTenantConfService.class
 org\jeecg\config\init\TomcatFactoryConfig.class
 org\jeecg\modules\system\mapper\SysDataLogMapper.class
 org\jeecg\modules\system\service\impl\SysRoleServiceImpl.class
@@ -132,6 +134,7 @@ org\jeecg\modules\system\service\impl\SysAnnouncementServiceImpl.class
 org\jeecg\modules\system\vo\SysUserDepVo.class
 org\jeecg\modules\system\entity\SysDataSource.class
 org\jeecg\modules\system\service\ISysDataSourceService.class
+org\jeecg\modules\system\entity\ReviewClassTenantConf.class
 org\jeecg\modules\system\util\SecurityUtil.class
 org\jeecg\modules\message\entity\SysMessage.class
 org\jeecg\modules\system\service\impl\SysRolePermissionServiceImpl.class
@@ -220,6 +223,7 @@ org\jeecg\modules\system\service\impl\SysGatewayRouteServiceImpl.class
 org\jeecg\modules\system\service\impl\SysUserRoleServiceImpl.class
 org\jeecg\modules\system\vo\lowapp\DepartAndUserInfo.class
 org\jeecg\modules\system\controller\SysFormFileController.class
+org\jeecg\modules\system\service\impl\ReviewClassTenantConfServiceImpl.class
 org\jeecg\modules\system\service\ISysLogService.class
 org\jeecg\modules\system\vo\lowapp\DepartInfo.class
 org\jeecg\modules\system\service\IThirdAppService.class

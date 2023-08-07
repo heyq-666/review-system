@@ -3,9 +3,9 @@ package com.review.front.frontReviewClass.controller;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.review.common.Constants;
+import com.review.common.DongLiangConstants;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
 import com.review.front.frontReviewClass.vo.ReviewResultVO;
-import com.review.front.frontUser.service.IFrontUserService;
 import com.review.manage.question.vo.QuestionVO;
 import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewClass.vo.ReviewClassPage;
@@ -16,9 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.exception.JeecgBoot401Exception;
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,8 +47,6 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
 
     @Autowired
     private IFrontReviewClassService frontReviewClassService;
-    @Autowired
-    private IFrontUserService frontUserService;
 
     /**
      * 小程序-根据分类ID查询分类下的问题及选项
@@ -96,10 +98,28 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     @AutoLog(value = "小程序-获取测评分类")
     @PostMapping(value = "/getReviewClass")
     public Result<List<ReviewClassPage>> getReviewClassByProjectId(@RequestBody ReviewClassPage reviewClass) {
-        List<ReviewClassPage> reviewClassList = frontReviewClassService.getReviewClassByProjectId(reviewClass.getProjectId());
+        Long tenantId = null;
+        //是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+        if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+            tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
+        }
+        List<ReviewClassPage> reviewClassList = new ArrayList<>();
+        if (tenantId != null && tenantId != -1) {//租户
+            reviewClass.setTenantId(tenantId);
+            reviewClassList = frontReviewClassService.getReviewClassTenant(reviewClass);
+        }else {
+            reviewClassList = frontReviewClassService.getReviewClassByProjectId(reviewClass.getProjectId());
+        }
         for (int i = 0; i < reviewClassList.size(); i++) {
-            Integer count = frontReviewClassService.getReviewClassNumber(reviewClassList.get(i).getClassId());
-            reviewClassList.get(i).setReviewCount(count);
+            //过滤栋梁测评量表
+            if (DongLiangConstants.dongliangStuId.equals(reviewClassList.get(i).getClassId())
+                    || DongLiangConstants.dongliangProId.equals(reviewClassList.get(i).getClassId())){
+                reviewClassList.remove(i);
+                i--;
+            }else {
+                Integer count = frontReviewClassService.getReviewClassNumber(reviewClassList.get(i).getClassId());
+                reviewClassList.get(i).setReviewCount(count);
+            }
         }
         return Result.OK("查询成功",reviewClassList);
     }
@@ -160,15 +180,14 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     @AutoLog(value = "小程序-获取推荐量表")
     @PostMapping(value = "/getPsychoMetrics")
     public Result<List<ReviewClass>> getPsychoMetrics() {
+        Long tenantId = null;
+        //是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+        if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+            tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
+        }
         List<ReviewClass> reviewClassList = frontReviewClassService.getPsychoMetrics();
-        for (int i = 0; i < reviewClassList.size(); i++) {
-            if (reviewClassList.get(i).getCharge() != null && reviewClassList.get(i).getCharge() == Constants.ClassCharge) {
-                reviewClassList.get(i).setRealPrice(reviewClassList.get(i).getOrgPrice().subtract(reviewClassList.get(i).getDicountPrice()));
-            }else {
-                reviewClassList.get(i).setRealPrice(BigDecimal.valueOf(0.0));
-            }
-            Integer count = frontReviewClassService.getReviewClassNumber(reviewClassList.get(i).getClassId());
-            reviewClassList.get(i).setReviewCount(count);
+        if (tenantId != null && tenantId != -1) {
+            reviewClassList = frontReviewClassService.getReviewClassTenantF(reviewClassList,tenantId);
         }
         return Result.OK(reviewClassList);
     }

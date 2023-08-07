@@ -1,10 +1,10 @@
 package org.jeecg.config.shiro.filters;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.constant.CommonConstant;
-import org.jeecg.common.util.DateUtils;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.base.entity.ReviewUser;
 import org.jeecg.modules.base.entity.SysTenantVO;
@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 
 /**
  * @author javabage
@@ -37,8 +36,18 @@ public class ReviewFilter extends BasicHttpAuthenticationFilter{
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
         String tenantId = httpServletRequest.getHeader(CommonConstant.TENANT_ID);
-        TenantContext.setTenant(tenantId);
-
+        if (StringUtils.isNotEmpty(tenantId)) {
+            TenantContext.setTenant(tenantId);
+        } else {
+            String appId = httpServletRequest.getHeader(CommonConstant.APP_ID);
+            SysTenantVO sysTenantVO = baseCommonService.getTenantIdByAppId(appId);
+            if (sysTenantVO != null && sysTenantVO.getId() != null) {
+                TenantContext.setTenant(sysTenantVO.getId().toString());
+                httpServletRequest.getSession().setAttribute("appSession", sysTenantVO);
+            }else {
+                TenantContext.setTenant(String.valueOf(oConvertUtils.getLong(tenantId, -1)));
+            }
+        }
         Long tenantIdL =  oConvertUtils.getLong(tenantId, -1);
         if (!baseCommonService.checkSysTenant(tenantIdL)) {
             return false;

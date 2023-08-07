@@ -7,10 +7,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.PermissionData;
 import org.jeecg.common.config.TenantContext;
@@ -25,10 +24,7 @@ import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.modules.system.entity.*;
-import org.jeecg.modules.system.service.ISysTenantPackService;
-import org.jeecg.modules.system.service.ISysTenantService;
-import org.jeecg.modules.system.service.ISysUserService;
-import org.jeecg.modules.system.service.ISysUserTenantService;
+import org.jeecg.modules.system.service.*;
 import org.jeecg.modules.system.vo.SysUserTenantVo;
 import org.jeecg.modules.system.vo.tenant.TenantDepartAuthInfo;
 import org.jeecg.modules.system.vo.tenant.TenantPackModel;
@@ -64,6 +60,9 @@ public class SysTenantController {
     @Autowired
     private BaseCommonService baseCommonService;
 
+    @Autowired
+    private IReviewClassTenantConfService reviewClassTenantConfService;
+
     /**
      * 获取列表数据
      * @param sysTenant
@@ -97,6 +96,8 @@ public class SysTenantController {
         //---author:zhangyafei---date:20210916-----for: 租户管理添加日期范围查询---
 		Page<SysTenant> page = new Page<SysTenant>(pageNo, pageSize);
 		IPage<SysTenant> pageList = sysTenantService.page(page, queryWrapper);
+        //获取给租户绑定的量表
+        reviewClassTenantConfService.getClassList(pageList);
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
@@ -136,6 +137,10 @@ public class SysTenantController {
         }
         try {
             sysTenantService.saveTenant(sysTenant);
+            //保存绑定的量表
+            if (StringUtils.isNotEmpty(sysTenant.getClassIds())) {
+                reviewClassTenantConfService.saveClass(sysTenant);
+            }
             result.success("添加成功！");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -161,7 +166,8 @@ public class SysTenantController {
             tenant.setHouseNumber(RandomUtil.randomStringUpper(6));
         }
         boolean ok = sysTenantService.updateById(tenant);
-        if(ok) {
+        boolean classOk = reviewClassTenantConfService.updateClassConf(tenant);
+        if(ok && classOk) {
             result.success("修改成功!");
         }
         return result;
@@ -273,6 +279,18 @@ public class SysTenantController {
         if(sysTenant==null) {
             result.error500("未找到对应实体");
         }else {
+            QueryWrapper<ReviewClassTenantConf> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("tenant_id",sysTenant.getId());
+            List<ReviewClassTenantConf> list = reviewClassTenantConfService.list(queryWrapper);
+            StringBuffer stringBuffer = new StringBuffer();
+            String classIds = "";
+            for (int i = 0; i < list.size(); i++) {
+                stringBuffer.append(list.get(i).getClassId()).append(",");
+            }
+            if (stringBuffer.length() > 0) {
+                classIds = stringBuffer.substring(0,stringBuffer.length() - 1);
+            }
+            sysTenant.setClassIds(classIds);
             result.setResult(sysTenant);
             result.setSuccess(true);
         }

@@ -20,6 +20,7 @@ D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\tenant\TenantPackUserCount.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\thirdapp\JdtDepartmentTreeVo.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\message\util\PushMsgUtil.java
+D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\service\impl\ReviewClassTenantConfServiceImpl.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\service\ISysFormFileService.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\lowapp\SysDictVo.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\entity\SysTenantPackUser.java
@@ -145,6 +146,7 @@ D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\ngalain\aop\LogRecordAspect.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\lowapp\DepartInfo.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\entity\SysUserRole.java
+D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\service\IReviewClassTenantConfService.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\model\SysLoginModel.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\message\controller\SysMessageTemplateController.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\service\ISysUserService.java
@@ -180,6 +182,7 @@ D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\message\mapper\SysMessageTemplateMapper.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\tenant\UserPosition.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\thirdapp\JwDepartmentTreeVo.java
+D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\mapper\ReviewClassTenantConfMapper.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\mapper\SysDataSourceMapper.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\mapper\SysTenantPackMapper.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\mapper\SysUserAgentMapper.java
@@ -206,6 +209,7 @@ D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\lowapp\UpdateDepartInfo.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\SysDepartUsersVO.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\message\handle\impl\SystemSendMsgHandle.java
+D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\entity\ReviewClassTenantConf.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\monitor\controller\ActuatorRedisController.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\SysUserRoleVO.java
 D:\jeecg-review\review-system\jeecg-module-system\jeecg-system-biz\src\main\java\org\jeecg\modules\system\vo\tenant\UserDepart.java

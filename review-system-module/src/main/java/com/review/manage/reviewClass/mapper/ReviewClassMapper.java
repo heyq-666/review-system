@@ -19,4 +19,6 @@ public interface ReviewClassMapper extends BaseMapper<ReviewClass> {
     void deleteClassByClassId(String classId);
 
     public boolean deleteByMainId(@Param("classId") String classId);
+
+    List<String> getClassIds(@Param("tenantId") Long tenantId);
 }

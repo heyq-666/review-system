@@ -59,4 +59,6 @@ public interface FrontReviewClassMapper extends BaseMapper<ReviewClass> {
      * @return
      */
     Integer getReviewClassNumber(String classId);
+
+    List<String> getClassIds(Long tenantId);
 }

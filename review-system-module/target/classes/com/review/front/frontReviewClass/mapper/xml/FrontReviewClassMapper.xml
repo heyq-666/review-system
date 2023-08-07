@@ -59,7 +59,8 @@
         c.dicount_price dicountPrice,
         ( c.org_price - c.dicount_price ) AS realPrice,
         c.class_desc classDesc,
-        c.guide
+        c.guide,
+        c.is_share isShare
         <choose>
             <when test="projectId == null or projectId == 0">
                 ,(select count(o.id) from review_order o where o.class_id=c.class_id and status in(2,3)) buyCount,
@@ -120,5 +121,9 @@
     </select>
     <select id="getReviewClassNumber" resultType="Integer" parameterType="String">
         select COUNT(DISTINCT user_id) from review_result where class_id = #{classId}
+    </select>
+
+    <select id="getClassIds" parameterType="Long" resultType="String">
+        select class_id as classId from review_class_tenant_conf where tenant_id = #{tenantId}
     </select>
 </mapper>

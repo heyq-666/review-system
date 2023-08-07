@@ -3,9 +3,14 @@ package org.jeecg.common.util;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.system.util.ResourceUtil;
 import org.jeecg.common.system.vo.OpenIdJson;
+import org.jeecg.modules.base.entity.SysTenantVO;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,10 +97,18 @@ public class WxAppletsUtils {
     }*/
 
     public static String getOpenid(String code) throws JsonProcessingException {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest();
+        SysTenantVO sysTenantVO = (SysTenantVO) request.getSession().getAttribute("appSession");
         String result = "";
         Map<String,String> map = new HashMap();
-        map.put("appid",appId);
-        map.put("secret",appSecret);
+        if (sysTenantVO != null && StringUtils.isNotEmpty(sysTenantVO.getAppId()) && StringUtils.isNotEmpty(sysTenantVO.getAppSecret())){
+            map.put("appid",sysTenantVO.getAppId());
+            map.put("secret",sysTenantVO.getAppSecret());
+        } else {
+            map.put("appid",appId);
+            map.put("secret",appSecret);
+        }
         map.put("js_code",code);
         map.put("grant_type","authorization_code");
         result = HttpClientUtils.doGet("https://api.weixin.qq.com/sns/jscode2session",map,null);

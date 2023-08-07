@@ -1,8 +1,6 @@
 package com.review.manage.report.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.review.front.frontReport.service.IReviewReportVariateService;
 import com.review.manage.report.entity.ReviewReportEntity;
 import com.review.manage.report.entity.ReviewReportGradeEntity;
@@ -16,9 +14,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.system.base.controller.JeecgController;
-import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,16 +48,22 @@ public class ReportController extends JeecgController<ReviewReportEntity, IRepor
 
     @ApiOperation(value="维度列表-分页列表查询", notes="维度列表-分页列表查询")
     @GetMapping(value = "/list")
-    public Result<IPage<ReviewReportEntity>> queryPageList(ReviewReportEntity reviewReport,
-                                                            @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                                            @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-                                                            HttpServletRequest req) {
-        QueryWrapper<ReviewReportEntity> queryWrapper = QueryGenerator.initQueryWrapper(reviewReport, req.getParameterMap());
-        Page<ReviewReportEntity> page = new Page<ReviewReportEntity>(pageNo, pageSize);
-        IPage<ReviewReportEntity> pageList = reportService.page(page, queryWrapper);
+    public Result<List<ReviewReportEntity>> queryPageList(ReviewReportEntity reviewReport,HttpServletRequest req) {
+        Long tenantId = null;
+        //是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+        if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+            tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
+        }
+        List<ReviewReportEntity> list = reportService.list();
         //量表信息
-        reportService.getClassNameByClassId(pageList);
-        return Result.OK(pageList);
+        reportService.getClassNameByClassId(list);
+        List<ReviewReportEntity> listNew = new ArrayList<>();
+        if (tenantId != null && tenantId != -1) {
+            listNew = reportService.filterData(tenantId,list);
+            return Result.OK(listNew);
+        }else {
+            return Result.OK(list);
+        }
     }
 
     @AutoLog(value = "维度管理-通过id删除")

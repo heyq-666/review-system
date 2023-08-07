@@ -332,7 +332,17 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
 
     @Override
     public List<ReviewClass> getPsychoMetrics() {
-        return frontReviewClassMapper.getPsychoMetrics();
+        List<ReviewClass> reviewClassList = frontReviewClassMapper.getPsychoMetrics();
+        for (int i = 0; i < reviewClassList.size(); i++) {
+            if (reviewClassList.get(i).getCharge() != null && reviewClassList.get(i).getCharge() == Constants.ClassCharge) {
+                reviewClassList.get(i).setRealPrice(reviewClassList.get(i).getOrgPrice().subtract(reviewClassList.get(i).getDicountPrice()));
+            }else {
+                reviewClassList.get(i).setRealPrice(BigDecimal.valueOf(0.0));
+            }
+            Integer count = this.getReviewClassNumber(reviewClassList.get(i).getClassId());
+            reviewClassList.get(i).setReviewCount(count);
+        }
+        return reviewClassList;
     }
 
     @Override
@@ -502,6 +512,45 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         }
         /******************保存因子对应维度的结果end*********************/
         return reviewResult;
+    }
+
+    @Override
+    public List<ReviewClassPage> getReviewClassTenant(ReviewClassPage reviewClass) {
+        //所有量表
+        List<ReviewClassPage> list = this.getReviewClassByProjectId(reviewClass.getProjectId());
+        //筛选共享量表
+        List<ReviewClassPage> shareClassList = list.stream().filter(reviewClassPage -> reviewClassPage.getIsShare() == 1)
+                .collect(Collectors.toList());
+        //获取给租户绑定的量表
+        List<ReviewClassPage> ownClassList = new ArrayList<>();
+        List<String> classIds = frontReviewClassMapper.getClassIds(reviewClass.getTenantId());
+        for (int i = 0; i < classIds.size(); i++) {
+            for (int j = 0; j < list.size(); j++) {
+                if (classIds.get(i).equals(list.get(j).getClassId())) {
+                    ownClassList.add(list.get(j));
+                }
+            }
+        }
+        shareClassList.addAll(ownClassList);
+        return shareClassList;
+    }
+
+    @Override
+    public List<ReviewClass> getReviewClassTenantF(List<ReviewClass> reviewClassList,Long tenantId) {
+        List<ReviewClass> shareClassList = reviewClassList.stream().filter(reviewClassPage -> reviewClassPage.getIsShare() == 1)
+                .collect(Collectors.toList());
+        //是否给租户绑定
+        List<ReviewClass> ownClassList = new ArrayList<>();
+        List<String> classIds = frontReviewClassMapper.getClassIds(tenantId);
+        for (int i = 0; i < classIds.size(); i++) {
+            for (int j = 0; j < reviewClassList.size(); j++) {
+                if (classIds.get(i).equals(reviewClassList.get(j).getClassId())) {
+                    ownClassList.add(reviewClassList.get(j));
+                }
+            }
+        }
+        shareClassList.addAll(ownClassList);
+        return shareClassList;
     }
 
     /**

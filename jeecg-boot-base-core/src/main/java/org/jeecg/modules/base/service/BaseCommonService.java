@@ -54,4 +54,11 @@ public interface BaseCommonService {
      * @return
      */
     boolean checkSysTenant(Long tenantId);
+
+    /**
+     * 通过小程序appid获取租户id
+     * @param appId
+     * @return
+     */
+    SysTenantVO getTenantIdByAppId(String appId);
 }

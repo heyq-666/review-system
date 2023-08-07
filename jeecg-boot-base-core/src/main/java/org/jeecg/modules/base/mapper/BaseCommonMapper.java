@@ -22,4 +22,6 @@ public interface BaseCommonMapper {
     ReviewUser getUserInfoByUserId(@Param("userId")String userId);
 
     SysTenantVO getSysTenantInfo(@Param("id")Long tenantId);
+
+    SysTenantVO getTenantIdByAppId(@Param("appId")String appId);
 }

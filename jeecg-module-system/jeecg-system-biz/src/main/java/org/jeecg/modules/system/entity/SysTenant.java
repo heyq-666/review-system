@@ -137,5 +137,11 @@ public class SysTenant implements Serializable {
      * 小程序二维码路径
      */
     private String appletsQrCodePath;
+
+    private String appId;
+
+    private String appSecret;
+
+    private transient String classIds;
     
 }

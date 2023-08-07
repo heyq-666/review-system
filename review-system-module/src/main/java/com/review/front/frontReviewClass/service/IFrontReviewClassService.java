@@ -75,4 +75,13 @@ public interface IFrontReviewClassService extends IService<ReviewClass> {
     Integer getReviewClassNumber(String classId);
 
     ReviewResult completeReviewNew(List<QuestionVO> resultList, String classId, org.jeecg.modules.base.entity.ReviewUser user);
+
+    /**
+     * 获取所属租户的量表
+     * @param reviewClass
+     * @return
+     */
+    List<ReviewClassPage> getReviewClassTenant(ReviewClassPage reviewClass);
+
+    List<ReviewClass> getReviewClassTenantF(List<ReviewClass> reviewClassList,Long tenantId);
 }

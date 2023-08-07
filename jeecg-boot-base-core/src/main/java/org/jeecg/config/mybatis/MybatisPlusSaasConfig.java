@@ -1,29 +1,23 @@
 package org.jeecg.config.mybatis;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
-import org.apache.shiro.SecurityUtils;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
 import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.util.JwtUtil;
-import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.LongValue;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 单数据源配置（jeecg.datasource.open = false时生效）
@@ -61,23 +55,23 @@ public class MybatisPlusSaasConfig {
             TENANT_TABLE.add("sys_announcement");
 
             //测评业务表
-            TENANT_TABLE.add("review_answer");
+            //TENANT_TABLE.add("review_answer");
             TENANT_TABLE.add("review_banner");
-            TENANT_TABLE.add("review_class");
+            //TENANT_TABLE.add("review_class");
             TENANT_TABLE.add("review_eval_code");
             TENANT_TABLE.add("review_expert");
             TENANT_TABLE.add("review_notice");
             TENANT_TABLE.add("review_order");
             TENANT_TABLE.add("review_project");
-            TENANT_TABLE.add("review_question");
-            TENANT_TABLE.add("review_report");
-            TENANT_TABLE.add("review_report_grade");
+            //TENANT_TABLE.add("review_question");
+            //TENANT_TABLE.add("review_report");
+            //TENANT_TABLE.add("review_report_grade");
             TENANT_TABLE.add("review_report_result");
-            TENANT_TABLE.add("review_report_variate");
+            //TENANT_TABLE.add("review_report_variate");
             TENANT_TABLE.add("review_result");
             TENANT_TABLE.add("review_subject");
             TENANT_TABLE.add("review_user");
-            TENANT_TABLE.add("review_variate");
+            //TENANT_TABLE.add("review_variate");
             TENANT_TABLE.add("review_video_analysis");
         }
 

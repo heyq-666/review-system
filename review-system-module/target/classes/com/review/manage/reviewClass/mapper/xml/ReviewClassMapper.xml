@@ -30,4 +30,7 @@
         WHERE
             class_id = #{classId}
     </delete>
+    <select id="getClassIds" parameterType="Long" resultType="String">
+        select class_id as classId from review_class_tenant_conf where tenant_id = #{tenantId}
+    </select>
 </mapper>

@@ -2,10 +2,8 @@ package org.jeecg.modules.base.entity;
 
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.jeecg.common.aspect.annotation.Dict;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -129,5 +127,9 @@ public class SysTenantVO implements Serializable {
      * 小程序二维码路径
      */
     private String appletsQrCodePath;
+
+    private String appId;
+
+    private String appSecret;
     
 }

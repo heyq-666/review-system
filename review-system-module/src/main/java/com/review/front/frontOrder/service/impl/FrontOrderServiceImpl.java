@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.review.common.Constants;
+import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.util.HttpUtils;
 import org.jeecg.common.util.PayUtils;
 import org.jeecg.common.util.WxAppletsUtils;
@@ -26,11 +27,15 @@ import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewOrder.entity.ReviewOrder;
 import com.review.manage.reviewOrder.vo.ReviewOrderVO;
 import lombok.extern.slf4j.Slf4j;
+import org.jeecg.modules.base.entity.SysTenantVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -391,12 +396,20 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
     public PreOrderVO generatePrePayOrder(String openid, String ip, Long orderNo, BigDecimal orderAmount, String body) {
         PreOrderVO preOrder = new PreOrderVO();
         try{
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                    .getRequest();
+            SysTenantVO sysTenantVO = (SysTenantVO) request.getSession().getAttribute("appSession");
             //生成的随机字符串
             String nonce_str = IdUtil.simpleUUID();
             //商品名称
             //获取本机的ip地址
             long money = orderAmount.multiply(BigDecimal.valueOf(100)).longValue();//支付金额，单位：分，这边需要转成字符串类型，否则后面的签名会失败
             Map<String, String> packageParams = new HashMap<String, String>();
+            if (sysTenantVO != null && StringUtils.isNotEmpty(sysTenantVO.getAppId()) && StringUtils.isNotEmpty(sysTenantVO.getAppSecret())){
+                packageParams.put("appid",sysTenantVO.getAppId());
+            } else {
+                packageParams.put("appid",WxAppletsUtils.appId);
+            }
             packageParams.put("appid", WxAppletsUtils.appId);
             packageParams.put("mch_id", WxAppletsUtils.mchID);
             packageParams.put("nonce_str", nonce_str);

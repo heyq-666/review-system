@@ -23,9 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +45,10 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
 
     private static final String dongLiangApiurlPro = "http://www.xinzhaitongxing.com:9998/api/commitTest";*/
 
+    /*private static final String dongLiangApiurlStu = "http://wlj.xinzhaitongxing.com:9999/api/commitTest";
+
+    private static final String dongLiangApiurlPro = "http://wlj.xinzhaitongxing.com:9998/api/commitTest";*/
+
     private static final String reportUrl = "https://wlj.xinzhaitongxing.com/review/upload2";
 
     @Autowired
@@ -64,7 +66,7 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
         queryWrapper.eq("eval_code",evalCodeEntity.getEvalCode());
         List<EvalCodeEntity> list = dongLiangReviewService.list(queryWrapper);
         List<EvalCodeEntity> list1 = list.stream().filter(item -> item.getStatus() == 1 || item.getStatus() == 3).collect(Collectors.toList());
-        return list1.size() > 0 ? Result.OK("测评码有效") : Result.OK("测评码无效或不存在");
+        return list1.size() > 0 ? Result.OK("测评码有效") : Result.error("测评码无效或不存在");
     }
 
     /**
@@ -116,7 +118,7 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
             }else {
                 flag = 2;
                 dongLiangReviewService.handleBusinessData(flag,currentTime,json.toString(),dongliangTestQuestionVO,new ReviewUser());
-                return Result.error("提交失败",json);
+                return Result.error(json.get("msg").toString());
             }
         }else {
             flag = 2;

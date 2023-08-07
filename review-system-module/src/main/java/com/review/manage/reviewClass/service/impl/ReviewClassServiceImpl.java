@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @Description: 测评量表
@@ -38,6 +39,11 @@ public class ReviewClassServiceImpl extends ServiceImpl<ReviewClassMapper, Revie
 			reviewClassMapper.deleteByMainId(id.toString());
 			reviewClassMapper.deleteById(id);
 		}
+	}
+
+	@Override
+	public List<String> getClassIds(Long tenantId) {
+		return reviewClassMapper.getClassIds(tenantId);
 	}
 
 	/*@Override

@@ -124,4 +124,9 @@ public class BaseCommonServiceImpl implements BaseCommonService {
         }
         return true;
     }
+
+    @Override
+    public SysTenantVO getTenantIdByAppId(String appId) {
+        return baseCommonMapper.getTenantIdByAppId(appId);
+    }
 }

@@ -29,5 +29,7 @@ public interface IReviewClassService extends IService<ReviewClass> {
 	 */
 	public void delBatchMain (Collection<? extends Serializable> idList);
 
+    List<String> getClassIds(Long tenantId);
+
     //void updateByClassId(ReviewClass reviewClass);
 }

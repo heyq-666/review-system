@@ -31,4 +31,8 @@
                *
         from sys_tenant where id = #{id}
     </select>
+
+    <select id="getTenantIdByAppId" parameterType="String" resultType="org.jeecg.modules.base.entity.SysTenantVO">
+        select * from sys_tenant where app_id = #{appId}
+    </select>
 </mapper>

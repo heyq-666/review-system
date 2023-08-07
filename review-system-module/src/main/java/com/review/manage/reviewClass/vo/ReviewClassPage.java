@@ -118,4 +118,14 @@ public class ReviewClassPage {
 	 */
 	private transient Integer reviewCount;
 
+	/**
+	 * 是否共享
+	 */
+	private Integer isShare;
+
+	/**
+	 * 租户ID
+	 */
+	private Long tenantId;
+
 }

@@ -6,26 +6,21 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.review.common.Constants;
 import com.review.common.MyBeanUtils;
-import org.jeecg.common.util.WxAppletsUtils;
 import com.review.front.frontProject.service.IFrontProjectService;
 import com.review.front.frontUser.service.IFrontUserService;
 import com.review.manage.project.entity.ReviewProjectEntity;
 import com.review.manage.userManage.entity.ReviewUser;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.base.controller.JeecgController;
-import org.jeecg.common.system.util.JwtUtil;
-import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.RedisUtil;
+import org.jeecg.common.util.WxAppletsUtils;
 import org.jeecg.common.util.oConvertUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,13 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author javabage
@@ -68,7 +58,9 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
      */
     @AutoLog(value = "小程序-获取openid")
     @PostMapping(value = "getOpenid")
-    public Result<?> getOpenid(@RequestBody JSONObject paramJson) throws JsonProcessingException {
+    public Result<?> getOpenid(@RequestBody JSONObject paramJson,HttpServletRequest request) throws JsonProcessingException {
+        String appId = request.getHeader("X-AppId-Id");
+        System.out.println(appId);
         if (paramJson == null || paramJson.isEmpty() || !paramJson.containsKey("code")) {
             return Result.error(300,"code为空");
         }

@@ -98,6 +98,11 @@ public class ReviewClass implements Serializable {
     @Dict(dicCode = "yn")
     @ApiModelProperty(value = "是否推荐量表")
     private Integer recommendType;
+    /**是否推荐量表*/
+    @Excel(name = "是否共享量表", width = 15, dicCode = "yn")
+    @Dict(dicCode = "yn")
+    @ApiModelProperty(value = "是否推荐量表")
+    private Integer isShare;
 
     private transient BigDecimal realPrice;
 

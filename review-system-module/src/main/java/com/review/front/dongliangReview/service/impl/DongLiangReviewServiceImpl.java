@@ -11,7 +11,6 @@ import com.review.front.frontReport.service.IFrontReviewResultService;
 import com.review.manage.userManage.entity.ReviewResult;
 import com.review.manage.userManage.entity.ReviewUser;
 import org.apache.commons.lang.StringUtils;
-import org.jeecg.common.util.oConvertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,8 +64,8 @@ public class DongLiangReviewServiceImpl extends ServiceImpl<DongLiangReviewMappe
                 TestRecord testRecord = new TestRecord();
                 testRecord.setQuesNo("I" + I);
                 testRecord.setAnswer(testRecordListOld.get(i).getAnswer());
-                testRecord.setScoreA(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreA()) ? testRecordListOld.get(i).getScoreA() : "1");
-                testRecord.setScoreB(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreB()) ? testRecordListOld.get(i).getScoreB() : "1");
+                testRecord.setScoreA(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreA()) ? DecimalInputText(testRecordListOld.get(i).getScoreA()) : "1");
+                testRecord.setScoreB(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreB()) ? DecimalInputText(testRecordListOld.get(i).getScoreB()) : "1");
                 testRecordList.add(testRecord);
                 I++;
             } else if (i >= 162 && i < 204){
@@ -79,16 +78,16 @@ public class DongLiangReviewServiceImpl extends ServiceImpl<DongLiangReviewMappe
                 TestRecord testRecord = new TestRecord();
                 testRecord.setQuesNo("A" + A);
                 testRecord.setAnswer(testRecordListOld.get(i).getAnswer());
-                testRecord.setScoreA(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreA()) ? testRecordListOld.get(i).getScoreA() : "1");
-                testRecord.setScoreB(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreB()) ? testRecordListOld.get(i).getScoreB() : "1");
+                testRecord.setScoreA(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreA()) ? DecimalInputText(testRecordListOld.get(i).getScoreA()) : "1");
+                testRecord.setScoreB(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreB()) ? DecimalInputText(testRecordListOld.get(i).getScoreB()) : "1");
                 testRecordList.add(testRecord);
                 A++;
             } else if ( i >= 336 ){
                 TestRecord testRecord = new TestRecord();
                 testRecord.setQuesNo("P" + P);
                 testRecord.setAnswer(testRecordListOld.get(i).getAnswer());
-                testRecord.setScoreA(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreA()) ? testRecordListOld.get(i).getScoreA() : "1");
-                testRecord.setScoreB(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreB()) ? testRecordListOld.get(i).getScoreB() : "1");
+                testRecord.setScoreA(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreA()) ? DecimalInputText(testRecordListOld.get(i).getScoreA()) : "1");
+                testRecord.setScoreB(StringUtils.isNotBlank(testRecordListOld.get(i).getScoreB()) ? DecimalInputText(testRecordListOld.get(i).getScoreB()) : "1");
                 testRecordList.add(testRecord);
                 P++;
             }
@@ -165,5 +164,13 @@ public class DongLiangReviewServiceImpl extends ServiceImpl<DongLiangReviewMappe
             testRecord.setScoreB("0");
             testRecordList.add(testRecord);
         }
+    }
+    public static String DecimalInputText(String text) {
+        if (text.endsWith(".")) {
+            text = text.substring(0, text.length() - 1);
+        }else if (text.endsWith(".0")) {
+            text = text.substring(0, text.length() - 2);
+        }
+        return text;
     }
 }
