@@ -107,7 +107,8 @@
         DATE_FORMAT(r.create_time,'%Y-%m-%e %H:%i:%S') createTime,
         r.grade_total reportGrade,
         c.banner_img classCover,
-        c.title classTitle
+        c.title classTitle,
+        r.review_result reviewResult
         FROM
         review_result r inner join review_class c on r.class_id = c.class_id
         WHERE r.user_id = #{userId}

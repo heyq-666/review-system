@@ -58,7 +58,7 @@ public class MybatisPlusSaasConfig {
             //TENANT_TABLE.add("review_answer");
             TENANT_TABLE.add("review_banner");
             //TENANT_TABLE.add("review_class");
-            TENANT_TABLE.add("review_eval_code");
+            //TENANT_TABLE.add("review_eval_code");
             TENANT_TABLE.add("review_expert");
             TENANT_TABLE.add("review_notice");
             TENANT_TABLE.add("review_order");

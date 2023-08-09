@@ -61,12 +61,12 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
      */
     @AutoLog(value = "栋梁测评-测评码验证")
     @PostMapping(value = "verifyEvalCode")
-    public Result<?> verifyEvalCode(EvalCodeEntity evalCodeEntity) {
+    public Result<?> verifyEvalCode(@RequestBody EvalCodeEntity evalCodeEntity) {
         QueryWrapper<EvalCodeEntity> queryWrapper = new QueryWrapper<EvalCodeEntity>();
         queryWrapper.eq("eval_code",evalCodeEntity.getEvalCode());
         List<EvalCodeEntity> list = dongLiangReviewService.list(queryWrapper);
         List<EvalCodeEntity> list1 = list.stream().filter(item -> item.getStatus() == 1 || item.getStatus() == 3).collect(Collectors.toList());
-        return list1.size() > 0 ? Result.OK("测评码有效") : Result.error("测评码无效或不存在");
+        return list1.size() > 0 ? Result.OK("测评码有效") : Result.error("测评码无效");
     }
 
     /**
@@ -98,16 +98,15 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
         Integer flag = 1;
         RestTemplate restTemplate = new RestTemplate();
         String resultJson = restTemplate.postForObject(dongLiangApiurl,JSONObject.parseObject(paramSub),String.class);
-
         //post提交-需要测试
         /*HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<DongliangTestQuestionVO> entityParam = new HttpEntity<DongliangTestQuestionVO>(dongliangTestQuestionVO[0],headers);
         String resultJsons = restTemplate.postForObject(dongLiangApiurl,entityParam,String.class);*/
-
-        log.info("dongliangCommitMsg：",resultJson);
+        //log.info("dongliangCommitMsg：",resultJson);
         if (StringUtils.isNotEmpty(resultJson)) {
             JSONObject json = JSONObject.parseObject(resultJson);
+            log.info("dongliangPostLog:", json.toString());
             if ((Integer) json.get("code") == 200){
                 String pdfUrl = json.getString("data");
                 String pdfUrlView = reportUrl + pdfUrl;

@@ -65,6 +65,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 .addResourceLocations("file:" + jeecgBaseConfig.getPath().getWebapp() + "//")
                 //update-end-author:taoyan date:20211116 for: jeecg.path.webapp配置无效 #3126
                 .addResourceLocations(staticLocations.split(","));
+        //registry.addResourceHandler("/upload2/**").addResourceLocations("file:C:/Users/Heyq/Desktop/");
+        registry.addResourceHandler("/upload2/**").addResourceLocations("file:/data/dk/");//pdf报告查看
     }
 
     /**
