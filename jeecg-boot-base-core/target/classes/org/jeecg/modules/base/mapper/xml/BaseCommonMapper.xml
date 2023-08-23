@@ -35,4 +35,8 @@
     <select id="getTenantIdByAppId" parameterType="String" resultType="org.jeecg.modules.base.entity.SysTenantVO">
         select * from sys_tenant where app_id = #{appId}
     </select>
+
+    <select id="getProjectInfo" parameterType="Long" resultType="org.jeecg.modules.base.entity.ReviewProjectEntity">
+        select * from review_project where id = #{projectId}
+    </select>
 </mapper>

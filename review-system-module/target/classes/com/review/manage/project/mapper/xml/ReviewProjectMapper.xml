@@ -15,4 +15,7 @@
     <select id="isExitProjectClass" parameterType="long" resultType="String">
         select class_id AS classIds from review_project_class where project_id = #{id}
     </select>
+    <select id="getAppInfo" parameterType="long" resultType="map">
+        SELECT app_id as appId,app_secret as appSecret FROM sys_tenant where id = #{tenantId}
+    </select>
 </mapper>
