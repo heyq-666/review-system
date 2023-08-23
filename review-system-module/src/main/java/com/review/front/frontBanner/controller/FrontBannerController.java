@@ -10,8 +10,11 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +41,12 @@ public class FrontBannerController extends JeecgController<ReviewBannerEntity, I
     public Result<IPage<ReviewBannerEntity>> list(@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                           @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                           HttpServletRequest req){
+        Long tenantId = null;
+        //是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+        if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+            tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
+        }
+        System.out.println("租户id："+ tenantId);
         ReviewBannerEntity reviewBanner = new ReviewBannerEntity().setStatus(Constants.StatusPublish);
         QueryWrapper<ReviewBannerEntity> queryWrapper = QueryGenerator.initQueryWrapper(reviewBanner, req.getParameterMap());
         Page<ReviewBannerEntity> page = new Page<ReviewBannerEntity>(pageNo, pageSize);

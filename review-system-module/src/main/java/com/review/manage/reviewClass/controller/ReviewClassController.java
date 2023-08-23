@@ -64,7 +64,7 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
     */
    @ApiOperation(value="测评量表-分页列表查询", notes="测评量表-分页列表查询")
    @GetMapping(value = "/list")
-   public Result<IPage<ReviewClass>> queryPageList(ReviewClass reviewClass,
+   public Result<?> queryPageList(ReviewClass reviewClass,
                                                    @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
                                                    @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                    HttpServletRequest req) {
@@ -89,7 +89,9 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
                QueryWrapper<ReviewClass> queryWrapper1 = new QueryWrapper<>();
                queryWrapper1.eq("class_id",classIds.get(i));
                reviewClass1 = reviewClassService.getOne(queryWrapper1);
-               openClassList.add(reviewClass1);
+               if (reviewClass1 != null) {
+                   openClassList.add(reviewClass1);
+               }
            }
            if (shareClassList != null && shareClassList.size()>0){
                if (openClassList != null && openClassList.size() > 0) {

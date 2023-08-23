@@ -927,7 +927,7 @@ public class SysTenantController {
             return result;
         }
         //生成二维码
-        String qrCodePath = WxAppletsUtils.geneAppletsQrCode("pages/index/indexNew", "tenantId=" + sysTenant.getId());
+        String qrCodePath = WxAppletsUtils.geneAppletsQrCode("pages/index/indexNew", "tenantId/" + sysTenant.getId());
 
         sysTenantDb.setAppletsQrCodePath(qrCodePath);
         sysTenantDb.setUpdateTime(new Date());

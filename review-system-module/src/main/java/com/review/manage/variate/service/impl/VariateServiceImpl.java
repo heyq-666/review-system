@@ -1,6 +1,7 @@
 package com.review.manage.variate.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewClass.service.IReviewClassService;
@@ -32,14 +33,14 @@ public class VariateServiceImpl extends ServiceImpl<ReviewVariateMapper, ReviewV
      * @param pageList
      */
     @Override
-    public void getClassNameByClassId(List<ReviewVariateEntity> pageList) {
+    public void getClassNameByClassId(IPage<ReviewVariateEntity> pageList) {
         String classId = "";
         String className = "";
-        for (int i = 0; i < pageList.size(); i++) {
-            classId = pageList.get(i).getClassId();
+        for (int i = 0; i < pageList.getRecords().size(); i++) {
+            classId = pageList.getRecords().get(i).getClassId();
             if (StringUtils.isNotBlank(classId)){
                 className = reviewVariateMapper.getClassNameByClassId(classId);
-                pageList.get(i).setClassName(className);
+                pageList.getRecords().get(i).setClassName(className);
             }
         }
     }
@@ -60,7 +61,7 @@ public class VariateServiceImpl extends ServiceImpl<ReviewVariateMapper, ReviewV
     }
 
     @Override
-    public List<ReviewVariateEntity> filterData(Long tenantId,List<ReviewVariateEntity> list) {
+    public List<ReviewVariateEntity> filterData(Long tenantId,IPage<ReviewVariateEntity> pageList) {
         //先获取租户绑定的量表
         //获取给该租户开放的量表
         List<String> classIds = reviewClassService.getClassIds(tenantId);
@@ -73,9 +74,9 @@ public class VariateServiceImpl extends ServiceImpl<ReviewVariateMapper, ReviewV
         }
         List<ReviewVariateEntity> listNew = new ArrayList<>();
         for (int i = 0; i < classIds.size(); i++) {
-            for (int j = 0; j < list.size(); j++) {
-                if (classIds.get(i).equals(list.get(j).getClassId())){
-                    listNew.add(list.get(j));
+            for (int j = 0; j < pageList.getRecords().size(); j++) {
+                if (classIds.get(i).equals(pageList.getRecords().get(j).getClassId())){
+                    listNew.add(pageList.getRecords().get(j));
                 }
             }
         }

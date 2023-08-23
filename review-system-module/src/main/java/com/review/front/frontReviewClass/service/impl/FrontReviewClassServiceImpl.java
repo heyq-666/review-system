@@ -357,6 +357,8 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         QueryWrapper<ReviewVariateEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("class_id", classId);
         List<ReviewVariateEntity> variateGradeConfList = variateService.list(queryWrapper);
+        //因子按序号排序
+        variateGradeConfList.sort(((o1, o2) -> o1.getSortNum().compareTo(o2.getSortNum())));
         String regex = "#(.*?)#";//匹配题目序号的正则
         List<ReviewResult> resultList1 = new ArrayList<>();
         for (int i = 0; i < variateGradeConfList.size(); i++) {

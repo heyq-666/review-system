@@ -2,6 +2,7 @@ package org.jeecg.modules.base.service;
 
 import org.jeecg.common.api.dto.LogDTO;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.modules.base.entity.ReviewProjectEntity;
 import org.jeecg.modules.base.entity.ReviewUser;
 import org.jeecg.modules.base.entity.SysTenantVO;
 
@@ -61,4 +62,11 @@ public interface BaseCommonService {
      * @return
      */
     SysTenantVO getTenantIdByAppId(String appId);
+
+    /**
+     * 获取测评项目信息
+     * @param projectId
+     * @return
+     */
+    ReviewProjectEntity getProjectInfo(Long projectId);
 }

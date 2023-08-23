@@ -21,6 +21,7 @@ import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.util.RedisUtil;
 import org.jeecg.common.util.WxAppletsUtils;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -151,6 +152,12 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
     @AutoLog(value = "小程序-用户是否注册")
     @PostMapping(value = "getUserInfoByOpenid")
     public Result<?> getUserInfoByOpenid(@RequestBody ReviewUser reviewUser) {
+        Long tenantId = null;
+        //是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+        if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+            tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
+        }
+        System.out.println(tenantId);
         QueryWrapper<ReviewUser> queryWrapper = new QueryWrapper<ReviewUser>();
         queryWrapper.eq("openid",reviewUser.getOpenid());
         ReviewUser reviewUser1 = frontUserService.getOne(queryWrapper);

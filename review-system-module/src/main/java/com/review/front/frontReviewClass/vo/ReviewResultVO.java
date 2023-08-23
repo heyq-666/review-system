@@ -1,5 +1,6 @@
 package com.review.front.frontReviewClass.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -39,6 +40,7 @@ public class ReviewResultVO implements Serializable {
 
 	private Double gradeTotal;
 
+	@JsonProperty(value="pCount")
 	private Long pCount;
 
 	private String title;

@@ -12,6 +12,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,11 +24,13 @@ public class WxAppletsUtils {
 
     public final static String accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 
-    public final static String appId = "wx5c0cb023244b6007";
+    public final static String appId = "wx5c0cb023244b6007";//沃莲纪
+    //public final static String appId = "wxe1e9802d7d62c6d4";//zxk
 
     //public final static String appSecret = "f95e7676a11f1fbcd2be34f8ea01fed5";
     //public final static String appSecret = "994d504be2dc39634df03fe9889701b7";
-    public final static String appSecret = "53b3c8f98a8b8e6351a0f23f028f5eb0";
+    public final static String appSecret = "53b3c8f98a8b8e6351a0f23f028f5eb0";//沃莲纪
+    //public final static String appSecret = "f8ce119deb600c324de09ced464272ce";//zxk
 
     public final static String qrCodeUrl = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s";
 
@@ -67,7 +70,8 @@ public class WxAppletsUtils {
         paramObj.put("width", 200);
         paramObj.put("is_hyaline", true);
         paramObj.put("auto_color", true);
-        String filePath = "qrcode/%s/" + params.split("=")[1] + "_" + System.currentTimeMillis() + ".jpg";
+        //String filePath = "qrcode/%s/" + params.split("=")[1] + "_" + System.currentTimeMillis() + ".jpg";
+        String filePath = "qrcode/%s/" + params.split("/")[1] + "_" + System.currentTimeMillis() + ".jpg";
         return HttpUtils.postFile(String.format(qrCodeUrl, accessToken), paramObj.toString(), filePath);
     }
 
@@ -131,4 +135,36 @@ public class WxAppletsUtils {
         return PayUtils.sign(stringSignTemp, payKey, "utf-8").toUpperCase();
     }
 
+    public static String geneAppletsQrCodeTenant(String pagePath, String params, List<Map<String, String>> list) {
+        String[] sss = params.split("\\*");
+        String ss1 = sss[0];
+        String ss2 = sss[1];
+        String accessToken = geneAccessTenant(list);
+        JSONObject paramObj = new JSONObject();
+        paramObj.put("scene", params);
+        paramObj.put("page", pagePath);
+        paramObj.put("width", 200);
+        paramObj.put("is_hyaline", true);
+        paramObj.put("auto_color", true);
+        String filePath = "qrcode/%s/" + ss1.split("/")[1] + "_" + ss2.split("/")[1] + "_" + System.currentTimeMillis() + ".jpg";
+        return HttpUtils.postFile(String.format(qrCodeUrl, accessToken), paramObj.toString(), filePath);
+    }
+
+    private static String geneAccessTenant(List<Map<String, String>> list) {
+        String tokenStr = "";
+        if (list != null && list.size() > 0) {
+            String appId = list.get(0).get("appId");
+            String appSecret = list.get(0).get("appSecret");
+            if (StringUtils.isNotEmpty(appId) && StringUtils.isNotEmpty(appSecret)) {
+                tokenStr = HttpUtils.postString(String.format(accessTokenUrl, appId, appSecret), "");
+            }
+        }else {
+            tokenStr = HttpUtils.postString(String.format(accessTokenUrl, appId, appSecret), "");
+        }
+        JSONObject tokenObj = JSONObject.parseObject(tokenStr);
+        if (tokenObj.containsKey("access_token")) {
+            return tokenObj.getString("access_token");
+        }
+        return null;
+    }
 }

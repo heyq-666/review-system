@@ -1,8 +1,6 @@
 package com.review.front.frontReport.controller;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.review.front.frontReport.entity.ReviewReportTemplateEntity;
 import com.review.front.frontReport.service.IFrontReviewResultService;
 import com.review.front.frontReport.service.IReviewReportTemplateService;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
@@ -10,14 +8,12 @@ import com.review.front.frontReviewClass.vo.ReviewResultVO;
 import com.review.manage.reviewClass.vo.ReviewClassPage;
 import com.review.manage.userManage.entity.ReviewResult;
 import com.review.manage.userManage.entity.ReviewUser;
-import com.review.manage.variate.entity.ReviewVariateEntity;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
-import org.jeecg.common.system.query.QueryGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,11 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author javabage

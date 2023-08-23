@@ -3,6 +3,7 @@ package org.jeecg.modules.base.mapper;
 import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.common.api.dto.LogDTO;
+import org.jeecg.modules.base.entity.ReviewProjectEntity;
 import org.jeecg.modules.base.entity.ReviewUser;
 import org.jeecg.modules.base.entity.SysTenantVO;
 
@@ -24,4 +25,6 @@ public interface BaseCommonMapper {
     SysTenantVO getSysTenantInfo(@Param("id")Long tenantId);
 
     SysTenantVO getTenantIdByAppId(@Param("appId")String appId);
+
+    ReviewProjectEntity getProjectInfo(@Param("projectId")Long projectId);
 }

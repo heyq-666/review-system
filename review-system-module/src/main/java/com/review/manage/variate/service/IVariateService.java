@@ -1,5 +1,6 @@
 package com.review.manage.variate.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.review.manage.variate.entity.ReviewVariateEntity;
 
@@ -14,7 +15,7 @@ public interface IVariateService extends IService<ReviewVariateEntity> {
      * 因子列表数据存储量表名称
      * @param pageList
      */
-    void getClassNameByClassId(List<ReviewVariateEntity> list);
+    void getClassNameByClassId(IPage<ReviewVariateEntity> pageList);
 
     void delVariateGrade(String variateId);
 
@@ -27,5 +28,5 @@ public interface IVariateService extends IService<ReviewVariateEntity> {
      */
     Integer getMaxSortNum(String classId);
 
-    List<ReviewVariateEntity> filterData(Long tenantId,List<ReviewVariateEntity> list);
+    List<ReviewVariateEntity> filterData(Long tenantId,IPage<ReviewVariateEntity> pageList);
 }

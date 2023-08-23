@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.review.manage.project.entity.ReviewProjectEntity;
 
+import java.util.List;
+import java.util.Map;
+
 public interface IReviewProjectService extends IService<ReviewProjectEntity> {
 
     /**
@@ -19,4 +22,6 @@ public interface IReviewProjectService extends IService<ReviewProjectEntity> {
     void insert(ReviewProjectEntity reviewProject);
 
     void getProjectClassInfo(IPage<ReviewProjectEntity> pageList);
+
+    List<Map<String, String>> getAppInfo(Long tenantId);
 }

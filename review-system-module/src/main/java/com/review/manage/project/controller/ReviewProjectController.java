@@ -3,7 +3,6 @@ package com.review.manage.project.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.jeecg.common.util.WxAppletsUtils;
 import com.review.manage.project.entity.ReviewProjectEntity;
 import com.review.manage.project.service.IReviewProjectService;
 import io.swagger.annotations.Api;
@@ -11,14 +10,21 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.common.util.WxAppletsUtils;
+import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -123,7 +129,24 @@ public class ReviewProjectController extends JeecgController<ReviewProjectEntity
             return result;
         }
         //生成二维码
-        String qrCodePath = WxAppletsUtils.geneAppletsQrCode("pages/index/indexNew", "projectId=" + reviewProject.getId());
+        Long tenantId = null;
+        //是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+        if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+            tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
+        }
+        String qrCodePath = "";
+        List<Map<String,String>> list = new ArrayList();
+        if (tenantId != -1) {//租户
+            list = reviewProjectService.getAppInfo(tenantId);
+            if (list != null && list.size() > 0){
+                qrCodePath = WxAppletsUtils.geneAppletsQrCodeTenant("pages/index/indexNew"
+                        ,"projectId/" + reviewProject.getId()
+                                + "*tenantId/" + tenantId
+                        ,list);
+            }
+        }else {
+            qrCodePath = WxAppletsUtils.geneAppletsQrCode("pages/index/indexNew", "projectId/" + reviewProject.getId());
+        }
         reviewProject.setAppletsQrCodeLink(qrCodePath);
         reviewProject.setUpdateTime(new Date());
         reviewProjectService.saveOrUpdate(reviewProject);

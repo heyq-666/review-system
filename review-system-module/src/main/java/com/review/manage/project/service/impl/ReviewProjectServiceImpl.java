@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -59,5 +60,10 @@ public class ReviewProjectServiceImpl extends ServiceImpl<ReviewProjectMapper, R
             }
             /*newPageList.get(i).setClassIdList(reviewProjectMapper.isExitProjectClass(newPageList.get(i).getId()));*/
         }
+    }
+
+    @Override
+    public List<Map<String, String>> getAppInfo(Long tenantId) {
+        return reviewProjectMapper.getAppInfo(tenantId);
     }
 }

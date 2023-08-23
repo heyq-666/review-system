@@ -10,6 +10,7 @@ import org.jeecg.common.util.DateUtils;
 import org.jeecg.common.util.IpUtils;
 import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.base.entity.ReviewProjectEntity;
 import org.jeecg.modules.base.entity.ReviewUser;
 import org.jeecg.modules.base.entity.SysTenantVO;
 import org.jeecg.modules.base.mapper.BaseCommonMapper;
@@ -128,5 +129,10 @@ public class BaseCommonServiceImpl implements BaseCommonService {
     @Override
     public SysTenantVO getTenantIdByAppId(String appId) {
         return baseCommonMapper.getTenantIdByAppId(appId);
+    }
+
+    @Override
+    public ReviewProjectEntity getProjectInfo(Long projectId) {
+        return baseCommonMapper.getProjectInfo(projectId);
     }
 }

@@ -3,7 +3,6 @@ package com.review.manage.userManage.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.review.manage.userManage.entity.ReviewResult;
 import com.review.manage.userManage.entity.ReviewUser;
 import com.review.manage.userManage.service.IReviewUserService;
 import com.review.manage.userManage.vo.QuestionAnswerVo;
@@ -21,8 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -223,4 +220,15 @@ public class ReviewUserController extends JeecgController<ReviewUser, IReviewUse
 		System.out.println(questionAnswerVo.getEndTime());
 		return null;
 	}
+	/*@RequestMapping(value = "/getReviewUserGroup", method = RequestMethod.GET)
+	public Result<IPage<ReviewClass>> getReviewUserGroup(ReviewClass reviewClass,
+														@RequestParam(name="pageNo", defaultValue="1") Integer pageNo, @RequestParam(name="pageSize", defaultValue="10") Integer pageSize, HttpServletRequest req) {
+		Result<IPage<ReviewClass>> result = new Result<>();
+		QueryWrapper<ReviewClass> queryWrapper = QueryGenerator.initQueryWrapper(reviewClass, req.getParameterMap());
+		Page<ReviewClass> page = new Page<ReviewClass>(pageNo, pageSize);
+		IPage<ReviewClass> pageList = reviewClassService.page(page, queryWrapper);
+		result.setSuccess(true);
+		result.setResult(pageList);
+		return result;
+	}*/
 }

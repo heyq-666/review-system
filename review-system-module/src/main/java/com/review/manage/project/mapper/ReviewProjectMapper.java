@@ -3,8 +3,10 @@ package com.review.manage.project.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.review.manage.project.entity.ReviewProjectClassEntity;
 import com.review.manage.project.entity.ReviewProjectEntity;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: 测评量表
@@ -19,4 +21,6 @@ public interface ReviewProjectMapper extends BaseMapper<ReviewProjectEntity> {
     void insertReviewProjectClass(List<ReviewProjectClassEntity> list);
 
     List<String> isExitProjectClass(Long id);
+
+    List<Map<String, String>> getAppInfo(@Param("tenantId")Long tenantId);
 }

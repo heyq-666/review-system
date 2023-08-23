@@ -1,6 +1,8 @@
 package com.review.manage.variate.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.review.manage.question.entity.ReviewQuestion;
 import com.review.manage.question.entity.ReviewQuestionClassEntity;
 import com.review.manage.question.service.IReviewQuestionClassService;
@@ -20,6 +22,7 @@ import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.exception.JeecgBootException;
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
@@ -63,28 +66,30 @@ public class VariateController extends JeecgController<ReviewVariateEntity, IVar
 
     @ApiOperation(value="因子列表-分页列表查询", notes="因子列表-分页列表查询")
     @GetMapping(value = "/list")
-    public Result<List<ReviewVariateEntity>> queryPageList(ReviewVariateEntity reviewVariate,
-                                                            /*@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-                                                            @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,*/
+    public Result<?> queryPageList(ReviewVariateEntity reviewVariate,
+                                                            @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+                                                            @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
                                                             HttpServletRequest req) {
         Long tenantId = null;
         //是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
         if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
             tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
         }
-        /*QueryWrapper<ReviewVariateEntity> queryWrapper = QueryGenerator.initQueryWrapper(reviewVariate, req.getParameterMap());
-        Page<ReviewVariateEntity> page = new Page<ReviewVariateEntity>();
-        IPage<ReviewVariateEntity> pageList = variateService.page(page, queryWrapper);*/
-        List<ReviewVariateEntity> list = variateService.list();
+        QueryWrapper<ReviewVariateEntity> queryWrapper = QueryGenerator.initQueryWrapper(reviewVariate, req.getParameterMap());
+        Page<ReviewVariateEntity> page = new Page<ReviewVariateEntity>(pageNo, pageSize);
+        IPage<ReviewVariateEntity> pageList = variateService.page(page, queryWrapper);
+        /*List<ReviewVariateEntity> list = variateService.list();*/
         //只要是开放的量表，该量表关联的因子也一并开放
         //量表信息
-        variateService.getClassNameByClassId(list);
+        variateService.getClassNameByClassId(pageList);
         List<ReviewVariateEntity> listNew = new ArrayList<>();
         if (tenantId != null && tenantId != -1) {
-            listNew = variateService.filterData(tenantId,list);
+            listNew = variateService.filterData(tenantId,pageList);
+            listNew.stream().collect(Collectors.groupingBy(ReviewVariateEntity :: getClassName));
             return Result.OK(listNew);
         }else {
-            return Result.OK(list);
+            pageList.getRecords().stream().collect(Collectors.groupingBy(ReviewVariateEntity :: getClassName));
+            return Result.OK(pageList);
         }
     }
 

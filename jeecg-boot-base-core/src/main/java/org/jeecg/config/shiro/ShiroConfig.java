@@ -166,11 +166,16 @@ public class ShiroConfig {
         // 添加自己的过滤器并且取名为review
         filterMap.put("review",new ReviewFilter(baseCommonService));
 
+        //添加项目测评权限过滤器
+        /*filterMap.put("reviewProject",new ReviewProjectAuthInterceptor(baseCommonService));*/
+
         shiroFilterFactoryBean.setFilters(filterMap);
         // <!-- 过滤链定义，从上向下顺序执行，一般将/**放在最为下边
         filterChainDefinitionMap.put("/**", "jwt");
 
         filterChainDefinitionMap.put("/reviewFront/**", "review");
+
+        /*filterChainDefinitionMap.put("/reviewFront/**", "reviewProject");*/
 
         //未授权界面返回JSON
         shiroFilterFactoryBean.setUnauthorizedUrl("/sys/common/403");
