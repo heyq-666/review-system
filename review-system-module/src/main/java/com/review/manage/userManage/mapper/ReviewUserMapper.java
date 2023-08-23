@@ -1,8 +1,10 @@
 package com.review.manage.userManage.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.review.manage.userManage.entity.ReviewResult;
+import com.review.front.frontReport.entity.ReviewReportResultEntity;
 import com.review.manage.userManage.entity.ReviewUser;
+import com.review.manage.userManage.vo.QuestionAnswerVo;
+import com.review.manage.userManage.vo.ReviewQuestionAnswerVO;
 import com.review.manage.userManage.vo.ReviewResultVo;
 import com.review.manage.userManage.vo.SysUserDepVo;
 import org.apache.ibatis.annotations.Param;
@@ -28,4 +30,8 @@ public interface ReviewUserMapper extends BaseMapper<ReviewUser> {
     List<ReviewResultVo> getResultByUserId(String userId);
 
     void removeRecord(String resultId);
+
+    List<ReviewQuestionAnswerVO> getListByGroupId(QuestionAnswerVo questionAnswerVo);
+
+    List<ReviewReportResultEntity> getReviewReportResult(String resultId);
 }

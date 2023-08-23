@@ -63,6 +63,7 @@ com\review\manage\report\entity\ReviewReportEntity.class
 com\review\front\frontReport\mapper\FrontReviewResultMapper.class
 com\review\front\frontSubject\service\impl\FrontSubjectServiceImpl.class
 com\review\manage\expert\service\impl\ExpertBeGoodAtImpl.class
+com\review\manage\userManage\vo\ReviewQuestionAnswerVO.class
 com\review\front\frontAppoint\vo\ConsultationVO.class
 com\review\front\videoAnalysis\vo\OssTmpAuth$AuthResult.class
 com\review\front\frontOrder\mapper\FrontOrderMapper.class
@@ -180,6 +181,7 @@ com\review\manage\evalCode\entity\ReviewEvalCode.class
 com\review\manage\reviewClass\controller\ReviewClassController.class
 com\review\front\frontReport\service\impl\FrontReviewResultServiceImpl.class
 com\review\front\frontReviewClass\mapper\FrontReviewClassMapper.class
+com\review\manage\userManage\entity\TestEntity.class
 com\review\front\frontBanner\controller\FrontBannerController.class
 com\review\manage\intake\service\IntakeContactRecordsService.class
 com\review\front\frontAppoint\controller\AppointExpertController.class

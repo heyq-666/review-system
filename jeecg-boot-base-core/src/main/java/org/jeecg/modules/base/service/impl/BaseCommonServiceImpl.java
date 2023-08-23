@@ -135,4 +135,9 @@ public class BaseCommonServiceImpl implements BaseCommonService {
     public ReviewProjectEntity getProjectInfo(Long projectId) {
         return baseCommonMapper.getProjectInfo(projectId);
     }
+
+    @Override
+    public SysTenantVO getTenantInfoByTenantId(String tenantId) {
+        return baseCommonMapper.getTenantInfoByTenantId(tenantId);
+    }
 }

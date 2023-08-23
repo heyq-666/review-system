@@ -10,16 +10,21 @@ import com.review.manage.userManage.vo.ReviewResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -39,6 +44,8 @@ import java.util.stream.Collectors;
 public class ReviewUserController extends JeecgController<ReviewUser, IReviewUserService> {
 	@Autowired
 	private IReviewUserService reviewUserService;
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	/**
 	 * 分页列表查询
@@ -215,20 +222,19 @@ public class ReviewUserController extends JeecgController<ReviewUser, IReviewUse
 
 	@AutoLog(value = "导出答题记录")
 	@ApiOperation(value="导出答题记录", notes="导出答题记录")
-	@PostMapping(value = "/exportQuestionAnswerByGroup")
-	public Result<?> exportQuestionAnswerByGroup(@RequestBody QuestionAnswerVo questionAnswerVo) {
-		System.out.println(questionAnswerVo.getEndTime());
-		return null;
+	@RequestMapping(value = "/exportQuestionAnswerByGroup")
+	public void exportQuestionAnswerByGroup(QuestionAnswerVo questionAnswerVo,HttpServletResponse response) {
+		response.setContentType("application/vnd.ms-excel");
+		OutputStream fOut = null;
+		try {
+			fOut = response.getOutputStream();
+			Workbook workbook = reviewUserService.getExportWorkbook(questionAnswerVo);
+			workbook.write(fOut);
+			fOut.flush();
+		}catch (Exception e) {
+			logger.error("exportQuestionAnswerByGroup error, ", e);
+		} finally {
+			IOUtils.closeQuietly(fOut);
+		}
 	}
-	/*@RequestMapping(value = "/getReviewUserGroup", method = RequestMethod.GET)
-	public Result<IPage<ReviewClass>> getReviewUserGroup(ReviewClass reviewClass,
-														@RequestParam(name="pageNo", defaultValue="1") Integer pageNo, @RequestParam(name="pageSize", defaultValue="10") Integer pageSize, HttpServletRequest req) {
-		Result<IPage<ReviewClass>> result = new Result<>();
-		QueryWrapper<ReviewClass> queryWrapper = QueryGenerator.initQueryWrapper(reviewClass, req.getParameterMap());
-		Page<ReviewClass> page = new Page<ReviewClass>(pageNo, pageSize);
-		IPage<ReviewClass> pageList = reviewClassService.page(page, queryWrapper);
-		result.setSuccess(true);
-		result.setResult(pageList);
-		return result;
-	}*/
 }

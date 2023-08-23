@@ -43,4 +43,42 @@
     <delete id="removeRecord" parameterType="String">
         delete from review_result where result_id = #{resultId}
     </delete>
+
+    <select id="getListByGroupId" parameterType="com.review.manage.userManage.vo.QuestionAnswerVo" resultType="com.review.manage.userManage.vo.ReviewQuestionAnswerVO">
+        SELECT
+            class_id classId,
+            q.user_id userId,
+            q.result_id resultId,
+            u.user_name userName,
+            u.real_name realName,
+            u.sex sex,
+            u.age age,
+            u.mobile_phone mobilePhone,
+            u.group_id groupId,
+            u.extra extra,
+            q.question_num questionNum,
+            concat( q.question_num, '.', q.content ) AS content,
+            q.sel_code selCode,
+            q.select_grade selectGrade,
+            q.right_answer rightAnswer,
+            DATE_FORMAT( q.`create_time`, '%Y-%m-%e %H:%i:%S' ) AS createTime
+        FROM
+            review_question_answer q,review_user u
+        WHERE
+            q.user_id = u.user_id
+            AND q.group_id = #{groupId}
+        <if test="projectId != null and projectId > 0">
+            AND q.project_id = #{projectId}
+        </if>
+        <if test="startTime != null and startTime != '' ">
+            AND q.create_time <![CDATA[ >= ]]> #{startTime}
+        </if>
+        <if test="endTime != null and endTime != '' ">
+            AND q.create_time <![CDATA[ <= ]]> #{endTime}
+        </if>
+    </select>
+
+    <select id="getReviewReportResult" parameterType="String" resultType="com.review.front.frontReport.entity.ReviewReportResultEntity">
+        select * from review_report_result where result_id = #{resultId}
+    </select>
 </mapper>

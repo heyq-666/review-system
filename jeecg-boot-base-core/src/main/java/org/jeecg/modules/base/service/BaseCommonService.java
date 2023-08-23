@@ -69,4 +69,6 @@ public interface BaseCommonService {
      * @return
      */
     ReviewProjectEntity getProjectInfo(Long projectId);
+
+    SysTenantVO getTenantInfoByTenantId(String tenantId);
 }

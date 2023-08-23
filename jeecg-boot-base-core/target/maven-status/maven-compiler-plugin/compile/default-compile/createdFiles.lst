@@ -118,6 +118,7 @@ org\jeecg\common\system\base\service\impl\JeecgServiceImpl.class
 org\jeecg\common\util\Md5Util.class
 org\jeecg\common\util\dynamic\db\DataSourceCachePool.class
 org\jeecg\common\system\base\controller\JeecgController.class
+org\jeecg\config\shiro\filters\ReviewProjectAuthInterceptor.class
 org\jeecg\modules\base\entity\ReviewUser.class
 org\jeecg\common\util\security\entity\MyKeyPair.class
 org\jeecg\common\system\annotation\EnumDict.class
@@ -146,6 +147,7 @@ org\jeecg\common\system\vo\DictQuery.class
 org\jeecg\common\constant\enums\FileTypeEnum.class
 org\jeecg\common\desensitization\annotation\SensitiveEncode.class
 org\jeecg\common\util\DateUtils$7.class
+org\jeecg\modules\base\entity\ReviewProjectEntity.class
 org\jeecg\common\constant\enums\OperateTypeEnum.class
 org\jeecg\config\shiro\filters\CustomShiroFilterFactoryBean.class
 org\jeecg\common\aspect\annotation\AutoDict.class

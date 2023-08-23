@@ -46,6 +46,9 @@ public class ReviewFilter extends BasicHttpAuthenticationFilter{
         String tenantId = httpServletRequest.getHeader(CommonConstant.TENANT_ID);
         if (StringUtils.isNotEmpty(tenantId)) {
             TenantContext.setTenant(tenantId);
+            SysTenantVO sysTenantVO = baseCommonService.getTenantInfoByTenantId(tenantId);
+            httpServletRequest.getSession().setAttribute("appSession", sysTenantVO);
+
         } else {
             String appId = httpServletRequest.getHeader(CommonConstant.APP_ID);
             SysTenantVO sysTenantVO = baseCommonService.getTenantIdByAppId(appId);
@@ -74,6 +77,7 @@ public class ReviewFilter extends BasicHttpAuthenticationFilter{
                 //检查用户项目权限
                 if (reviewUser != null) {
                     if (checkProjectAuth(projectId, reviewUser.getGroupId())) {
+                        httpServletRequest.getSession().setAttribute("reviewUser", reviewUser);
                         return true;
                     }else {
                         JSONObject json = new JSONObject();

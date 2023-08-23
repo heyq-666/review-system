@@ -61,7 +61,6 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
     @PostMapping(value = "getOpenid")
     public Result<?> getOpenid(@RequestBody JSONObject paramJson,HttpServletRequest request) throws JsonProcessingException {
         String appId = request.getHeader("X-AppId-Id");
-        System.out.println(appId);
         if (paramJson == null || paramJson.isEmpty() || !paramJson.containsKey("code")) {
             return Result.error(300,"code为空");
         }

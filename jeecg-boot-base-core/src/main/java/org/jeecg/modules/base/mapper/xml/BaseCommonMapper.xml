@@ -39,4 +39,8 @@
     <select id="getProjectInfo" parameterType="Long" resultType="org.jeecg.modules.base.entity.ReviewProjectEntity">
         select * from review_project where id = #{projectId}
     </select>
+
+    <select id="getTenantInfoByTenantId" parameterType="String" resultType="org.jeecg.modules.base.entity.SysTenantVO">
+        select * from sys_tenant where id = #{tenantId}
+    </select>
 </mapper>

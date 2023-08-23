@@ -1,10 +1,11 @@
 package com.review.manage.userManage.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.review.manage.userManage.entity.ReviewResult;
 import com.review.manage.userManage.entity.ReviewUser;
+import com.review.manage.userManage.vo.QuestionAnswerVo;
 import com.review.manage.userManage.vo.ReviewResultVo;
 import com.review.manage.userManage.vo.SysUserDepVo;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.List;
 import java.util.Map;
@@ -28,4 +29,6 @@ public interface IReviewUserService extends IService<ReviewUser> {
     List<ReviewResultVo> getResultByUserId(String userId);
 
     void removeRecord(String resultId);
+
+    Workbook getExportWorkbook(QuestionAnswerVo questionAnswerVo);
 }
