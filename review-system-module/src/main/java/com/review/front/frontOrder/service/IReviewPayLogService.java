@@ -8,4 +8,5 @@ import com.review.front.frontOrder.entity.ReviewPayLogEntity;
  * @date 2023/3/30
  */
 public interface IReviewPayLogService extends IService<ReviewPayLogEntity> {
+    void updatePayLog(String jsonString, String now, int success, String outTradeNo);
 }

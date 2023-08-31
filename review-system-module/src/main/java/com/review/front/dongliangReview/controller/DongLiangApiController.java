@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.review.common.httpclient.HttpClientUtils;
 import com.review.front.dongliangReview.entity.EvalCodeEntity;
 import com.review.front.dongliangReview.service.IDongLiangReviewService;
 import com.review.front.dongliangReview.vo.DongliangTestQuestionVO;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -76,7 +79,7 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
      */
     @AutoLog(value = "完成测试，提交调用栋梁接口")
     @PostMapping(value = "commitTest")
-    public Result<?> commitTest(@RequestBody DongliangTestQuestionVO[] dongliangTestQuestionVO) {
+    public Result<?> commitTest(HttpServletResponse response, HttpServletRequest request, @RequestBody DongliangTestQuestionVO[] dongliangTestQuestionVO) throws Exception{
 
         Date date = new Date();
         SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -87,6 +90,8 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
         }else if (dongliangTestQuestionVO[0].getVersion() == 2){
             dongLiangApiurl = dongLiangApiurlPro;
         }
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         //接口入参处理
         dongLiangReviewService.handleData(dongliangTestQuestionVO);
         String param = JSON.toJSONString(dongliangTestQuestionVO);
@@ -97,7 +102,8 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
         //调用栋梁答题提交接口
         Integer flag = 1;
         RestTemplate restTemplate = new RestTemplate();
-        String resultJson = restTemplate.postForObject(dongLiangApiurl,JSONObject.parseObject(paramSub),String.class);
+        //String resultJson = restTemplate.postForObject(dongLiangApiurl,JSONObject.parseObject(paramSub),String.class);
+        String resultJson = HttpClientUtils.doPost(dongLiangApiurl,JSONObject.parseObject(paramSub),"utf-8");
         //post提交-需要测试
         /*HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -136,6 +142,7 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
     @PostMapping(value = "getEvalCode")
     public Result<String> getEvalCode() {
         QueryWrapper<EvalCodeEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status",1);
         queryWrapper.last("LIMIT 1");
         EvalCodeEntity evalCodeEntity = dongLiangReviewService.getOne(queryWrapper);
         if (evalCodeEntity != null) {
@@ -157,7 +164,7 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
     public Result<String> updateEvalCodeStock(@RequestBody EvalCodeEntity evalCodeEntity) {
         EvalCodeEntity evalCode = new EvalCodeEntity();
         evalCode.setStatus((byte) 1);
-        boolean isSuccess = dongLiangReviewService.update(evalCode, new UpdateWrapper<EvalCodeEntity>().eq("evalCode",evalCodeEntity.getEvalCode()));
+        boolean isSuccess = dongLiangReviewService.update(evalCode, new UpdateWrapper<EvalCodeEntity>().eq("eval_code",evalCodeEntity.getEvalCode()));
         return isSuccess ? Result.OK("该订单未成功支付") : Result.error(0,"支付异常");
     }
 

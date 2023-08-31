@@ -70,7 +70,7 @@
             rec.begin_time
     </select>
 
-    <select id="getMyConsultationDetail" parameterType="long" resultType="com.review.front.frontAppoint.vo.ConsultationVO">
+    <select id="getMyConsultationDetail" parameterType="map" resultType="com.review.front.frontAppoint.vo.ConsultationVO">
         SELECT DISTINCT
             rer.id,
             re.id expertId,
@@ -131,6 +131,7 @@
                 LEFT JOIN review_user ru ON rer.user_id = ru.user_id
         WHERE
             rer.calendar_id = #{id}
+          AND rer.user_id = #{userId}
           AND rer.del_flag = 1
         ORDER BY
             rer.create_time DESC

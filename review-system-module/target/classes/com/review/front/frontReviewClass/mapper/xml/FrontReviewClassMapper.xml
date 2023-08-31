@@ -127,4 +127,8 @@
     <select id="getClassIds" parameterType="Long" resultType="String">
         select class_id as classId from review_class_tenant_conf where tenant_id = #{tenantId}
     </select>
+
+    <select id="getQuestionsNum" parameterType="String" resultType="Integer">
+        select COUNT(1) from review_question_class where class_id = #{classId}
+    </select>
 </mapper>

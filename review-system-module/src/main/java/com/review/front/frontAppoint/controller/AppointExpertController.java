@@ -88,30 +88,33 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         List<ReviewExpert> record = pageList.getRecords();
         for (int i = 0; i < record.size(); i++) {
             List<BeGoodAt> beGoodAtList = reviewExpertReserveService.getBeGoodAtList(record.get(i).getId());
-            List<String> beGoodAtCodeList = new ArrayList<>();
-            for (int j = 0; j < beGoodAtList.size(); j++) {
-                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtEmotion())){
-                    beGoodAtCodeList.add("be_good_at_emotion");
+            boolean isAllElementsNull = beGoodAtList.stream().allMatch(element -> element == null);
+            if (!isAllElementsNull) {
+                List<String> beGoodAtCodeList = new ArrayList<>();
+                for (int j = 0; j < beGoodAtList.size(); j++) {
+                    if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtEmotion())){
+                        beGoodAtCodeList.add("be_good_at_emotion");
+                    }
+                    if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtRelation())){
+                        beGoodAtCodeList.add("be_good_at_relation");
+                    }
+                    if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtFamilyTrouble())){
+                        beGoodAtCodeList.add("be_good_at_family_trouble");
+                    }
+                    if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtMarriage())){
+                        beGoodAtCodeList.add("be_good_at_marriage");
+                    }
                 }
-                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtRelation())){
-                    beGoodAtCodeList.add("be_good_at_relation");
+                List<BeGoodAt> beGoodAtNameList = reviewExpertReserveService.getBeGoodAtNameList(beGoodAtCodeList);
+                for (int k = 0; k < beGoodAtNameList.size(); k++) {
+                    beGoodAtNameList.get(k).setId(record.get(i).getId());
                 }
-                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtFamilyTrouble())){
-                    beGoodAtCodeList.add("be_good_at_family_trouble");
+                if (beGoodAtNameList != null && beGoodAtNameList.size() > 3){
+                    List<BeGoodAt> beGoodAtNameListLimit = beGoodAtNameList.stream().skip(0).limit(3).collect(Collectors.toList());
+                    record.get(i).setBeGoodAtList(beGoodAtNameListLimit);
+                }else {
+                    record.get(i).setBeGoodAtList(beGoodAtNameList);
                 }
-                if (!StringUtils.isEmpty(beGoodAtList.get(j).getBeGoodAtMarriage())){
-                    beGoodAtCodeList.add("be_good_at_marriage");
-                }
-            }
-            List<BeGoodAt> beGoodAtNameList = reviewExpertReserveService.getBeGoodAtNameList(beGoodAtCodeList);
-            for (int k = 0; k < beGoodAtNameList.size(); k++) {
-                beGoodAtNameList.get(k).setId(record.get(i).getId());
-            }
-            if (beGoodAtNameList != null && beGoodAtNameList.size() > 3){
-                List<BeGoodAt> beGoodAtNameListLimit = beGoodAtNameList.stream().skip(0).limit(3).collect(Collectors.toList());
-                record.get(i).setBeGoodAtList(beGoodAtNameListLimit);
-            }else {
-                record.get(i).setBeGoodAtList(beGoodAtNameList);
             }
             record.get(i).setRealPrice(record.get(i).getOrgPrice().subtract(record.get(i).getDicountPrice()));
         }
@@ -230,14 +233,14 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
     @AutoLog(value = "小程序-我的预约详情")
     @PostMapping(value = "queryMyConsultationDetail")
     public Result<List<ConsultationVO>> queryMyConsultationDetail(@RequestBody ConsultationVO consultationVO) {
-        List<ConsultationVO> reviewExpertReserveList = reviewExpertReserveService.getMyConsultationDetail(consultationVO.getId());
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
         org.jeecg.modules.base.entity.ReviewUser reviewUserEntity = (org.jeecg.modules.base.entity.ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         String userId = reviewUserEntity.getUserId();
+        List<ConsultationVO> reviewExpertReserveList = reviewExpertReserveService.getMyConsultationDetail(consultationVO.getId(),userId);
         if (StrUtil.isNotBlank(reviewExpertReserveList.get(0).getUserId()) && reviewExpertReserveList.get(0).getCharge() == Constants.ClassCharge) {
             //判断用户是否支付了问诊费用
-            reviewExpertReserveList.get(0).setBuy(reviewClassService.userBuy(reviewExpertReserveList.get(0).getId().toString(), userId));
+            reviewExpertReserveList.get(0).setBuy(reviewClassService.userBuy(reviewExpertReserveList.get(0).getCalendarId().toString(), userId));
         }
         //时间格式处理
         reviewExpertReserveService.beginAndEndTimehandle(reviewExpertReserveList);
@@ -245,6 +248,8 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         reviewExpertReserveService.videoConsultCondition(reviewExpertReserveList);
         //判断该预约是否已经被咨询师确认
         reviewExpertReserveService.isConfirmByExpert(consultationVO,reviewExpertReserveList);
+        //判断该预约是否可以取消
+        reviewExpertReserveService.isCancle(reviewExpertReserveList);
         return Result.OK("查询成功",reviewExpertReserveList);
     }
 
@@ -296,7 +301,7 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         for (int i = 0; i < reviewAppointList.size(); i++) {
             if (StrUtil.isNotBlank(reviewAppointList.get(i).getUserId()) && reviewAppointList.get(i).getCharge() == Constants.ClassCharge) {
                 //判断用户是否支付了问诊费用
-                reviewAppointList.get(i).setBuy(reviewClassService.userBuy(reviewAppointList.get(i).getId().toString(), reviewAppointList.get(i).getUserId()));
+                reviewAppointList.get(i).setBuy(reviewClassService.userBuy(reviewAppointList.get(i).getCalendarId().toString(), reviewAppointList.get(i).getUserId()));
             }
         }
         appointExpertService.handleTime(reviewAppointList);
@@ -318,7 +323,10 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
         //给咨客发送短信通知：咨询师已确认该预约
         JSONObject obj = new JSONObject();
         obj.put("name",consultationVO.getPatientName());
-        DySmsHelper.sendSms(consultationVO.getUserPhone(),obj, DySmsEnum.SMS_REMINDER_PAY_CODE);
+        obj.put("visitDate",consultationVO.getVisitDate());
+        obj.put("beginTime",consultationVO.getBeginTime());
+        obj.put("txMeetingCode",consultationVO.getTxNumber());
+        DySmsHelper.sendSms(consultationVO.getUserPhone(),obj, DySmsEnum.MEETING2_CODE);
         return Result.OK("已确认",consultationVO.getId());
     }
     @AutoLog(value = "小程序-专家长程培训经历列表查询")
@@ -339,19 +347,23 @@ public class AppointExpertController extends JeecgController<ReviewExpert, IAppo
     @PostMapping(value = "getExpertFieldGroup")
     public Result<String> getExpertFieldGroup(@RequestBody ReviewExpert reviewExpert) {
         String expert_field_group = reviewExpertReserveService.getExpertFieldGroup(reviewExpert.getId());
-        String dictId = reviewExpertReserveService.getDictId("expert_field_group");
-        String[] dictIdSpl = expert_field_group.split(",");
-        List<Integer> dictIdList = new ArrayList<>();
-        for (int i = 0; i < dictIdSpl.length; i++) {
-            dictIdList.add(Integer.valueOf(dictIdSpl[i]));
+        if (!StringUtils.isEmpty(expert_field_group)) {
+            String dictId = reviewExpertReserveService.getDictId("expert_field_group");
+            String[] dictIdSpl = expert_field_group.split(",");
+            List<Integer> dictIdList = new ArrayList<>();
+            for (int i = 0; i < dictIdSpl.length; i++) {
+                dictIdList.add(Integer.valueOf(dictIdSpl[i]));
+            }
+            List<BeGoodAt> dictTextList = reviewExpertReserveService.getDictText(dictId,dictIdList);
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < dictTextList.size(); i++) {
+                stringBuilder.append(dictTextList.get(i).getDictName() + ",");
+            }
+            String substring = stringBuilder.substring(0,stringBuilder.length() - 1);
+            return Result.OK(substring);
+        }else {
+            return Result.OK("");
         }
-        List<BeGoodAt> dictTextList = reviewExpertReserveService.getDictText(dictId,dictIdList);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < dictTextList.size(); i++) {
-            stringBuilder.append(dictTextList.get(i).getDictName() + ",");
-        }
-        String substring = stringBuilder.substring(0,stringBuilder.length() - 1);
-        return Result.OK(substring);
     }
 
     /**

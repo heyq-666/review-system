@@ -29,20 +29,25 @@ public class DongLiangReviewServiceImpl extends ServiceImpl<DongLiangReviewMappe
     private static final String coverUrl = "https://pcapi.dilighthealth.com/profile/upload/2022/10/09/9b1ff86c-6a28-4496-8b5f-6a2a21570ad1.png";
     //logo 背景图地址
     //private static final String logoUrl = "https://pcapi.dilighthealth.com/profile/upload/2022/10/09/9b1ff86c-6a28-4496-8b5f-6a2a21570ad1.png";
-    private static final String logoUrl = "https://www.xinzhaitongxing.com/review/plug-in/login/images/logo5.png";
+    //private static final String logoUrl = "https://www.xinzhaitongxing.com/review/plug-in/login/images/logo5.png";
+    //private static final String logoUrl = "https://xztx-review-img.oss-cn-beijing.aliyuncs.com/dongliangPdf/logo.png";
+    private static final String logoUrl = "https://wlj.xinzhaitongxing.com/logo.png";
     //公司名称
-    private static final String companyName = "北京心宅同行管理咨询有限公司";
+    private static final String companyName = "沃莲纪(北京)科技有限公司";
     //二维码地址
     //private static final String qrCodeUrl = "https://pcapi.dilighthealth.com/profile/upload/2022/10/10/b69f7e67-65bb-43dc-b02b-8cb5b8e042c6.png";
-    private static final String qrCodeUrl =  "https://www.xinzhaitongxing.com/review/plug-in/login/images/appLogo.jpg";
+    //private static final String qrCodeUrl =  "https://www.xinzhaitongxing.com/review/plug-in/login/images/appLogo.jpg";
+    //private static final String qrCodeUrl =  "https://xztx-review-img.oss-cn-beijing.aliyuncs.com/dongliangPdf/logoDL.jpg";
+    private static final String qrCodeUrl = "https://wlj.xinzhaitongxing.com/logoDL.jpg";
+    //private static final String qrCodeUrl =  "https://www.xinzhaitongxing.com/review/plug-in/login/images/appLogo.jpg";
     //封面标题
     private static final String indexTitle = "生涯发展评估报告";
     //报告撰写
-    private static final String reportWriting = "北京心宅同行管理咨询有限公司";
+    private static final String reportWriting = "沃莲纪(北京)科技有限公司";
     //联系方式
-    private static final String contactPhone = "18510801311";
+    private static final String contactPhone = "15201412349";
     //联系人
-    private static final String contactPeople = "北京心宅同行管理咨询有限公司";
+    private static final String contactPeople = "沃莲纪(北京)科技有限公司";
     //联系地址
     private static final String contactAddress = "北京市石景山区";
 

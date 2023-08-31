@@ -118,7 +118,6 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\mana
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontAppoint\service\impl\ReviewExpertReserveServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\reviewClass\service\impl\ReviewClassServiceImpl.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\msgManage\mapper\SendMsgMapper.java
-D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\userManage\entity\TestEntity.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontReport\mapper\ReviewReportTemplateMapper.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontReviewClass\entity\ReviewClassTenantConf.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontNotice\service\IFrontNoticeService.java

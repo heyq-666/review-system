@@ -9,10 +9,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.review.common.Constants;
-import org.apache.commons.lang.StringUtils;
-import org.jeecg.common.util.HttpUtils;
-import org.jeecg.common.util.PayUtils;
-import org.jeecg.common.util.WxAppletsUtils;
 import com.review.front.dongliangReview.entity.EvalCodeEntity;
 import com.review.front.dongliangReview.service.IDongLiangReviewService;
 import com.review.front.frontAppoint.service.IAppointExpertService;
@@ -27,6 +23,10 @@ import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewOrder.entity.ReviewOrder;
 import com.review.manage.reviewOrder.vo.ReviewOrderVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.jeecg.common.util.HttpUtils;
+import org.jeecg.common.util.PayUtils;
+import org.jeecg.common.util.WxAppletsUtils;
 import org.jeecg.modules.base.entity.SysTenantVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,6 +269,7 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
                 //封装订单信息
                 ReviewOrder orderEntity = new ReviewOrder();
                 BeanUtils.copyProperties(reviewOrder, orderEntity);
+                //MyBeanUtils.copyBeanNotNull2Bean(reviewOrder, orderEntity);
                 orderEntity.setOrderNo(orderNo);
                 orderEntity.setClassName("预约专家订单");
                 orderEntity.setCreateTime(new Date());
@@ -352,13 +353,14 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
                 //封装订单信息
                 ReviewOrder orderEntity = new ReviewOrder();
                 BeanUtils.copyProperties(reviewOrder, orderEntity);
+                //MyBeanUtils.copyBeanNotNull2Bean(reviewOrder, orderEntity);
                 orderEntity.setOrderNo(orderNo);
                 orderEntity.setClassName("栋梁测评码");
                 orderEntity.setCreateTime(new Date());
-                orderEntity.setOperateTime(orderEntity.getCreateTime());
-                orderEntity.setOrderAmount(orderEntity.getOrgAmount());
+                orderEntity.setOperateTime(new Date());
+                orderEntity.setOrderAmount(new BigDecimal(reviewOrder.getOrderAmount()));
                 //如果金额为0
-                if (orderEntity.getOrderAmount() == null || orderEntity.getOrderAmount().doubleValue() == 0) {
+                if (reviewOrder.getOrderAmount() == null || reviewOrder.getOrderAmount().equals("0")) {
                     orderEntity.setStatus(Constants.OrderStatus.SUCCESS);
                     orderEntity.setPayId("000");
                     this.save(orderEntity);
@@ -369,7 +371,7 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
                 orderEntity.setStatus(Constants.OrderStatus.PRE_PAY);
                 //创建微信预支付订单
                 PreOrderVO preOrder = this.generatePrePayOrder(reviewOrder.getOpenid(), reviewOrder.getIpAddr(),
-                        orderEntity.getOrderNo(), orderEntity.getOrderAmount(), orderEntity.getClassName());
+                        orderEntity.getOrderNo(), new BigDecimal(reviewOrder.getOrderAmount()), orderEntity.getClassName());
 
                 if (Constants.WX_PAY_STATUS_SUCCESS.equals(preOrder.getResultCode())) {
                     orderEntity.setPayId(preOrder.getPrePayID());
@@ -407,11 +409,13 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
             Map<String, String> packageParams = new HashMap<String, String>();
             if (sysTenantVO != null && StringUtils.isNotEmpty(sysTenantVO.getAppId()) && StringUtils.isNotEmpty(sysTenantVO.getAppSecret())){
                 packageParams.put("appid",sysTenantVO.getAppId());
+                packageParams.put("mch_id", sysTenantVO.getMchId());
             } else {
                 packageParams.put("appid",WxAppletsUtils.appId);
+                packageParams.put("mch_id", WxAppletsUtils.mchID);
             }
-            packageParams.put("appid", WxAppletsUtils.appId);
-            packageParams.put("mch_id", WxAppletsUtils.mchID);
+            //packageParams.put("appid", WxAppletsUtils.appId);
+            //packageParams.put("mch_id", WxAppletsUtils.mchID);
             packageParams.put("nonce_str", nonce_str);
             packageParams.put("body", body);
             packageParams.put("out_trade_no", orderNo+"");//商户订单号
@@ -424,13 +428,22 @@ public class FrontOrderServiceImpl extends ServiceImpl<FrontOrderMapper, ReviewO
             // 除去数组中的空值和签名参数
             packageParams = PayUtils.paraFilter(packageParams);
             String prestr = PayUtils.createLinkString(packageParams); // 把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
-            //MD5运算生成签名，这里是第一次签名，用于调用统一下单接口
-            String mysign = PayUtils.sign(prestr, WxAppletsUtils.payKey, "utf-8").toUpperCase();
-            log.info("=======================第一次签名：" + mysign + "=====================");
+
 
             //拼接统一下单接口使用的xml数据，要将上一步生成的签名一起拼接进去
-            String paramXmlStr = String.format(WxAppletsUtils.prePayParamFormat, WxAppletsUtils.appId, body, WxAppletsUtils.mchID, nonce_str, WxAppletsUtils.notifyUrl, openid,
-                    orderNo, ip, money, WxAppletsUtils.tradeType, mysign);
+            String paramXmlStr = "";
+            if (sysTenantVO != null && StringUtils.isNotEmpty(sysTenantVO.getAppId()) && StringUtils.isNotEmpty(sysTenantVO.getAppSecret())){
+                //MD5运算生成签名，这里是第一次签名，用于调用统一下单接口
+                String mysign = PayUtils.sign(prestr, sysTenantVO.getPayKey(), "utf-8").toUpperCase();
+                log.info("=======================第一次签名：" + mysign + "=====================");
+                paramXmlStr = String.format(WxAppletsUtils.prePayParamFormat, sysTenantVO.getAppId(), body, sysTenantVO.getMchId(), nonce_str, WxAppletsUtils.notifyUrl, openid,
+                        orderNo, ip, money, WxAppletsUtils.tradeType, mysign);
+            }else {
+                String mysign = PayUtils.sign(prestr, WxAppletsUtils.payKey, "utf-8").toUpperCase();
+                log.info("=======================第一次签名：" + mysign + "=====================");
+                paramXmlStr = String.format(WxAppletsUtils.prePayParamFormat, WxAppletsUtils.appId, body, WxAppletsUtils.mchID, nonce_str, WxAppletsUtils.notifyUrl, openid,
+                        orderNo, ip, money, WxAppletsUtils.tradeType, mysign);
+            }
             log.info("调试模式_统一下单接口 请求XML数据：{}", paramXmlStr);
             //调用统一下单接口，并接受返回的结果
             String result = HttpUtils.postString(WxAppletsUtils.prePayUrl, paramXmlStr);

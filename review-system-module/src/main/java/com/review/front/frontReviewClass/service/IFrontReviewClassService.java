@@ -84,4 +84,6 @@ public interface IFrontReviewClassService extends IService<ReviewClass> {
     List<ReviewClassPage> getReviewClassTenant(ReviewClassPage reviewClass);
 
     List<ReviewClass> getReviewClassTenantF(List<ReviewClass> reviewClassList,Long tenantId);
+
+    Integer getQuestionsNum(String classId);
 }

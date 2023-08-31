@@ -181,7 +181,6 @@ com\review\manage\evalCode\entity\ReviewEvalCode.class
 com\review\manage\reviewClass\controller\ReviewClassController.class
 com\review\front\frontReport\service\impl\FrontReviewResultServiceImpl.class
 com\review\front\frontReviewClass\mapper\FrontReviewClassMapper.class
-com\review\manage\userManage\entity\TestEntity.class
 com\review\front\frontBanner\controller\FrontBannerController.class
 com\review\manage\intake\service\IntakeContactRecordsService.class
 com\review\front\frontAppoint\controller\AppointExpertController.class

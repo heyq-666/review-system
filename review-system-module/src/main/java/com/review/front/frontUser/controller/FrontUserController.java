@@ -111,9 +111,10 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
         if (reviewUser == null || StrUtil.isBlank(reviewUser.getUserId())) {
             return Result.error(300,"用户信息为空");
         }
+        org.jeecg.modules.base.entity.ReviewUser reviewUserEntity = (org.jeecg.modules.base.entity.ReviewUser) request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         /*Object userId = request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         ReviewUser reviewUserEntity = frontUserService.getById(userId.toString());*/
-        ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
+        //ReviewUser reviewUserEntity = (ReviewUser)request.getSession().getAttribute(CommonConstant.REVIEW_LOGIN_USER);
         if (!reviewUser.getUserId().equals(reviewUserEntity.getUserId())) {
             return Result.error(400,"非本人登陆，不允许修改");
         }
@@ -137,10 +138,11 @@ public class FrontUserController extends JeecgController<ReviewUser,IFrontUserSe
             reviewUserOld.setUpdateTime(new Date());
             frontUserService.saveOrUpdate(reviewUserOld);
             request.getSession().removeAttribute(reviewUser.getMobilePhone() + Constants.MSG_CODE_KEY);
+            return Result.OK(reviewUserOld);
         } catch (Exception e) {
             return Result.error("用户信息修改失败");
         }
-        return Result.OK("用户信息修改成功");
+        //return Result.OK("用户信息修改成功");
     }
 
     /**

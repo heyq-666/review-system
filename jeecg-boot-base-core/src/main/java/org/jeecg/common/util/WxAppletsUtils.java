@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
-import org.jeecg.common.system.util.ResourceUtil;
 import org.jeecg.common.system.vo.OpenIdJson;
 import org.jeecg.modules.base.entity.SysTenantVO;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -38,12 +37,13 @@ public class WxAppletsUtils {
 
     //public final static String payKey = "xinzhaitongxing18510801311paykey";
     public final static String payKey = "wolianji18510801311wolianji01311";
+    //public final static String payKey = "Zxkkj111111111111111111111111111";
 
     //public final static String mchID = "1635457862";
 
     public final static String mchID = "1647976610";
 
-    public final static String notifyUrl = ResourceUtil.getConfigByName("wx_pay_notify_url");
+    public final static String notifyUrl = "https://wlj.xinzhaitongxing.com/review/reviewFront/order/wxPayNotify";
 
     public final static String tradeType = "JSAPI";
 
@@ -129,10 +129,19 @@ public class WxAppletsUtils {
      * @return
      */
     public static String paySign(String nonce_str, String prepay_id, long timeStamp) {
-        String stringSignTemp = String.format("appId=%s&nonceStr=%s&package=prepay_id=%s&signType=MD5&timeStamp=%s",
-                appId, nonce_str, prepay_id, timeStamp);
-        //再次签名，这个签名用于小程序端调用wx.requesetPayment方法
-        return PayUtils.sign(stringSignTemp, payKey, "utf-8").toUpperCase();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest();
+        SysTenantVO sysTenantVO = (SysTenantVO) request.getSession().getAttribute("appSession");
+        if (sysTenantVO != null && StringUtils.isNotEmpty(sysTenantVO.getAppId()) && StringUtils.isNotEmpty(sysTenantVO.getAppSecret())){
+            String stringSignTemp = String.format("appId=%s&nonceStr=%s&package=prepay_id=%s&signType=MD5&timeStamp=%s",
+                    sysTenantVO.getAppId(), nonce_str, prepay_id, timeStamp);
+            //再次签名，这个签名用于小程序端调用wx.requesetPayment方法
+            return PayUtils.sign(stringSignTemp, sysTenantVO.getPayKey(), "utf-8").toUpperCase();
+        }else {
+            String stringSignTemp = String.format("appId=%s&nonceStr=%s&package=prepay_id=%s&signType=MD5&timeStamp=%s",
+                    appId, nonce_str, prepay_id, timeStamp);
+            return PayUtils.sign(stringSignTemp, payKey, "utf-8").toUpperCase();
+        }
     }
 
     public static String geneAppletsQrCodeTenant(String pagePath, String params, List<Map<String, String>> list) {

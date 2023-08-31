@@ -10,9 +10,7 @@ import org.jeecg.common.util.DateUtils;
 import org.jeecg.common.util.IpUtils;
 import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.common.util.oConvertUtils;
-import org.jeecg.modules.base.entity.ReviewProjectEntity;
-import org.jeecg.modules.base.entity.ReviewUser;
-import org.jeecg.modules.base.entity.SysTenantVO;
+import org.jeecg.modules.base.entity.*;
 import org.jeecg.modules.base.mapper.BaseCommonMapper;
 import org.jeecg.modules.base.service.BaseCommonService;
 import org.slf4j.Logger;
@@ -22,6 +20,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Description: common实现类
@@ -139,5 +140,29 @@ public class BaseCommonServiceImpl implements BaseCommonService {
     @Override
     public SysTenantVO getTenantInfoByTenantId(String tenantId) {
         return baseCommonMapper.getTenantInfoByTenantId(tenantId);
+    }
+
+    @Override
+    public List<ReviewClass> getReviewClass(String classId) {
+        return baseCommonMapper.getReviewClass(classId);
+    }
+
+    @Override
+    public boolean userBuy(String classId, String userId) {
+        Map map = new HashMap();
+        map.put("classId",classId);
+        map.put("userId",userId);
+        List<ReviewOrder> list = baseCommonMapper.userBuy(map);
+        if (list != null && list.size() > 0) {
+            ReviewOrderVO orderVO = new ReviewOrderVO();
+            orderVO.setId(Long.valueOf(list.get(0).getId()));
+            orderVO.setPayId(list.get(0).toString());
+            orderVO.setStatus(list.get(0).getStatus());
+            orderVO.setCreateTime(String.valueOf(list.get(0).getCreateTime()));
+            if (orderVO != null && (orderVO.getStatus() == 2 || orderVO.getStatus() == 3)) {
+                return true;
+            }
+        }
+        return true;
     }
 }

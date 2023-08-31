@@ -141,4 +141,18 @@ public class ConsultationVO implements Serializable {
     private String videoConsultCondition;
 
     private String isConfirmByExpert;
+
+    /*预约状态count*/
+
+    private Integer obligationCount = 0;//待付款
+
+    private Integer toBeginCount = 0;//待开始
+
+    private Integer completedCount = 0;//已完成
+
+    private Integer allStatus = 0;//全部
+
+    private Integer cancle = 0;//已取消
+
+    private Integer isCancle;
 }

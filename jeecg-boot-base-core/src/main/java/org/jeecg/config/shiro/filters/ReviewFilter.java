@@ -1,5 +1,6 @@
 package org.jeecg.config.shiro.filters;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -8,6 +9,7 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.jeecg.common.config.TenantContext;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.base.entity.ReviewClass;
 import org.jeecg.modules.base.entity.ReviewProjectEntity;
 import org.jeecg.modules.base.entity.ReviewUser;
 import org.jeecg.modules.base.entity.SysTenantVO;
@@ -22,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author javabage
@@ -69,6 +73,29 @@ public class ReviewFilter extends BasicHttpAuthenticationFilter{
             return true;
         }
         if (requestPath.indexOf("reviewFront/") > -1) { //前端拦截
+            //支付拦截
+            List<String> list = new ArrayList<>();
+            list.add("/review/reviewFront/reviewClass/completeReview");
+            list.add("/review/reviewFront/reviewClass/getQuestionsByClassID");
+            list.add("/review/reviewFront/reviewReport/getReviewReportDetail");
+            list.add("/review/reviewFront/project/getReviewProjectDetail");
+            if (list.contains(requestPath)) {
+                String classId = httpServletRequest.getHeader("classId");
+                if (StringUtils.isNotBlank(classId)) {
+                    List<ReviewClass> reviewList = baseCommonService.getReviewClass(classId);
+                    if (reviewList == null) {
+                        return true;
+                    }
+                    if (reviewList != null && reviewList.get(0).getCharge() == 0) {
+                        return true;
+                    }
+                    String userId = getReviewUserId(httpServletRequest);
+                    //检查用户是否已经购买
+                    if (StrUtil.isNotBlank(userId) && baseCommonService.userBuy(classId, userId)) {
+                        return true;
+                    }
+                }
+            }
             //项目测评权限拦截
             String projectId = httpServletRequest.getHeader("projectId");
             if (StringUtils.isNotBlank(projectId) && !"0".equals(projectId)) {
@@ -135,5 +162,18 @@ public class ReviewFilter extends BasicHttpAuthenticationFilter{
             return true;
         }
         return false;
+    }
+
+    private String getReviewUserId(HttpServletRequest request) {
+        ReviewUser reviewUser = (ReviewUser) request.getSession().getAttribute("reviewUser");
+        if (reviewUser == null) {
+            String userId = request.getHeader("userId");
+            if (StringUtils.isNotBlank(userId)) {
+                return userId;
+            }
+        }else {
+            return reviewUser.getUserId();
+        }
+        return null;
     }
 }

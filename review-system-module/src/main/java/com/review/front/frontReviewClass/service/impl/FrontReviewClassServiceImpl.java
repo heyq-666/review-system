@@ -555,6 +555,11 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         return shareClassList;
     }
 
+    @Override
+    public Integer getQuestionsNum(String classId) {
+        return frontReviewClassMapper.getQuestionsNum(classId);
+    }
+
     /**
      * 正则匹配指定符号之间的数字
      * @param str

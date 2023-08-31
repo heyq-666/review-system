@@ -6,6 +6,7 @@ import com.review.front.frontAppoint.vo.BeGoodAt;
 import com.review.front.frontAppoint.vo.ConsultationVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author javabage
@@ -22,10 +23,10 @@ public interface ReviewExpertReserveMapper extends BaseMapper<ReviewExpertReserv
 
     /**
      * 预约详情
-     * @param id
+     * @param map
      * @return
      */
-    List<ConsultationVO> getMyConsultationDetail(Long id);
+    List<ConsultationVO> getMyConsultationDetail(Map map);
 
     /**
      * 获取咨询师擅长领域id

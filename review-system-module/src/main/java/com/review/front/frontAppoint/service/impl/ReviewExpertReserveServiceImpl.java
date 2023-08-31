@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author javabage
@@ -32,12 +34,32 @@ public class ReviewExpertReserveServiceImpl extends ServiceImpl<ReviewExpertRese
 
     @Override
     public List<ConsultationVO> getMyConsultation(String userId) {
-        return reviewExpertReserveMapper.getMyConsultation(userId);
+        List<ConsultationVO> list = reviewExpertReserveMapper.getMyConsultation(userId);
+        int cancle = 0;//已取消
+        int toBeginCount = 0;//待开始
+        int completedCount = 0;//已完成
+        int allStatus = 0;//全部
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getStatus() == 1){
+                toBeginCount += 1;
+                list.get(i).setToBeginCount(toBeginCount);
+            }else if (list.get(i).getStatus() == 2) {
+                completedCount += 1;
+                list.get(i).setCompletedCount(completedCount);
+            }else if (list.get(i).getStatus() == 3) {
+                cancle += 1;
+                list.get(i).setCancle(cancle);
+            }
+        }
+        return list;
     }
 
     @Override
-    public List<ConsultationVO> getMyConsultationDetail(Long id) {
-        return reviewExpertReserveMapper.getMyConsultationDetail(id);
+    public List<ConsultationVO> getMyConsultationDetail(Long id,String userId) {
+        Map map = new HashMap();
+        map.put("id",id);
+        map.put("userId",userId);
+        return reviewExpertReserveMapper.getMyConsultationDetail(map);
     }
 
     @Override
@@ -112,6 +134,29 @@ public class ReviewExpertReserveServiceImpl extends ServiceImpl<ReviewExpertRese
     @Override
     public List<BeGoodAt> getBeGoodAtNameList(List<String> beGoodAtListNew) {
         return reviewExpertReserveMapper.getBeGoodAtNameList(beGoodAtListNew);
+    }
+
+    @Override
+    public void isCancle(List<ConsultationVO> reviewExpertReserveList){
+        if (reviewExpertReserveList != null && reviewExpertReserveList.size() > 0) {
+            try {
+                String visitDate = reviewExpertReserveList.get(0).getVisitDate();
+                String beginTime = reviewExpertReserveList.get(0).getBeginTime();
+                String visitTime = visitDate + " " + beginTime + ":00";
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date visit = format.parse(visitTime);
+                Date now = new Date();
+                long nd = 1000 * 24 * 60 * 60;
+                long nh = 1000 * 60 * 60;
+                long threeHour = 1000 * 60 * 60 * 3;
+                long diff = threeHour - visit.getTime() + now.getTime();
+                long hour = diff % nd / nh;
+                reviewExpertReserveList.get(0).setIsCancle(0);
+                System.out.println(hour);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

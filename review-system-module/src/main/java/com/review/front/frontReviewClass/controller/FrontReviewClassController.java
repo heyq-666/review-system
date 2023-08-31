@@ -1,7 +1,6 @@
 package com.review.front.frontReviewClass.controller;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.review.common.Constants;
 import com.review.common.DongLiangConstants;
 import com.review.front.frontReviewClass.service.IFrontReviewClassService;
@@ -34,6 +33,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author javabage
@@ -65,6 +65,16 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
             questionVO1.setSelectList(frontReviewClassService.getSelectVOList(questionVO1.getQuestionId()));
         }
         return Result.OK("查询成功",questionVOList);
+    }
+
+    @AutoLog(value = "小程序-根据分类ID查询分类下的问题数量")
+    @PostMapping(value = "/getQuestionsNum")
+    public Result<?> getQuestionsNum(@RequestBody QuestionVO questionVO) {
+        if (StringUtils.isBlank(questionVO.getClassId())) {
+            return Result.error(300,"classID不能为空");
+        }
+        Integer questionNum = frontReviewClassService.getQuestionsNum(questionVO.getClassId());
+        return Result.OK(questionNum);
     }
 
     /**
@@ -193,12 +203,39 @@ public class FrontReviewClassController extends JeecgController<ReviewClass, IFr
     }
     @AutoLog(value = "小程序-模糊查询量表")
     @PostMapping(value = "/getReviewClassByLike")
-    public Result<List<ReviewClass>> getReviewClassByLike(@RequestBody ReviewClass reviewClass) {
-        QueryWrapper<ReviewClass> queryWrapper = new QueryWrapper<>();
+    public Result<List<ReviewClassPage>> getReviewClassByLike(@RequestBody ReviewClassPage reviewClass) {
+        /*QueryWrapper<ReviewClass> queryWrapper = new QueryWrapper<>();
         queryWrapper.like("title",reviewClass.getTitle());
         List<ReviewClass> classList = frontReviewClassService.list(queryWrapper);
+
         classList.removeIf(reviewClass1 -> reviewClass1.getStatus() == 0);
-        return Result.OK(classList);
+        return Result.OK(classList);*/
+        Long tenantId = null;
+        //是否开启系统管理模块的多租户数据隔离【SAAS多租户模式】
+        if(MybatisPlusSaasConfig.OPEN_SYSTEM_TENANT_CONTROL){
+            tenantId = oConvertUtils.getLong(TenantContext.getTenant(),-1);
+        }
+        List<ReviewClassPage> reviewClassList = new ArrayList<>();
+        if (tenantId != null && tenantId != -1) {//租户
+            reviewClass.setTenantId(tenantId);
+            reviewClassList = frontReviewClassService.getReviewClassTenant(reviewClass);
+        }else {
+            reviewClassList = frontReviewClassService.getReviewClassByProjectId(reviewClass.getProjectId());
+        }
+        for (int i = 0; i < reviewClassList.size(); i++) {
+            //过滤栋梁测评量表
+            if (DongLiangConstants.dongliangStuId.equals(reviewClassList.get(i).getClassId())
+                    || DongLiangConstants.dongliangProId.equals(reviewClassList.get(i).getClassId())){
+                reviewClassList.remove(i);
+                i--;
+            }else {
+                Integer count = frontReviewClassService.getReviewClassNumber(reviewClassList.get(i).getClassId());
+                reviewClassList.get(i).setReviewCount(count);
+            }
+        }
+        reviewClassList = reviewClassList.stream().filter(ReviewClassPage -> ReviewClassPage.getTitle() != null && ReviewClassPage.getTitle().indexOf(reviewClass.getTitle())>-1)
+                .collect(Collectors.toList());
+        return Result.OK(reviewClassList);
     }
     @AutoLog(value = "小程序-获取量表测评人数")
     @PostMapping(value = "/getReviewClassNumber")

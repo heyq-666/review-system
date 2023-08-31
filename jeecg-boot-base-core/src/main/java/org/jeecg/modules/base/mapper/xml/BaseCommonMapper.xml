@@ -43,4 +43,15 @@
     <select id="getTenantInfoByTenantId" parameterType="String" resultType="org.jeecg.modules.base.entity.SysTenantVO">
         select * from sys_tenant where id = #{tenantId}
     </select>
+
+    <select id="getReviewClass" parameterType="String" resultType="org.jeecg.modules.base.entity.ReviewClass">
+        select * from review_class where class_id = #{classId}
+    </select>
+
+    <select id="userBuy" parameterType="map" resultType="org.jeecg.modules.base.entity.ReviewOrder">
+        select id, pay_id payId, status,DATE_FORMAT(create_time, '%Y-%m-%e %H:%i:%S') as createTime
+        from review_order
+        where class_id = #{classId} and user_id = #{userId}
+          and status in(0,1,2,3,5)
+    </select>
 </mapper>

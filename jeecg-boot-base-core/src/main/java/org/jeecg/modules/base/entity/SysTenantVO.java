@@ -131,5 +131,9 @@ public class SysTenantVO implements Serializable {
     private String appId;
 
     private String appSecret;
+
+    private String mchId;
+
+    private String payKey;
     
 }

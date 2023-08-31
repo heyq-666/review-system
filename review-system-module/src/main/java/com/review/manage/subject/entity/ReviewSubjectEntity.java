@@ -45,6 +45,9 @@ public class ReviewSubjectEntity implements Serializable {
 
     private transient String classIds;
 
+    @ApiModelProperty(value = "专题封面图片")
+    private String coverImage;
+
     /**
      * 租户ID
      */

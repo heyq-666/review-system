@@ -142,6 +142,10 @@ public class SysTenant implements Serializable {
 
     private String appSecret;
 
+    private String mchId;
+
+    private String payKey;
+
     private transient String classIds;
     
 }

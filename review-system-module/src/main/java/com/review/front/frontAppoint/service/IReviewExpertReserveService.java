@@ -25,7 +25,7 @@ public interface IReviewExpertReserveService extends IService<ReviewExpertReserv
      * @param id
      * @return
      */
-    List<ConsultationVO> getMyConsultationDetail(Long id);
+    List<ConsultationVO> getMyConsultationDetail(Long id,String userId);
 
     /**
      *  时间格式处理
@@ -69,4 +69,6 @@ public interface IReviewExpertReserveService extends IService<ReviewExpertReserv
      * @return
      */
     List<BeGoodAt> getBeGoodAtNameList(List<String> beGoodAtListNew);
+
+    void isCancle(List<ConsultationVO> reviewExpertReserveList);
 }

@@ -48,6 +48,7 @@
             rec.begin_time AS beginTime,
             rer.user_id AS userId,
             re.charge AS charge,
+            rec.id AS calendarId,
             CASE
                 rer.confirm_flag
                 WHEN 0 THEN

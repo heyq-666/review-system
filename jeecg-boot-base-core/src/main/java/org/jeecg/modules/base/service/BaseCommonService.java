@@ -2,9 +2,12 @@ package org.jeecg.modules.base.service;
 
 import org.jeecg.common.api.dto.LogDTO;
 import org.jeecg.common.system.vo.LoginUser;
+import org.jeecg.modules.base.entity.ReviewClass;
 import org.jeecg.modules.base.entity.ReviewProjectEntity;
 import org.jeecg.modules.base.entity.ReviewUser;
 import org.jeecg.modules.base.entity.SysTenantVO;
+
+import java.util.List;
 
 /**
  * common接口
@@ -71,4 +74,8 @@ public interface BaseCommonService {
     ReviewProjectEntity getProjectInfo(Long projectId);
 
     SysTenantVO getTenantInfoByTenantId(String tenantId);
+
+    List<ReviewClass> getReviewClass(String classId);
+
+    boolean userBuy(String classId, String userId);
 }

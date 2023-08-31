@@ -7,6 +7,7 @@ import com.review.manage.question.vo.QuestionVO;
 import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewClass.vo.ReviewClassPage;
 import com.review.manage.reviewOrder.vo.ReviewOrderVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -61,4 +62,6 @@ public interface FrontReviewClassMapper extends BaseMapper<ReviewClass> {
     Integer getReviewClassNumber(String classId);
 
     List<String> getClassIds(Long tenantId);
+
+    Integer getQuestionsNum(@Param("classId") String classId);
 }
