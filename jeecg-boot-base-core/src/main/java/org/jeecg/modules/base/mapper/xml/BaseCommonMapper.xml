@@ -49,7 +49,7 @@
     </select>
 
     <select id="userBuy" parameterType="map" resultType="org.jeecg.modules.base.entity.ReviewOrder">
-        select id, pay_id payId, status,DATE_FORMAT(create_time, '%Y-%m-%e %H:%i:%S') as createTime
+        select id, pay_id payId, status, create_time as createTime
         from review_order
         where class_id = #{classId} and user_id = #{userId}
           and status in(0,1,2,3,5)

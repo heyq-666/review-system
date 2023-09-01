@@ -80,6 +80,8 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
     @Autowired
     private IReportGradeService reportGradeService;
 
+    private final static String classIdFinal = "7116ab76c491b5f7c489d5fdd9eda944";
+
     @Override
     public List<QuestionVO> getQuestionVOList(String classId) {
         return frontReviewClassMapper.getQuestionVOList(classId);
@@ -364,15 +366,37 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         for (int i = 0; i < variateGradeConfList.size(); i++) {
             String variateGradeConf = variateGradeConfList.get(i).getVariateGradeConf();//#1#*2+#2#/2
             //因子表达式中的题目序号集合
-            List<String> questionNumList = getSubUtil(variateGradeConf,regex);//1,2
             List<String> selectGradeList = new ArrayList<>();
-            //根据题目序号获取分值
-            StringBuffer stringBuffer = new StringBuffer();
-            for (int j = 0; j < questionNumList.size(); j++) {
-                Integer questionNum = Integer.valueOf(questionNumList.get(j));
-                List<String> selectGrade = resultList.stream().filter(item -> item.getQuestionNum() == questionNum).map(QuestionVO::getSelectGrade).collect(Collectors.toList());
-                selectGradeList.add(selectGrade.get(0));
-            }
+            //if (classId.equals(classIdFinal)) {
+                //List<Map<String,Boolean>> questionNumListF = getGradeTotalF(variateGradeConf);
+                List<Map<String,Boolean>> questionNumListF = getSubUtilF(variateGradeConf,regex);
+                for (int j = 0; j < questionNumListF.size(); j++) {
+                    Integer questionNum = 0;
+                    //获取key
+                    Map<String,Boolean> map = questionNumListF.get(j);
+                    Set<String> keySet = map.keySet();
+                    for (String key : keySet) {
+                        questionNum = Integer.valueOf(key);
+                    }
+                    Integer finalQuestionNum = questionNum;
+                    List<String> selectGrade = resultList.stream().filter(item -> item.getQuestionNum() == finalQuestionNum).map(QuestionVO::getSelectGrade).collect(Collectors.toList());
+                    if (questionNumListF.get(j).get(String.valueOf(finalQuestionNum))) {
+                        selectGradeList.add(selectGrade.get(0).equals("1.0") ? "0.0" : "1.0");
+                    }else {
+                        selectGradeList.add(selectGrade.get(0));
+                    }
+                }
+                variateGradeConf = variateGradeConf.replaceAll("@","#");
+            /*} else {
+                List<String> questionNumList = getSubUtil(variateGradeConf,regex);
+                //根据题目序号获取分值
+                StringBuffer stringBuffer = new StringBuffer();
+                for (int j = 0; j < questionNumList.size(); j++) {
+                    Integer questionNum = Integer.valueOf(questionNumList.get(j));
+                    List<String> selectGrade = resultList.stream().filter(item -> item.getQuestionNum() == questionNum).map(QuestionVO::getSelectGrade).collect(Collectors.toList());
+                    selectGradeList.add(selectGrade.get(0));
+                }
+            }*/
             //替换题目序号为对应的分值
             StringBuffer gradeTotal = replacement(variateGradeConf,regex,selectGradeList);
             //计算结果
@@ -516,6 +540,36 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         return reviewResult;
     }
 
+    private List<Map<String,Boolean>> getGradeTotalF(String variateGradeConf) {
+        final Pattern p = Pattern.compile("F#(.*?)#F");
+        final Matcher m = p.matcher(variateGradeConf);
+        List<String> listF = new ArrayList<>();
+        while (m.find()) {
+            int i = 1;
+            listF.add(m.group(i));
+        }
+        String variateGradeConfNew = variateGradeConf.replaceAll("F","");
+        final Pattern p1 = Pattern.compile("#(.*?)#");
+        final Matcher m1 = p1.matcher(variateGradeConfNew);
+        List<String> listAll = new ArrayList<>();
+        while (m1.find()) {
+            int i = 1;
+            listAll.add(m1.group(i));
+        }
+        List<Map<String,Boolean>> mapList = new ArrayList<>();
+        for (int i = 0; i < listAll.size(); i++) {
+            Map<String,Boolean> map = new HashMap<>();
+            for (int j = 0; j < listF.size(); j++) {
+                if (listAll.get(i).equals(listF.get(j))) {
+                    map.put(listAll.get(i),true);
+                    mapList.add(map);
+                }
+                break;
+            }
+        }
+        return mapList;
+    }
+
     @Override
     public List<ReviewClassPage> getReviewClassTenant(ReviewClassPage reviewClass) {
         //所有量表
@@ -575,6 +629,54 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
             list.add(m.group(i));
         }
         return list;
+    }
+    private List<Map<String,Boolean>> getSubUtilF(String str,String regex){
+        final Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(str);
+        final Pattern p1 = Pattern.compile("@(.*?)@");
+        Matcher m1 = p1.matcher(str);
+        List<Map<String,Boolean>> list = new ArrayList<>();
+        while (m.find()) {
+            int i = 1;
+            Map<String,Boolean> map = new HashMap<>();
+            map.put(m.group(i),false);
+            list.add(map);
+        }
+        while (m1.find()) {
+            int i = 1;
+            Map<String,Boolean> map = new HashMap<>();
+            map.put(m1.group(i),true);
+            list.add(map);
+        }
+        return list;
+        /*final Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(str);
+        final Pattern p1 = Pattern.compile("F#(.*?)#F");
+        Matcher m1 = p1.matcher(str);
+        List<Map<String,Boolean>> list = new ArrayList<>();
+        int temp = 0;
+        while (m.find()) {
+            boolean flag = false;
+            int i = 1;
+            while (m1.find()) {
+                int start = m1.start();//0,5  6,11
+                int end = m1.end();
+                if (start - temp == 1) {
+                    Map<String,Boolean> map = new HashMap<>();
+                    map.put(m1.group(i),true);
+                    list.add(map);
+                    flag = true;
+                    temp = end;
+                    break;
+                }
+            }
+            if (!flag) {
+                Map<String,Boolean> map = new HashMap<>();
+                map.put(m.group(i),false);
+                list.add(map);
+            }
+        }
+        return list;*/
     }
 
     private StringBuffer replacement(String str,String regex,List<String> selectGradeList){

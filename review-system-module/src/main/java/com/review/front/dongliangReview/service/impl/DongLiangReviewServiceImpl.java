@@ -45,7 +45,7 @@ public class DongLiangReviewServiceImpl extends ServiceImpl<DongLiangReviewMappe
     //报告撰写
     private static final String reportWriting = "沃莲纪(北京)科技有限公司";
     //联系方式
-    private static final String contactPhone = "15201412349";
+    private static final String contactPhone = "17627816696";
     //联系人
     private static final String contactPeople = "沃莲纪(北京)科技有限公司";
     //联系地址
