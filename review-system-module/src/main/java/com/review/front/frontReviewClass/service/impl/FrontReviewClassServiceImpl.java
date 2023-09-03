@@ -631,7 +631,56 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
         return list;
     }
     private List<Map<String,Boolean>> getSubUtilF(String str,String regex){
+        //匹配正反向题目
         final Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(str);
+        final Pattern p1 = Pattern.compile("@(.*?)@");
+        Matcher m1 = p1.matcher(str);
+        List<Map<Integer,Map<String,Boolean>>> list = new ArrayList<>();
+        List<Map<String,Boolean>> mapList = new ArrayList<>();
+        while (m.find()) {
+            int i = 1;
+            Map<String,Boolean> map = new HashMap<>();
+            map.put(m.group(i),false);
+            Map<Integer,Map<String,Boolean>> mapMap = new HashMap<>();
+            mapMap.put(m.start(),map);
+            list.add(mapMap);
+        }
+        while (m1.find()) {
+            int i = 1;
+            Map<String,Boolean> map = new HashMap<>();
+            map.put(m1.group(i),true);
+            Map<Integer,Map<String,Boolean>> mapMap = new HashMap<>();
+            mapMap.put(m1.start(),map);
+            list.add(mapMap);
+        }
+        Collections.sort(list, new Comparator<Map<Integer, Map<String, Boolean>>>() {
+            @Override
+            public int compare(Map<Integer, Map<String, Boolean>> o1, Map<Integer, Map<String, Boolean>> o2) {
+                Set s = o1.keySet();
+                Set ss = o2.keySet();
+                Integer key1 = null;
+                Integer key2 = null;
+                for (Object key : s) {
+                    key1 = (Integer) key;
+                }
+                for (Object key : ss) {
+                    key2 = (Integer) key;
+                }
+                return key1.compareTo(key2);
+            }
+        });
+        List<Map<String,Boolean>> listend = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            Set k = list.get(i).keySet();
+            Integer keyw = null;
+            for (Object key: k) {
+                keyw = (Integer) key;
+            }
+            listend.add(list.get(i).get(keyw));
+        }
+        return listend;
+        /*final Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(str);
         final Pattern p1 = Pattern.compile("@(.*?)@");
         Matcher m1 = p1.matcher(str);
@@ -647,34 +696,6 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
             Map<String,Boolean> map = new HashMap<>();
             map.put(m1.group(i),true);
             list.add(map);
-        }
-        return list;
-        /*final Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(str);
-        final Pattern p1 = Pattern.compile("F#(.*?)#F");
-        Matcher m1 = p1.matcher(str);
-        List<Map<String,Boolean>> list = new ArrayList<>();
-        int temp = 0;
-        while (m.find()) {
-            boolean flag = false;
-            int i = 1;
-            while (m1.find()) {
-                int start = m1.start();//0,5  6,11
-                int end = m1.end();
-                if (start - temp == 1) {
-                    Map<String,Boolean> map = new HashMap<>();
-                    map.put(m1.group(i),true);
-                    list.add(map);
-                    flag = true;
-                    temp = end;
-                    break;
-                }
-            }
-            if (!flag) {
-                Map<String,Boolean> map = new HashMap<>();
-                map.put(m.group(i),false);
-                list.add(map);
-            }
         }
         return list;*/
     }

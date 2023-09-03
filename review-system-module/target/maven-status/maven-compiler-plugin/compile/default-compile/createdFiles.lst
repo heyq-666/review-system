@@ -132,6 +132,7 @@ com\review\front\frontProject\controller\FrontProjectController.class
 com\review\manage\reviewClass\vo\ReviewClassPage.class
 com\review\manage\userManage\service\impl\ReviewUserServiceImpl.class
 com\review\manage\variate\mapper\ReviewVariateMapper.class
+com\review\front\frontReviewClass\service\impl\FrontReviewClassServiceImpl$2.class
 com\review\manage\userManage\controller\ReviewUserController.class
 com\review\common\Constants.class
 com\review\manage\report\entity\ReviewReportGradeEntity.class
