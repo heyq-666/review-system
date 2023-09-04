@@ -82,4 +82,9 @@ public class VariateServiceImpl extends ServiceImpl<ReviewVariateMapper, ReviewV
         }
         return listNew;
     }
+
+    @Override
+    public List<String> getVariateIds(String classId) {
+        return reviewVariateMapper.getVariateIds(classId);
+    }
 }

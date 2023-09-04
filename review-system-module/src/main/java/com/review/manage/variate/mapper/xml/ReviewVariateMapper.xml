@@ -21,4 +21,8 @@
     <select id="getMaxSortNum" parameterType="String" resultType="Integer">
         SELECT MAX(sort_num) sortNum FROM review_variate WHERE class_id = #{classId}
     </select>
+
+    <select id="getVariateIds" parameterType="String" resultType="String">
+        SELECT variate_id as variateId FROM review_variate where class_id = #{classId}
+    </select>
 </mapper>

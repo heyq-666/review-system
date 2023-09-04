@@ -29,4 +29,6 @@ public interface IVariateService extends IService<ReviewVariateEntity> {
     Integer getMaxSortNum(String classId);
 
     List<ReviewVariateEntity> filterData(Long tenantId,IPage<ReviewVariateEntity> pageList);
+
+    List<String> getVariateIds(String classId);
 }

@@ -12,6 +12,9 @@ import com.review.manage.project.entity.ReviewProjectEntity;
 import com.review.manage.project.service.IReviewProjectService;
 import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewClass.service.IReviewClassService;
+import com.review.manage.variate.entity.ReviewVariateEntity;
+import com.review.manage.variate.service.IVariateGradeService;
+import com.review.manage.variate.service.IVariateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +56,10 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
    private IReviewReportTemplateService reportTemplateService;
    @Autowired
    private IReviewProjectService reviewProjectService;
+   @Autowired
+   private IVariateService variateService;
+   @Autowired
+   private IVariateGradeService variateGradeService;
 
    /**
     * 分页列表查询
@@ -192,7 +199,16 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
    //@RequiresPermissions("reviewClass:review_class:delete")
    @DeleteMapping(value = "/delete")
    public Result<String> delete(@RequestParam(name="classId",required=true) String classId) {
+       //删除量表
        reviewClassService.delMain(classId);
+       //删除因子计分设置
+       List<String> variateIds = variateService.getVariateIds(classId);
+       //先删除因子的计分设置
+       variateGradeService.deleteVariateGrade(variateIds);
+       //删除因子
+       QueryWrapper<ReviewVariateEntity> queryWrapper = new QueryWrapper<>();
+       queryWrapper.eq("class_id",classId);
+       variateService.remove(queryWrapper);
        return Result.OK("删除成功!");
    }
 

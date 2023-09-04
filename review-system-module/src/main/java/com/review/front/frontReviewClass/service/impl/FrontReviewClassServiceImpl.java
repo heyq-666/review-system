@@ -379,7 +379,7 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
                         questionNum = Integer.valueOf(key);
                     }
                     Integer finalQuestionNum = questionNum;
-                    List<String> selectGrade = resultList.stream().filter(item -> item.getQuestionNum() == finalQuestionNum).map(QuestionVO::getSelectGrade).collect(Collectors.toList());
+                    List<String> selectGrade = resultList.stream().filter(item -> item.getQuestionNum().equals(finalQuestionNum)).map(QuestionVO::getSelectGrade).collect(Collectors.toList());
                     if (questionNumListF.get(j).get(String.valueOf(finalQuestionNum))) {
                         selectGradeList.add(selectGrade.get(0).equals("1.0") ? "0.0" : "1.0");
                     }else {

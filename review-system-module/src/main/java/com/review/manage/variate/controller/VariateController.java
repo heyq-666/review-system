@@ -202,7 +202,10 @@ public class VariateController extends JeecgController<ReviewVariateEntity, IVar
         queryWrapper.eq("class_id",classId);
         List<ReviewQuestionClassEntity> questionIdList = reviewQuestionClassService.list(queryWrapper);
         List<Integer> questionIds = questionIdList.stream().map(ReviewQuestionClassEntity::getQuestionId).collect(Collectors.toList());
-        List<ReviewQuestion> list = questionService.listByIds(questionIds);
+        List<ReviewQuestion> list = new ArrayList<>();
+        if (questionIds != null && questionIds.size() > 0) {
+            list = questionService.listByIds(questionIds);
+        }
         return Result.OK(list);
     }
 

@@ -3,6 +3,8 @@ package com.review.manage.variate.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.review.manage.variate.entity.ReviewVariateEntity;
 
+import java.util.List;
+
 /**
  * @author javabage
  * @date 2023/3/22
@@ -32,4 +34,6 @@ public interface ReviewVariateMapper extends BaseMapper<ReviewVariateEntity> {
      * @return
      */
     Integer getMaxSortNum(String classId);
+
+    List<String> getVariateIds(String classId);
 }
