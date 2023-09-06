@@ -28,6 +28,7 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -198,17 +199,20 @@ public class ReviewClassController extends JeecgController<ReviewClass, IReviewC
    @ApiOperation(value="测评量表-通过id删除", notes="测评量表-通过id删除")
    //@RequiresPermissions("reviewClass:review_class:delete")
    @DeleteMapping(value = "/delete")
+   @Transactional(rollbackFor = Exception.class)
    public Result<String> delete(@RequestParam(name="classId",required=true) String classId) {
        //删除量表
        reviewClassService.delMain(classId);
        //删除因子计分设置
        List<String> variateIds = variateService.getVariateIds(classId);
        //先删除因子的计分设置
-       variateGradeService.deleteVariateGrade(variateIds);
-       //删除因子
-       QueryWrapper<ReviewVariateEntity> queryWrapper = new QueryWrapper<>();
-       queryWrapper.eq("class_id",classId);
-       variateService.remove(queryWrapper);
+       if (variateIds != null && variateIds.size() > 0) {
+           variateGradeService.deleteVariateGrade(variateIds);
+           //删除因子
+           QueryWrapper<ReviewVariateEntity> queryWrapper = new QueryWrapper<>();
+           queryWrapper.eq("class_id",classId);
+           variateService.remove(queryWrapper);
+       }
        return Result.OK("删除成功!");
    }
 

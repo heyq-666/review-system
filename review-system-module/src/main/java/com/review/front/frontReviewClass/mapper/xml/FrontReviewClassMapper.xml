@@ -91,7 +91,7 @@
             id,
             pay_id payId,
             STATUS,
-            DATE_FORMAT( create_time, '%Y-%m-%e %H:%i:%S' ) AS createTime
+            create_time AS createTime
         FROM
             review_order
         WHERE
