@@ -400,7 +400,8 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
             //替换题目序号为对应的分值
             StringBuffer gradeTotal = replacement(variateGradeConf,regex,selectGradeList);
             //计算结果
-            double tradeTotalD = getGradeTotal(gradeTotal.toString());
+            double tradeTotalTemp = getGradeTotal(gradeTotal.toString());
+            double tradeTotalD = new BigDecimal(tradeTotalTemp).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
             //保存计算结果
             ReviewResult reviewResult = new ReviewResult();
             reviewResult.setGradeTotal(tradeTotalD);
