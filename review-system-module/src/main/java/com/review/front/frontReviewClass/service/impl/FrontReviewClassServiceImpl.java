@@ -3,6 +3,7 @@ package com.review.front.frontReviewClass.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.review.common.Constants;
+import com.review.common.MathCalculatorUtil;
 import com.review.common.MyBeanUtils;
 import com.review.front.frontProject.service.IFrontProjectService;
 import com.review.front.frontReport.entity.ReviewReportResultEntity;
@@ -400,7 +401,8 @@ public class FrontReviewClassServiceImpl extends ServiceImpl<FrontReviewClassMap
             //替换题目序号为对应的分值
             StringBuffer gradeTotal = replacement(variateGradeConf,regex,selectGradeList);
             //计算结果
-            double tradeTotalTemp = getGradeTotal(gradeTotal.toString());
+            //double tradeTotalTemp = getGradeTotal(gradeTotal.toString());
+            double tradeTotalTemp = MathCalculatorUtil.calculator(gradeTotal.toString());
             double tradeTotalD = new BigDecimal(tradeTotalTemp).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
             //保存计算结果
             ReviewResult reviewResult = new ReviewResult();

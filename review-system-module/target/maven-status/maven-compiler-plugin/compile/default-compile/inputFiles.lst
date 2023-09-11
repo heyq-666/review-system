@@ -217,6 +217,7 @@ D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\fron
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\report\entity\ReviewReportEntity.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\subject\controller\ReviewSubjectController.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\question\controller\QuestionController.java
+D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\common\MathCalculatorUtil.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\front\frontReport\service\IFrontReviewResultService.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\expert\mapper\ReviewExpertMapper.java
 D:\jeecg-review\review-system\review-system-module\src\main\java\com\review\manage\expert\model\ExpertBeGoodAtTreeModel.java
