@@ -33,5 +33,5 @@ public interface ReviewUserMapper extends BaseMapper<ReviewUser> {
 
     List<ReviewQuestionAnswerVO> getListByGroupId(QuestionAnswerVo questionAnswerVo);
 
-    List<ReviewReportResultEntity> getReviewReportResult(String resultId);
+    List<ReviewReportResultEntity> getReviewReportResult(@Param("resultId")String resultId);
 }

@@ -4,9 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.review.front.frontReport.entity.ReviewReportResultEntity;
+import com.review.front.frontReport.service.IFrontReviewResultService;
 import com.review.manage.reviewClass.entity.ReviewClass;
 import com.review.manage.reviewClass.service.IReviewClassService;
+import com.review.manage.userManage.entity.ReviewResult;
 import com.review.manage.userManage.entity.ReviewUser;
 import com.review.manage.userManage.mapper.ReviewUserMapper;
 import com.review.manage.userManage.service.IReviewUserService;
@@ -14,7 +15,6 @@ import com.review.manage.userManage.vo.QuestionAnswerVo;
 import com.review.manage.userManage.vo.ReviewQuestionAnswerVO;
 import com.review.manage.userManage.vo.ReviewResultVo;
 import com.review.manage.userManage.vo.SysUserDepVo;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +40,9 @@ public class ReviewUserServiceImpl extends ServiceImpl<ReviewUserMapper, ReviewU
 
     @Autowired
     private IReviewClassService iReviewClassService;
+
+    @Autowired
+    private IFrontReviewResultService reviewResultService;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -170,6 +173,7 @@ public class ReviewUserServiceImpl extends ServiceImpl<ReviewUserMapper, ReviewU
         headerAlias.put("03_年龄", "年龄");
         headerAlias.put("04_手机号", "手机号");
         headerAlias.put("05_完成时间", "完成时间");
+        //headerAlias.put("06_因子得分", "因子得分");
         return headerAlias;
     }
 
@@ -182,12 +186,24 @@ public class ReviewUserServiceImpl extends ServiceImpl<ReviewUserMapper, ReviewU
         userClassMap.put("04_手机号", answerQuestion.getMobilePhone());
         userClassMap.put("05_完成时间", answerQuestion.getCreateTime());
 
-        List<ReviewReportResultEntity> reportResultList = reviewUserMapper.getReviewReportResult(answerQuestion.getResultId());
         //导出报告因子得分
+        /*List<ReviewReportResultEntity> reportResultList = reviewUserMapper.getReviewReportResult(answerQuestion.getResultId());
         if(CollectionUtils.isNotEmpty(reportResultList)) {
             for (ReviewReportResultEntity reviewReportResult : reportResultList) {
                 userClassMap.put("0_" + reviewReportResult.getReportName(), reviewReportResult.getGrade());
                 headerAlias.put("0_" + reviewReportResult.getReportName(), reviewReportResult.getReportName());
+            }
+        }*/
+        ReviewResult reviewResult = reviewResultService.getById(answerQuestion.getResultId());
+        if(reviewResult != null) {
+            String[] reviewResultExplain = reviewResult.getReviewResult().split("<br>");
+            String grade = "";
+            String reportName = "";
+            for (int i = 0; i < reviewResultExplain.length; i++) {
+                reportName = reviewResultExplain[i].split(":")[0];
+                grade = reviewResultExplain[i].split(":")[1].split(";")[0];
+                userClassMap.put("0_" + reportName,grade);
+                headerAlias.put("0_" + reportName,reportName);
             }
         }
         return userClassMap;
