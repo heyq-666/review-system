@@ -20,13 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -41,22 +42,12 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
 
     //栋梁测评提交接口地址--formal
     private static final String dongLiangApiurlStu = "http://localhost:9999/api/commitTest";
-
     private static final String dongLiangApiurlPro = "http://localhost:9998/api/commitTest";
-    //栋梁测评提交接口地址--local
-    /*private static final String dongLiangApiurlStu = "http://www.xinzhaitongxing.com:9999/api/commitTest";
-
-    private static final String dongLiangApiurlPro = "http://www.xinzhaitongxing.com:9998/api/commitTest";*/
-
-    /*private static final String dongLiangApiurlStu = "http://wlj.xinzhaitongxing.com:9999/api/commitTest";
-
-    private static final String dongLiangApiurlPro = "http://wlj.xinzhaitongxing.com:9998/api/commitTest";*/
-
     private static final String reportUrl = "https://wlj.xinzhaitongxing.com/review/upload2";
-
+    //栋梁测评码验证
+    private static final String codeValidateUrlGet = "http://www.dlsycp.cn/web-cms/encryptiontestcode/selectEnCodeStatus";
     @Autowired
     private IDongLiangReviewService dongLiangReviewService;
-
     /**
      * 栋梁测评-测评码验证
      * @param evalCodeEntity
@@ -69,9 +60,16 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
         queryWrapper.eq("eval_code",evalCodeEntity.getEvalCode());
         List<EvalCodeEntity> list = dongLiangReviewService.list(queryWrapper);
         List<EvalCodeEntity> list1 = list.stream().filter(item -> item.getStatus() == 1 || item.getStatus() == 3).collect(Collectors.toList());
-        return list1.size() > 0 ? Result.OK("测评码有效") : Result.error("测评码无效");
+        Map map = new HashMap();
+        map.put("code",evalCodeEntity.getEvalCode());
+        String data = HttpClientUtils.doGet(codeValidateUrlGet,map);
+        JSONObject json = JSONObject.parseObject(data);
+        if (list1.size() > 0 && StringUtils.isNotEmpty(data) && json.get("code").equals(200) && json.get("data").equals("0")){
+            return Result.OK("测评码有效");
+        }
+        log.info("测评码验证，code = {}，validateResult = {}", evalCodeEntity.getEvalCode(), data);
+        return Result.error("测评码无效");
     }
-
     /**
      * 完成测试，提交调用栋梁接口
      * @param dongliangTestQuestionVO
@@ -80,7 +78,6 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
     @AutoLog(value = "完成测试，提交调用栋梁接口")
     @PostMapping(value = "commitTest")
     public Result<?> commitTest(HttpServletResponse response, HttpServletRequest request, @RequestBody DongliangTestQuestionVO[] dongliangTestQuestionVO) throws Exception{
-
         Date date = new Date();
         SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String currentTime  = sdf.format(date);
@@ -96,20 +93,10 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
         dongLiangReviewService.handleData(dongliangTestQuestionVO);
         String param = JSON.toJSONString(dongliangTestQuestionVO);
         String paramSub = param.substring(1,param.length()-1);
-        System.out.println("调用接口入参--测评人：" + dongliangTestQuestionVO[0].getUserInfo().getName());
-        System.out.println(paramSub);
-
+        log.info("栋梁测评入参,param = {}", paramSub);
         //调用栋梁答题提交接口
         Integer flag = 1;
-        RestTemplate restTemplate = new RestTemplate();
-        //String resultJson = restTemplate.postForObject(dongLiangApiurl,JSONObject.parseObject(paramSub),String.class);
         String resultJson = HttpClientUtils.doPost(dongLiangApiurl,JSONObject.parseObject(paramSub),"utf-8");
-        //post提交-需要测试
-        /*HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<DongliangTestQuestionVO> entityParam = new HttpEntity<DongliangTestQuestionVO>(dongliangTestQuestionVO[0],headers);
-        String resultJsons = restTemplate.postForObject(dongLiangApiurl,entityParam,String.class);*/
-        //log.info("dongliangCommitMsg：",resultJson);
         if (StringUtils.isNotEmpty(resultJson)) {
             JSONObject json = JSONObject.parseObject(resultJson);
             log.info("dongliangPostLog:", json.toString());
@@ -119,10 +106,12 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
                 dongliangTestQuestionVO[0].setReportUrl(pdfUrlView);
                 //业务数据处理
                 dongLiangReviewService.handleBusinessData(flag,currentTime,json.toString(),dongliangTestQuestionVO,new ReviewUser());
+                log.info("提交成功,测试人,user = {}", dongliangTestQuestionVO[0].getUserInfo().getName());
                 return Result.OK("提交成功",pdfUrlView);
             }else {
                 flag = 2;
                 dongLiangReviewService.handleBusinessData(flag,currentTime,json.toString(),dongliangTestQuestionVO,new ReviewUser());
+                log.info("提交成功,测试人,user = {}，msg = {}", dongliangTestQuestionVO[0].getUserInfo().getName(),json.get("msg").toString());
                 return Result.error(json.get("msg").toString());
             }
         }else {
@@ -131,6 +120,7 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
             json.put("code", 500);
             json.put("msg", "提交失败");
             dongLiangReviewService.handleBusinessData(flag,currentTime,json.toString(),dongliangTestQuestionVO,new ReviewUser());
+            log.info("提交成功,测试人,user = {}，msg = {}", dongliangTestQuestionVO[0].getUserInfo().getName(),json.get("msg").toString());
             return Result.error(500,"提交失败");
         }
     }
