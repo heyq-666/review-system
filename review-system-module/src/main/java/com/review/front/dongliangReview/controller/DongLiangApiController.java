@@ -64,10 +64,10 @@ public class DongLiangApiController extends JeecgController<EvalCodeEntity, IDon
         map.put("code",evalCodeEntity.getEvalCode());
         String data = HttpClientUtils.doGet(codeValidateUrlGet,map);
         JSONObject json = JSONObject.parseObject(data);
+        log.info("测评码验证，code = {}，validateResult = {}", evalCodeEntity.getEvalCode(), data);
         if (list1.size() > 0 && StringUtils.isNotEmpty(data) && json.get("code").equals(200) && json.get("data").equals("0")){
             return Result.OK("测评码有效");
         }
-        log.info("测评码验证，code = {}，validateResult = {}", evalCodeEntity.getEvalCode(), data);
         return Result.error("测评码无效");
     }
     /**
